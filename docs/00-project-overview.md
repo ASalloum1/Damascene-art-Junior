@@ -4,7 +4,7 @@
 Academic Junior Project with future commercial scalability.
 
 ## Project Description
-Damascene Art is a premium handcrafted brand specializing in Damascus-style wooden boxes inlaid with mother-of-pearl.
+Damascene Art is a premium handcrafted brand specializing in Damascus-style wooden boxes inlaid with mother-of-pearl.  
 This project aims to build a clean, scalable e-commerce platform that reflects the brand’s heritage, calm luxury, and artisanal identity.
 
 ## Team Structure
@@ -12,6 +12,17 @@ This project aims to build a clean, scalable e-commerce platform that reflects t
 - Backend Developer: TBD
 - AI Engineers: TBD, TBD
 - Frontend Developer: TBD
+
+## Project Motivation
+This project responds to a real need in how premium Damascene handcrafted products are presented digitally. In recent years, Syria’s tourism exposure has declined, which has impacted demand for traditional handmade crafts and reduced market visibility for some Damascene artisanal professions—making them vulnerable to gradual disappearance over time.
+
+Damascene Art aims to act as a professional digital intermediary that connects local Syrian artisans with broader audiences locally and globally, while presenting each piece as a collectible art object through a calm, museum-like experience aligned with the brand identity.
+
+## Expected Impact
+- Support the sustainability of Damascene craftsmanship by expanding access to customers and markets.
+- Export Damascene heritage to global audiences through a structured and premium digital platform.
+- Contribute to local economic value by enabling broader market reach and potential economic benefits for craft-based commerce.
+- Deliver a complete academic junior project demonstrating software engineering practice: clear requirements, scalable architecture, and professional documentation.
 
 ## Project Goals
 
@@ -25,6 +36,9 @@ This project aims to build a clean, scalable e-commerce platform that reflects t
 - Build a scalable foundation for a real brand
 - Support future frontend, payments, and shipping integration
 - Integrate AI features that enhance user experience without harming brand identity
+
+### Scope Note
+Phase 1 focuses on backend APIs and AI services; the frontend will be developed in a later phase.
 
 ## Key Features (Planned)
 - Product catalog and management
