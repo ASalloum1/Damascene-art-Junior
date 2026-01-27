@@ -9,8 +9,8 @@ This project aims to build a clean, scalable e-commerce platform that reflects t
 
 ## Team Structure
 - Project Lead: Ahmed Salloum
-- Backend Developer: TBD
-- AI Engineers: TBD, TBD
+- Backend Developer: Firas Naura
+- AI Engineers: Ahmed Salloum, Ahmed Naura
 - Frontend Developer: TBD
 
 ## Project Motivation
