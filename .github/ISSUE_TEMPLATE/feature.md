@@ -1,60 +1,29 @@
 ---
-
 name: Feature Task
-
 about: Create a new feature task
-
-title: "\[FEATURE] "
-
-labels: \["feature"]
-
+title: "[FEATURE] "
+labels: ["feature"]
 ---
 
-
-
-\## Description
-
+## Description
 Describe the feature clearly.
 
+## Assigned Area
+- [ ] backend
+- [ ] ai
+- [ ] frontend
 
+## Acceptance Criteria
+- [ ] AC1
+- [ ] AC2
 
-\## Assigned Area
+## Dependencies
+- Issues:
+- External:
 
-\- \[ ] backend
+## Documentation Required
+- [ ] Code documentation
+- [ ] API documentation
+- [ ] Guide/User documentation
 
-\- \[ ] ai
-
-\- \[ ] frontend
-
-
-
-\## Acceptance Criteria
-
-\- \[ ] AC1
-
-\- \[ ] AC2
-
-
-
-\## Dependencies
-
-\- Issues:
-
-\- External:
-
-
-
-\## Documentation Required
-
-\- \[ ] Code documentation
-
-\- \[ ] API documentation
-
-\- \[ ] Guide/User documentation
-
-
-
-\## Notes
-
-
-
+## Notes
