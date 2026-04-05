@@ -1,0 +1,128 @@
+/**
+ * Damascene Art — Global Styles & Animations
+ */
+
+/* ─── Font Import ────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
+
+/* ─── Reset & Base ───────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-arabic);
+  font-size: var(--font-size-base);
+  color: var(--color-ink-soft);
+  background: var(--color-ivory);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Override Vite default index.css #root sizing for dashboard */
+#root {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  text-align: start !important;
+  border-inline: none !important;
+  min-height: 100svh;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* ─── Skip Link (Accessibility) ──────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  inset-inline-start: var(--space-4);
+  background: var(--color-wood-dark);
+  color: var(--color-ivory);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  text-decoration: none;
+  z-index: 9999;
+  transition: top var(--transition-fast);
+}
+.skip-link:focus {
+  top: var(--space-4);
+}
+
+/* ─── Focus Ring (Accessible) ────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-wood-mid);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ─── Scrollbar (Subtle) ─────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-stone-light);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-stone);
+}
+
+/* ─── Page Fade-In Animation ─────────────────────────────────────── */
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-enter {
+  animation: pageFadeIn var(--transition-slow) ease both;
+}
+
+/* ─── Skeleton Pulse ─────────────────────────────────────────────── */
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+.skeleton {
+  background: var(--color-ivory-dark);
+  border-radius: var(--radius-sm);
+  animation: skeletonPulse 1.8s ease infinite;
+}
+
+/* ─── Bar Fill Animation ─────────────────────────────────────────── */
+@keyframes barFill {
+  from { width: 0; }
+}
+
+/* ─── Utility Classes ────────────────────────────────────────────── */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

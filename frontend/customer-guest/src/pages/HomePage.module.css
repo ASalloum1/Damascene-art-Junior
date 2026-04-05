@@ -1,0 +1,155 @@
+/* ── Hero ────────────────────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, var(--color-ink) 0%, var(--color-wood-mid) 100%);
+  padding: var(--space-20) var(--space-6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.heroContent {
+  max-width: 700px;
+  text-align: center;
+}
+
+.heroOrnament {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-block-end: var(--space-4);
+  color: var(--color-gold);
+}
+
+.heroTagline {
+  font-size: var(--font-size-sm);
+  color: var(--color-gold);
+  font-weight: 600;
+  letter-spacing: 3px;
+  margin-block-end: var(--space-4);
+}
+
+.heroTitle {
+  font-size: var(--font-size-4xl);
+  font-weight: 800;
+  color: var(--color-white);
+  margin-block-end: var(--space-4);
+  line-height: 1.3;
+}
+
+.heroSubtitle {
+  font-size: var(--font-size-md);
+  color: var(--color-gold-light);
+  margin-block-end: var(--space-8);
+}
+
+.heroBtns {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* ── Shared container ────────────────────────────────── */
+.container {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+}
+
+/* ── Categories ──────────────────────────────────────── */
+.categories {
+  padding-block: var(--space-16);
+}
+
+.categoryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+}
+
+@media (max-width: 640px) {
+  .categoryGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 400px) {
+  .categoryGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Featured ────────────────────────────────────────── */
+.featured {
+  background: var(--color-ivory-mid);
+  padding-block: var(--space-16);
+}
+
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-5);
+}
+
+@media (max-width: 640px) {
+  .productGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 380px) {
+  .productGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.featuredCta {
+  display: flex;
+  justify-content: center;
+  margin-block-start: var(--space-8);
+}
+
+/* ── Story ───────────────────────────────────────────── */
+.story {
+  background: linear-gradient(135deg, var(--color-wood-mid) 0%, var(--color-ink) 100%);
+  padding: var(--space-16) var(--space-6);
+  display: flex;
+  justify-content: center;
+}
+
+.storyContent {
+  max-width: 800px;
+  text-align: center;
+}
+
+.storyText {
+  font-size: var(--font-size-base);
+  color: var(--color-gold-light);
+  line-height: 2;
+  margin-block-end: var(--space-6);
+}
+
+/* ── Testimonials ────────────────────────────────────── */
+.testimonials {
+  padding-block: var(--space-16);
+}
+
+.testimonialGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+}
+
+@media (max-width: 640px) {
+  .testimonialGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Responsive hero title ───────────────────────────── */
+@media (max-width: 640px) {
+  .heroTitle {
+    font-size: var(--font-size-2xl);
+  }
+}

@@ -1,0 +1,38 @@
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-xs);
+  border-top: 3px solid var(--color-gold);
+}
+
+.stars {
+  margin-bottom: var(--space-3);
+}
+
+.text {
+  font-size: var(--font-size-base);
+  color: var(--color-ink-soft);
+  line-height: 1.8;
+  margin-bottom: var(--space-4);
+  margin-top: 0;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.name {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.location {
+  font-size: var(--font-size-xs);
+  color: var(--color-stone);
+  margin: 0;
+}

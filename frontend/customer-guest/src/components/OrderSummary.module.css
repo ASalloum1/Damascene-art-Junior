@@ -1,0 +1,93 @@
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: var(--space-20);
+}
+
+.heading {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-ink);
+  margin-bottom: var(--space-4);
+  margin-top: 0;
+}
+
+.itemsList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-4);
+}
+
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-ivory-dark);
+}
+
+.itemRow:last-child {
+  border-bottom: none;
+}
+
+.itemName {
+  color: var(--color-ink-soft);
+}
+
+.itemQty {
+  color: var(--color-stone);
+}
+
+.itemPrice {
+  color: var(--color-ink);
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-inline-start: var(--space-4);
+}
+
+.couponRow {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  align-items: flex-end;
+}
+
+.couponRow > :first-child {
+  flex: 1;
+}
+
+.lineItems {
+  display: flex;
+  flex-direction: column;
+}
+
+.lineItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-3);
+  color: var(--color-ink-soft);
+}
+
+.discount {
+  color: var(--color-success);
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  color: var(--color-ink);
+  border-top: 2px solid var(--color-ivory-dark);
+  padding-top: var(--space-4);
+  margin-top: var(--space-3);
+}
+
+.actionBtn {
+  margin-top: var(--space-5);
+}

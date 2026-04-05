@@ -1,0 +1,55 @@
+.page {
+  max-width: 440px;
+  margin-inline: auto;
+  padding: var(--space-16) var(--space-6);
+}
+
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-10);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.gemIcon {
+  display: block;
+  margin-inline: auto;
+  margin-block-end: var(--space-3);
+  color: var(--color-gold);
+}
+
+.heading {
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  color: var(--color-ink);
+  margin-block-end: var(--space-6);
+}
+
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  text-align: start;
+}
+
+@media (max-width: 400px) {
+  .twoCol {
+    grid-template-columns: 1fr;
+  }
+}
+
+.loginLink {
+  margin-block-start: var(--space-5);
+  font-size: var(--font-size-sm);
+  color: var(--color-stone);
+}
+
+.loginBtn {
+  background: transparent;
+  border: none;
+  color: var(--color-wood-mid);
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-arabic);
+}

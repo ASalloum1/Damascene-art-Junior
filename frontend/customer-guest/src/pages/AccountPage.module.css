@@ -1,0 +1,132 @@
+.page {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+  padding-block: var(--space-8);
+}
+
+/* ── Stat grid ───────────────────────────────────────── */
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  margin-block-end: var(--space-6);
+}
+
+@media (max-width: 640px) {
+  .statGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 380px) {
+  .statGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.statCard {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  text-align: center;
+  box-shadow: var(--shadow-xs);
+  cursor: pointer;
+  transition: box-shadow var(--transition-fast);
+}
+
+.statCard:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.statIcon {
+  color: var(--color-wood-mid);
+  margin-block-end: var(--space-2);
+}
+
+.statLabel {
+  font-weight: 700;
+  color: var(--color-ink);
+  font-size: var(--font-size-base);
+  margin-block-end: var(--space-1);
+}
+
+.statValue {
+  font-size: var(--font-size-sm);
+  color: var(--color-stone);
+}
+
+/* ── Cards ───────────────────────────────────────────── */
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-xs);
+  margin-block-end: var(--space-5);
+}
+
+.cardHeading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-ink);
+  margin-block-end: var(--space-4);
+}
+
+/* ── Orders table ────────────────────────────────────── */
+.orderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-block: var(--space-3);
+  border-block-end: 1px solid var(--color-ivory-dark);
+  font-size: var(--font-size-sm);
+  gap: var(--space-3);
+}
+
+.orderRow:last-child {
+  border-block-end: none;
+}
+
+.orderId {
+  font-weight: 700;
+  color: var(--color-ink);
+  min-width: 60px;
+}
+
+.orderDate {
+  color: var(--color-stone);
+  flex: 1;
+}
+
+.orderTotal {
+  font-weight: 700;
+  color: var(--color-ink);
+  min-width: 70px;
+}
+
+.trackBtn {
+  background: transparent;
+  border: none;
+  color: var(--color-wood-mid);
+  cursor: pointer;
+  font-weight: 600;
+  font-family: var(--font-arabic);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+/* ── Profile form ────────────────────────────────────── */
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+@media (max-width: 640px) {
+  .twoCol {
+    grid-template-columns: 1fr;
+  }
+}

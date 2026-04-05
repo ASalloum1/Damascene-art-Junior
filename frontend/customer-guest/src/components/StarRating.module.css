@@ -1,0 +1,11 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.count {
+  font-size: var(--font-size-xs);
+  color: var(--color-stone);
+  margin-inline-start: var(--space-2);
+}

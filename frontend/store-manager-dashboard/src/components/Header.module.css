@@ -1,0 +1,126 @@
+.header {
+  background: var(--color-white);
+  padding: 14px var(--space-6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-xs);
+  flex-shrink: 0;
+  gap: var(--space-4);
+  border-bottom: 1px solid var(--color-ivory-dark);
+  min-height: 60px;
+}
+
+/* ─── Mobile Menu Button ─────────────────────────────────────── */
+.mobileMenuBtn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+.mobileMenuBtn:hover {
+  background: var(--color-ivory-dark);
+}
+
+@media (max-width: 768px) {
+  .mobileMenuBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* ─── Page Title ─────────────────────────────────────────────── */
+.pageTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-ink);
+  margin: 0;
+  font-family: var(--font-arabic);
+  flex: 1;
+}
+
+/* ─── Actions Row ────────────────────────────────────────────── */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* ─── Icon Button (bell, etc.) ───────────────────────────────── */
+.iconBtn {
+  background: none;
+  border: none;
+  color: var(--color-stone-mid);
+  cursor: pointer;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+.iconBtn:hover {
+  color: var(--color-ink);
+  background: var(--color-ivory-dark);
+}
+
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  background: var(--color-error);
+  color: var(--color-ivory);
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* ─── User Chip ──────────────────────────────────────────────── */
+.userChip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: default;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  background: var(--color-wood-mid);
+  color: var(--color-ivory);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: var(--font-size-md);
+  flex-shrink: 0;
+}
+
+.userName {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .userName {
+    display: none;
+  }
+}

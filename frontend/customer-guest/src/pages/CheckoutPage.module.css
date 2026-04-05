@@ -1,0 +1,92 @@
+.page {
+  max-width: 900px;
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+  padding-block: var(--space-8);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: var(--space-6);
+  align-items: flex-start;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Section cards ───────────────────────────────────── */
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-xs);
+  margin-block-end: var(--space-5);
+}
+
+.cardHeading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-ink);
+  margin-block-end: var(--space-5);
+}
+
+/* ── 2-col form grid ─────────────────────────────────── */
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+@media (max-width: 480px) {
+  .twoCol {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Select field ────────────────────────────────────── */
+.selectField {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-ivory-dark);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-arabic);
+  color: var(--color-ink);
+  background: var(--color-ivory);
+  margin-block-end: var(--space-4);
+}
+
+/* ── Radio cards ─────────────────────────────────────── */
+.radioCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  margin-block-end: var(--space-2);
+  border: 1px solid var(--color-ivory-dark);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-arabic);
+  color: var(--color-ink-soft);
+}
+
+.radioCard input {
+  accent-color: var(--color-wood-mid);
+  cursor: pointer;
+}
+
+.radioGroupLabel {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-ink);
+  margin-block: var(--space-4) var(--space-2);
+  display: block;
+}
