@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import styles from './Modal.module.css';
@@ -30,6 +30,7 @@ export default function Modal({
   footer,
   closeOnBackdrop = true,
 }) {
+  const titleId = useId();
   const dialogRef = useRef(null);
   const previousFocusRef = useRef(null);
 
@@ -102,12 +103,12 @@ export default function Modal({
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="modal-title"
+        aria-labelledby={titleId}
         tabIndex={-1}
       >
         {/* Header */}
         <div className={styles.header}>
-          <h2 id="modal-title" className={styles.title}>
+          <h2 id={titleId} className={styles.title}>
             {title}
           </h2>
           <button

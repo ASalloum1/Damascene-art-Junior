@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import styles from './InputField.module.css';
 
 /**
@@ -28,7 +29,8 @@ export default function InputField({
   name,
   ...rest
 }) {
-  const inputId = id || `input-${label?.replace(/\s/g, '-') || Math.random()}`;
+  const reactId = useId();
+  const inputId = id || reactId;
 
   return (
     <div className={styles.fieldGroup}>

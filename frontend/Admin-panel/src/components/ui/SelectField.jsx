@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { ChevronDown } from 'lucide-react';
 import styles from './SelectField.module.css';
 
@@ -25,7 +26,8 @@ export default function SelectField({
   id,
   name,
 }) {
-  const selectId = id || `select-${label?.replace(/\s/g, '-') || Math.random()}`;
+  const reactId = useId();
+  const selectId = id || reactId;
 
   return (
     <div className={styles.fieldGroup}>

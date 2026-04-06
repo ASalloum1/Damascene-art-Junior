@@ -33,9 +33,11 @@ export default function DataTable({
   onSelectChange,
   pagination,
 }) {
+  const selectedSet = new Set(selected);
+
   const allPageSelected =
-    rows.length > 0 && rows.every((r) => selected.includes(r.id));
-  const someSelected = rows.some((r) => selected.includes(r.id));
+    rows.length > 0 && rows.every((r) => selectedSet.has(r.id));
+  const someSelected = rows.some((r) => selectedSet.has(r.id));
 
   function handleSelectAll(e) {
     if (!onSelectChange) return;
@@ -43,8 +45,8 @@ export default function DataTable({
       const ids = rows.map((r) => r.id);
       onSelectChange([...new Set([...selected, ...ids])]);
     } else {
-      const ids = rows.map((r) => r.id);
-      onSelectChange(selected.filter((id) => !ids.includes(id)));
+      const ids = new Set(rows.map((r) => r.id));
+      onSelectChange(selected.filter((id) => !ids.has(id)));
     }
   }
 
@@ -135,7 +137,7 @@ export default function DataTable({
                     <td key={col.key} className={styles.td}>
                       <div
                         className={`${styles.skeletonCell} skeleton`}
-                        style={{ width: `${60 + Math.random() * 40}%` }}
+                        style={{ width: `${60 + ((i * 17 + headers.indexOf(col) * 31) % 40)}%` }}
                       />
                     </td>
                   ))}
@@ -158,7 +160,7 @@ export default function DataTable({
               </tr>
             ) : (
               rows.map((row, rowIndex) => {
-                const isSelected = selected.includes(row.id);
+                const isSelected = selectedSet.has(row.id);
                 return (
                   <tr
                     key={row.id || rowIndex}

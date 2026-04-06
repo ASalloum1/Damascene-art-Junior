@@ -1,0 +1,20 @@
+.layout {
+  display: flex;
+  flex-direction: row;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-6);
+  background: var(--color-cream);
+}

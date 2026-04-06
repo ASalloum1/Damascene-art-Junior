@@ -1,0 +1,74 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pageTitle {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-navy);
+  margin: 0 0 4px;
+}
+
+.pageSubtitle {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.tableCard {
+  background: var(--color-white);
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--color-cream-dark);
+  overflow: hidden;
+}
+
+/* Image Placeholder */
+.imagePlaceholder {
+  width: 40px;
+  height: 40px;
+  background: var(--color-cream-dark);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+}
+
+/* Stock */
+.lowStock {
+  color: var(--color-red);
+  font-weight: 700;
+}
+
+/* Stars */
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.starFilled {
+  color: var(--color-gold);
+  fill: var(--color-gold);
+}
+
+.starEmpty {
+  color: var(--color-cream-dark);
+}
+
+.ratingVal {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-inline-start: 4px;
+}

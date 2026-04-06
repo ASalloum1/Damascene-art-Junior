@@ -1,0 +1,298 @@
+.page {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Profile Header */
+.profileHeader {
+  background: var(--color-white);
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: 28px 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.avatarCircle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--color-gold-bg);
+  color: var(--color-gold-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.avatarInitials {
+  line-height: 1;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profileName {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-navy);
+  margin: 0;
+}
+
+.profileEmail {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.profileMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-block-start: 4px;
+}
+
+.profileSince {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+/* Cards */
+.card {
+  background: var(--color-white);
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 24px;
+  border-block-end: 1px solid var(--color-cream-dark);
+  background: var(--color-cream);
+}
+
+.cardHeaderIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--color-gold-bg);
+  color: var(--color-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardHeaderIconBlue {
+  background: var(--color-blue-bg);
+  color: var(--color-blue);
+}
+
+.cardHeaderIconGold {
+  background: var(--color-gold-bg);
+  color: var(--color-gold);
+}
+
+.cardHeaderIconPurple {
+  background: var(--color-purple-bg);
+  color: var(--color-purple);
+}
+
+.cardTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-navy);
+  margin: 0;
+}
+
+.cardBody {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: flex-end;
+  padding-block-start: 4px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+/* Avatar Upload */
+.uploadAvatar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1.5px dashed var(--color-cream-dark);
+  border-radius: 10px;
+}
+
+.avatarSmall {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-gold-bg);
+  color: var(--color-gold-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.uploadInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.uploadLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-navy);
+}
+
+.uploadHint {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+/* Password */
+.passwordField {
+  position: relative;
+}
+
+.eyeBtn {
+  position: absolute;
+  inset-inline-start: 12px;
+  bottom: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  padding: 2px;
+}
+
+.eyeBtn:hover {
+  color: var(--color-navy);
+}
+
+/* Password Strength */
+.strengthWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.strengthTrack {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  max-width: 200px;
+}
+
+.strengthSegment {
+  height: 4px;
+  flex: 1;
+  border-radius: 2px;
+  transition: background-color 0.2s;
+}
+
+.strengthLabel {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Notification Prefs */
+.prefList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.prefRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-block-end: 1px solid var(--color-cream-dark);
+}
+
+.prefRow:last-child {
+  border-block-end: none;
+}
+
+.prefLabel {
+  font-size: 14px;
+  color: var(--color-text-primary);
+}
+
+/* Devices */
+.deviceCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.deviceIcon {
+  color: var(--color-text-secondary);
+}
+
+.currentDeviceText {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+/* Toggle Switch */
+.toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: var(--color-cream-dark);
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.toggleOn {
+  background: var(--color-gold);
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 4px;
+  inset-inline-start: 4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-white);
+  transition: inset-inline-start 0.2s;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggleOn .toggleThumb {
+  inset-inline-start: 24px;
+}

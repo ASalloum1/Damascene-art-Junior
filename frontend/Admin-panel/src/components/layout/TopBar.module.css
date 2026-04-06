@@ -1,0 +1,101 @@
+.topbar {
+  height: var(--topbar-height);
+  background: var(--color-white);
+  border-block-end: 1px solid var(--color-cream-dark);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: var(--space-6);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.iconBtn {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: var(--color-cream);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+
+.iconBtn:hover {
+  background: var(--color-cream-dark);
+}
+
+.badge {
+  position: absolute;
+  top: 4px;
+  inset-inline-end: 4px;
+  background: var(--color-gold);
+  color: var(--color-navy);
+  font-size: var(--font-size-tiny);
+  font-weight: var(--font-weight-bold);
+  min-width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 2px;
+  font-family: var(--font-arabic);
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+  font-family: var(--font-arabic);
+}
+
+.profile:hover {
+  background: var(--color-cream);
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--color-gold-light);
+  color: var(--color-navy);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-arabic);
+  flex-shrink: 0;
+}
+
+.adminName {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}

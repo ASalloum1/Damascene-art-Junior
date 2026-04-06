@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import styles from './TextArea.module.css';
 import { toArabicNum } from '../../utils/formatters.js';
 
@@ -27,7 +28,8 @@ export default function TextArea({
   id,
   name,
 }) {
-  const textareaId = id || `textarea-${label?.replace(/\s/g, '-') || Math.random()}`;
+  const reactId = useId();
+  const textareaId = id || reactId;
   const currentLength = value?.length || 0;
 
   return (
