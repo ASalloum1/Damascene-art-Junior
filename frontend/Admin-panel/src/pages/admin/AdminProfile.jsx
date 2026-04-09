@@ -75,11 +75,11 @@ function PasswordStrengthBar({ password }) {
           />
         ))}
       </div>
-      {strength > 0 && (
+      {strength > 0 ? (
         <span className={styles.strengthLabel} style={{ color: colors[strength] }}>
           {labels[strength]}
         </span>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -390,13 +390,13 @@ export default function AdminProfilePage() {
         </div>
         <div className={styles.cardBody}>
           <DataTable headers={deviceHeaders} rows={devices} />
-          {devices.filter((d) => !d.current).length > 0 && (
+          {devices.filter((d) => !d.current).length > 0 ? (
             <div className={styles.cardFooter}>
               <Button variant="danger" icon={LogOut} onClick={terminateAllOthers}>
                 إنهاء جميع الجلسات الأخرى
               </Button>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

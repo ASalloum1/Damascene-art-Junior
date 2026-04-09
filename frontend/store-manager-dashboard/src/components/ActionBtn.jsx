@@ -13,7 +13,7 @@ export function ActionBtn({ text, variant = 'primary', onClick, icon, disabled =
       disabled={disabled}
       aria-label={ariaLabel || text}
     >
-      {icon && <span className={styles.icon}>{icon}</span>}
+      {icon ? <span className={styles.icon}>{icon}</span> : null}
       {text}
     </button>
   );

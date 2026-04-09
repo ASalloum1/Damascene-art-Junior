@@ -23,8 +23,8 @@
   background-color: var(--color-white);
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition: background-color var(--transition-fast), color var(--transition-fast),
-    border-color var(--transition-fast);
+  transition: background-color var(--transition-base), color var(--transition-base),
+    border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 .variant-pills .tab:hover:not(.active) {
@@ -37,6 +37,7 @@
   background-color: var(--color-navy);
   color: var(--color-gold);
   border-color: var(--color-navy);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* ── Underline Variant ── */
@@ -60,7 +61,20 @@
   color: var(--color-text-secondary);
   cursor: pointer;
   margin-block-end: -2px;
-  transition: color var(--transition-fast), border-color var(--transition-fast);
+  position: relative;
+  transition: color var(--transition-base);
+}
+
+.variant-underline .tab::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-end: -2px;
+  width: 0;
+  height: 2px;
+  background-color: var(--color-gold);
+  transform: translateX(50%);
+  transition: width var(--transition-base), inset-inline-start var(--transition-base);
 }
 
 .variant-underline .tab:hover:not(.active) {
@@ -69,7 +83,13 @@
 
 .variant-underline .tab.active {
   color: var(--color-gold-dark);
-  border-block-end-color: var(--color-gold);
+  border-block-end-color: transparent;
+}
+
+.variant-underline .tab.active::after {
+  inset-inline-start: 0;
+  width: 100%;
+  transform: translateX(0);
 }
 
 /* ── Count Badge ── */
@@ -85,7 +105,20 @@
   border-radius: var(--radius-full);
   font-size: var(--font-size-tiny);
   font-weight: var(--font-weight-bold);
-  transition: background-color var(--transition-fast), color var(--transition-fast);
+  transition: background-color var(--transition-fast), color var(--transition-fast),
+    transform var(--transition-fast);
+  animation: fadeInScale 0.2s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .variant-pills .tab.active .count,

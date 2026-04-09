@@ -17,11 +17,11 @@ export function InputField({
 
   return (
     <div className={styles.wrapper}>
-      {label && (
+      {label ? (
         <label htmlFor={fieldId} className={styles.label}>
           {label}
         </label>
-      )}
+      ) : null}
 
       {textarea ? (
         <textarea
@@ -33,11 +33,11 @@ export function InputField({
         />
       ) : select ? (
         <select id={fieldId} name={name} className={`${styles.field} ${styles.select}`}>
-          {placeholder && (
+          {placeholder ? (
             <option value="" disabled>
               {placeholder}
             </option>
-          )}
+          ) : null}
           {options.map((opt) => (
             <option key={opt} value={opt}>
               {opt}

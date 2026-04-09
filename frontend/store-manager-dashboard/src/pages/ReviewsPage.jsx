@@ -1,4 +1,5 @@
 import styles from './pages.module.css';
+import reviewStyles from './ReviewsPage.module.css';
 import SectionTitle from '../components/SectionTitle';
 import StatCard from '../components/StatCard';
 import PageCard from '../components/PageCard';
@@ -43,14 +44,17 @@ export function ReviewsPage() {
       </div>
       <PageCard>
         {reviews.map((r, i) => (
-          <div key={i} className={styles.reviewCard}>
+          <div key={i} className={`${styles.reviewCard} ${reviewStyles.reviewCard}`}>
             <div className={styles.reviewHeader}>
               <div>
                 <span className={styles.reviewAuthor}>{r.customer}</span>
                 <span className={styles.reviewProduct}> — {r.product}</span>
               </div>
               <div className={styles.reviewMeta}>
-                <span className={styles.stars}>
+                <span
+                  className={`${styles.stars} ${reviewStyles.stars}`}
+                  aria-label={`تقييم ${r.rating} من ٥`}
+                >
                   {'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}
                 </span>
                 <Badge
@@ -59,17 +63,23 @@ export function ReviewsPage() {
                 />
               </div>
             </div>
-            <p className={styles.reviewText}>{r.text}</p>
-            <div className={styles.reviewFooter}>
+            <p className={`${styles.reviewText} ${reviewStyles.reviewText}`}>{r.text}</p>
+            <div className={`${styles.reviewFooter}`}>
               <span className={styles.reviewDate}>{r.date}</span>
-              <div className={styles.reviewActions}>
-                {r.status === 'بانتظار' && (
+              <div className={`${styles.reviewActions} ${reviewStyles.reviewActions}`}>
+                {r.status === 'بانتظار' ? (
                   <>
-                    <ActionBtn text="موافقة" variant="success" onClick={() => {}} />
-                    <ActionBtn text="رفض" variant="error" onClick={() => {}} />
+                    <span className={reviewStyles.btnApprove}>
+                      <ActionBtn text="موافقة" variant="success" onClick={() => {}} />
+                    </span>
+                    <span className={reviewStyles.btnReject}>
+                      <ActionBtn text="رفض" variant="error" onClick={() => {}} />
+                    </span>
                   </>
-                )}
-                <ActionBtn text="رد" variant="info" onClick={() => {}} />
+                ) : null}
+                <span className={reviewStyles.btnReply}>
+                  <ActionBtn text="رد" variant="info" onClick={() => {}} />
+                </span>
               </div>
             </div>
           </div>

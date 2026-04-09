@@ -22,7 +22,7 @@
 .heading {
   font-size: var(--font-size-xl);
   font-weight: 800;
-  color: var(--color-ink);
+  color: var(--color-navy);
   margin-block-end: var(--space-6);
 }
 
@@ -39,16 +39,16 @@
   align-items: center;
   gap: var(--space-2);
   cursor: pointer;
-  color: var(--color-ink-soft);
+  color: var(--color-navy-light);
 }
 
 .rememberLabel input {
-  accent-color: var(--color-wood-mid);
+  accent-color: var(--color-gold);
   cursor: pointer;
 }
 
 .forgotLink {
-  color: var(--color-wood-mid);
+  color: var(--color-gold);
   cursor: pointer;
   background: none;
   border: none;
@@ -72,19 +72,19 @@
 .socialBtn {
   flex: 1;
   padding: var(--space-3);
-  border: 1px solid var(--color-ivory-dark);
+  border: 1px solid var(--color-cream-mid);
   border-radius: var(--radius-md);
   background: var(--color-white);
   cursor: pointer;
   font-size: var(--font-size-sm);
   font-family: var(--font-arabic);
   text-align: center;
-  color: var(--color-ink-soft);
+  color: var(--color-navy-light);
   transition: background var(--transition-fast);
 }
 
 .socialBtn:hover {
-  background: var(--color-ivory);
+  background: var(--color-cream);
 }
 
 .registerLink {
@@ -96,7 +96,7 @@
 .registerBtn {
   background: transparent;
   border: none;
-  color: var(--color-wood-mid);
+  color: var(--color-gold);
   font-weight: 700;
   cursor: pointer;
   font-family: var(--font-arabic);

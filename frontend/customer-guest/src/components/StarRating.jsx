@@ -20,9 +20,9 @@ export function StarRating({ rating, reviewCount, size = 'md' }) {
         />
       ))}
 
-      {reviewCount !== undefined && (
+      {reviewCount !== undefined ? (
         <span className={styles.count}>({reviewCount})</span>
-      )}
+      ) : null}
     </div>
   );
 }

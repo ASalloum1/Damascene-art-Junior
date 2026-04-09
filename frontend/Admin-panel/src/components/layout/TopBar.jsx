@@ -27,9 +27,9 @@ export default function TopBar({
           aria-label="الإشعارات"
         >
           <Bell size={22} strokeWidth={1.8} />
-          {notificationCount > 0 && (
+          {notificationCount > 0 ? (
             <span className={styles.badge}>{notificationCount}</span>
-          )}
+          ) : null}
         </button>
         <button className={styles.profile} onClick={onProfileClick}>
           <span className={styles.avatar}>{adminName?.charAt(0) || 'م'}</span>

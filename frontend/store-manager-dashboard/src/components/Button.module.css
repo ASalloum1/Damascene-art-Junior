@@ -1,0 +1,96 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-block: 7px;
+  padding-inline: 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  font-family: var(--font-arabic);
+  cursor: pointer;
+  /* Refined letter spacing */
+  letter-spacing: 0.01em;
+  transition:
+    background var(--transition-base),
+    transform var(--transition-fast),
+    box-shadow var(--transition-base);
+  white-space: nowrap;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn:active:not(:disabled) {
+  /* Tactile press feedback */
+  transform: scale(0.97);
+  box-shadow: none;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ─── Variants ────────────────────────────────────────────────── */
+
+.primary {
+  background: var(--color-gold);
+  color: var(--color-cream);
+}
+.primary:hover:not(:disabled) {
+  background: var(--color-gold-dark);
+  /* Gold glow */
+  box-shadow: 0 4px 15px rgba(200, 164, 90, 0.35);
+}
+.primary:active:not(:disabled) {
+  box-shadow: 0 2px 8px rgba(200, 164, 90, 0.25);
+}
+
+.success {
+  background: var(--color-green-bg);
+  color: var(--color-green);
+}
+.success:hover:not(:disabled) {
+  background: var(--color-green);
+  color: var(--color-cream);
+}
+
+.error {
+  background: var(--color-red-bg);
+  color: var(--color-red);
+}
+.error:hover:not(:disabled) {
+  background: var(--color-red);
+  color: var(--color-cream);
+}
+
+.info {
+  background: var(--color-blue-bg);
+  color: var(--color-blue);
+}
+.info:hover:not(:disabled) {
+  background: var(--color-blue);
+  color: var(--color-cream);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--color-stone-mid);
+  border: 1px solid var(--color-stone-light);
+}
+.ghost:hover:not(:disabled) {
+  /* Smooth fade-in background */
+  background: var(--color-cream-deep);
+  color: var(--color-navy-light);
+  border-color: var(--color-stone);
+}

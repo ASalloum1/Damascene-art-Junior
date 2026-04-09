@@ -1,5 +1,5 @@
 import { Gem, Search, Heart, ShoppingCart, Menu, X, User } from 'lucide-react';
-import { Btn } from './Btn.jsx';
+import { Button } from './Button.jsx';
 import { navLinks } from '../data/index.js';
 import styles from './Navbar.module.css';
 
@@ -71,20 +71,20 @@ export function Navbar({
               aria-label={`السلة — ${cartCount} منتج`}
             >
               <ShoppingCart size={18} />
-              {cartCount > 0 && (
+              {cartCount > 0 ? (
                 <span className={styles.cartBadge}>{cartCount}</span>
-              )}
+              ) : null}
             </button>
 
             <div className={styles.loginBtn}>
-              <Btn
+              <Button
                 variant="outline"
                 size="sm"
                 icon={<User size={14} />}
                 onClick={() => onNavigate?.('login')}
               >
                 الدخول
-              </Btn>
+              </Button>
             </div>
 
             {/* Hamburger */}
@@ -101,13 +101,13 @@ export function Navbar({
       </header>
 
       {/* Backdrop */}
-      {mobileMenuOpen && (
+      {mobileMenuOpen ? (
         <div
           className={styles.backdrop}
           onClick={onMobileMenuClose}
           aria-hidden="true"
         />
-      )}
+      ) : null}
 
       {/* Drawer */}
       <div
@@ -143,7 +143,7 @@ export function Navbar({
         </nav>
 
         <div className={styles.drawerLogin}>
-          <Btn
+          <Button
             variant="primary"
             full
             icon={<User size={14} />}
@@ -153,7 +153,7 @@ export function Navbar({
             }}
           >
             الدخول
-          </Btn>
+          </Button>
         </div>
       </div>
     </>

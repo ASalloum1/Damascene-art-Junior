@@ -21,14 +21,14 @@
 
 .question {
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--color-navy);
   font-size: var(--font-size-md);
   margin: 0;
 }
 
 .answer {
   font-size: var(--font-size-base);
-  color: var(--color-ink-soft);
+  color: var(--color-navy-light);
   line-height: 1.9;
   margin: 0;
 }

@@ -104,7 +104,8 @@ export default function ActivityLogPage() {
         (a.item && a.item.toLowerCase().includes(q));
       const matchAction = !actionFilter || a.action === actionFilter;
       const matchRole = !roleFilter || a.role === roleFilter;
-      return matchSearch && matchAction && matchRole;
+      const matchSection = !sectionFilter || a.section === sectionFilter;
+      return matchSearch && matchAction && matchRole && matchSection;
     });
   }, [search, actionFilter, roleFilter, sectionFilter]);
 

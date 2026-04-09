@@ -34,6 +34,26 @@ export default function Modal({
   const dialogRef = useRef(null);
   const previousFocusRef = useRef(null);
 
+  function trapFocus(e) {
+    if (!dialogRef.current) return;
+    const focusable = dialogRef.current.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) {
+        e.preventDefault();
+        last?.focus();
+      }
+    } else {
+      if (document.activeElement === last) {
+        e.preventDefault();
+        first?.focus();
+      }
+    }
+  }
+
   // Focus trap and scroll lock
   useEffect(() => {
     if (isOpen) {
@@ -67,26 +87,6 @@ export default function Modal({
       document.body.style.overflow = '';
     };
   }, []);
-
-  function trapFocus(e) {
-    if (!dialogRef.current) return;
-    const focusable = dialogRef.current.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (e.shiftKey) {
-      if (document.activeElement === first) {
-        e.preventDefault();
-        last?.focus();
-      }
-    } else {
-      if (document.activeElement === last) {
-        e.preventDefault();
-        first?.focus();
-      }
-    }
-  }
 
   if (!isOpen) return null;
 
@@ -125,7 +125,7 @@ export default function Modal({
         <div className={styles.body}>{children}</div>
 
         {/* Footer */}
-        {footer && <div className={styles.footer}>{footer}</div>}
+        {footer ? <div className={styles.footer}>{footer}</div> : null}
       </div>
     </div>
   );

@@ -67,7 +67,7 @@ export default function SearchInput({
         className={styles.input}
         aria-label={placeholder}
       />
-      {value && (
+      {value ? (
         <button
           type="button"
           onClick={handleClear}
@@ -76,7 +76,7 @@ export default function SearchInput({
         >
           <X size={14} strokeWidth={1.8} />
         </button>
-      )}
+      ) : null}
     </div>
   );
 }

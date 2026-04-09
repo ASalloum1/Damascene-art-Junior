@@ -34,12 +34,12 @@ export default function InputField({
 
   return (
     <div className={styles.fieldGroup}>
-      {label && (
+      {label ? (
         <label htmlFor={inputId} className={styles.label}>
           {label}
-          {required && <span className={styles.required} aria-hidden="true"> *</span>}
+          {required ? <span className={styles.required} aria-hidden="true"> *</span> : null}
         </label>
-      )}
+      ) : null}
       <input
         id={inputId}
         name={name}
@@ -56,16 +56,16 @@ export default function InputField({
         className={[styles.input, error ? styles.inputError : ''].filter(Boolean).join(' ')}
         {...rest}
       />
-      {error && (
+      {error ? (
         <span id={`${inputId}-error`} className={styles.errorMsg} role="alert">
           {error}
         </span>
-      )}
-      {hint && !error && (
+      ) : null}
+      {hint && !error ? (
         <span id={`${inputId}-hint`} className={styles.hint}>
           {hint}
         </span>
-      )}
+      ) : null}
     </div>
   );
 }

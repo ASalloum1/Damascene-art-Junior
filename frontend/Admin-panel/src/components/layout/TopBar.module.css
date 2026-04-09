@@ -1,7 +1,9 @@
 .topbar {
   height: var(--topbar-height);
-  background: var(--color-white);
-  border-block-end: 1px solid var(--color-cream-dark);
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border-block-end: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -10,6 +12,17 @@
   top: 0;
   z-index: 10;
   flex-shrink: 0;
+}
+
+/* Gold gradient bottom border via pseudo-element */
+.topbar::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  height: 1px;
+  background: var(--gradient-gold);
+  opacity: 0.5;
 }
 
 .title {
@@ -37,11 +50,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background var(--transition-fast);
+  transition: background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .iconBtn:hover {
-  background: var(--color-cream-dark);
+  background: rgba(200, 164, 90, 0.08);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(200, 164, 90, 0.1);
 }
 
 .badge {
@@ -60,6 +75,7 @@
   justify-content: center;
   padding-inline: 2px;
   font-family: var(--font-arabic);
+  animation: pulseGlow 2s ease-in-out infinite;
 }
 
 .profile {
@@ -71,12 +87,12 @@
   cursor: pointer;
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-md);
-  transition: background var(--transition-fast);
+  transition: background var(--transition-fast), transform var(--transition-fast);
   font-family: var(--font-arabic);
 }
 
 .profile:hover {
-  background: var(--color-cream);
+  background: rgba(200, 164, 90, 0.06);
 }
 
 .avatar {
@@ -92,6 +108,13 @@
   justify-content: center;
   font-family: var(--font-arabic);
   flex-shrink: 0;
+  border: 2px solid rgba(200, 164, 90, 0.3);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.profile:hover .avatar {
+  transform: scale(1.08);
+  border-color: var(--color-gold);
 }
 
 .adminName {

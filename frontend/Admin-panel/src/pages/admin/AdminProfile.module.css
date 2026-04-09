@@ -1,33 +1,50 @@
 .page {
-  padding: 24px;
+  padding: var(--space-6);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-5);
 }
 
-/* Profile Header */
+/* Profile Header — subtle gradient overlay bg */
 .profileHeader {
   background: var(--color-white);
-  border-radius: 14px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  padding: 28px 24px;
+  background-image: var(--gradient-gold-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-6) var(--space-6);
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: var(--space-6);
+  animation: fadeInUp 0.4s ease-out backwards;
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
 }
 
+.profileHeader:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+/* Avatar — gold ring border, hover scale */
 .avatarCircle {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background: var(--color-gold-bg);
   color: var(--color-gold-dark);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
-  font-weight: 800;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-black);
   flex-shrink: 0;
+  border: 3px solid var(--color-gold);
+  box-shadow: 0 0 0 4px rgba(200, 164, 90, 0.15);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.avatarCircle:hover {
+  transform: scale(1.05);
+  box-shadow: var(--glow-gold);
 }
 
 .avatarInitials {
@@ -37,18 +54,28 @@
 .profileInfo {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .profileName {
-  font-size: 22px;
-  font-weight: 800;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-black);
   color: var(--color-navy);
   margin: 0;
 }
 
+.profileName::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 3px;
+  background: var(--color-gold);
+  border-radius: var(--radius-full);
+  margin-block-start: var(--space-2);
+}
+
 .profileEmail {
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   margin: 0;
 }
@@ -56,28 +83,39 @@
 .profileMeta {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-block-start: 4px;
+  gap: var(--space-3);
+  margin-block-start: var(--space-1);
 }
 
 .profileSince {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
 }
 
-/* Cards */
+/* Cards — hover elevation */
 .card {
   background: var(--color-white);
-  border-radius: 14px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+  animation: fadeInUp 0.4s ease-out backwards;
+}
+
+.card:nth-of-type(2) { animation-delay: 0.06s; }
+.card:nth-of-type(3) { animation-delay: 0.12s; }
+.card:nth-of-type(4) { animation-delay: 0.18s; }
+
+.card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
 }
 
 .cardHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 18px 24px;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
   border-block-end: 1px solid var(--color-cream-dark);
   background: var(--color-cream);
 }
@@ -85,7 +123,7 @@
 .cardHeaderIcon {
   width: 36px;
   height: 36px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--color-gold-bg);
   color: var(--color-gold);
   display: flex;
@@ -109,69 +147,75 @@
 }
 
 .cardTitle {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
   color: var(--color-navy);
   margin: 0;
 }
 
 .cardBody {
-  padding: 24px;
+  padding: var(--space-6);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-5);
 }
 
 .cardFooter {
   display: flex;
   justify-content: flex-end;
-  padding-block-start: 4px;
+  padding-block-start: var(--space-1);
 }
 
 .formGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
+  gap: var(--space-4);
 }
 
 /* Avatar Upload */
 .uploadAvatar {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px;
+  gap: var(--space-4);
+  padding: var(--space-4);
   border: 1.5px dashed var(--color-cream-dark);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
+  transition: border-color var(--transition-base);
+}
+
+.uploadAvatar:hover {
+  border-color: var(--color-gold-light);
 }
 
 .avatarSmall {
   width: 56px;
   height: 56px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background: var(--color-gold-bg);
   color: var(--color-gold-dark);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
   flex-shrink: 0;
+  border: 2px solid rgba(200, 164, 90, 0.2);
 }
 
 .uploadInfo {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .uploadLabel {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
   color: var(--color-navy);
 }
 
 .uploadHint {
-  font-size: 11px;
+  font-size: var(--font-size-tiny);
   color: var(--color-text-secondary);
 }
 
@@ -182,7 +226,7 @@
 
 .eyeBtn {
   position: absolute;
-  inset-inline-start: 12px;
+  inset-inline-start: var(--space-3);
   bottom: 10px;
   background: none;
   border: none;
@@ -191,22 +235,23 @@
   display: flex;
   align-items: center;
   padding: 2px;
+  transition: color var(--transition-fast);
 }
 
 .eyeBtn:hover {
   color: var(--color-navy);
 }
 
-/* Password Strength */
+/* Password Strength — animated fill transition */
 .strengthWrapper {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-2);
 }
 
 .strengthTrack {
   display: flex;
-  gap: 4px;
+  gap: var(--space-1);
   flex: 1;
   max-width: 200px;
 }
@@ -215,12 +260,26 @@
   height: 4px;
   flex: 1;
   border-radius: 2px;
-  transition: background-color 0.2s;
+  transition: background-color 0.4s ease, transform 0.3s ease;
+  transform-origin: center;
+}
+
+.strengthSegment[style*="background-color"] {
+  animation: strengthFill 0.4s ease-out;
+}
+
+@keyframes strengthFill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 
 .strengthLabel {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
 }
 
 /* Notification Prefs */
@@ -234,7 +293,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 0;
+  padding: var(--space-3) 0;
   border-block-end: 1px solid var(--color-cream-dark);
 }
 
@@ -243,7 +302,7 @@
 }
 
 .prefLabel {
-  font-size: 14px;
+  font-size: var(--font-size-base);
   color: var(--color-text-primary);
 }
 
@@ -251,7 +310,7 @@
 .deviceCell {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .deviceIcon {
@@ -260,7 +319,7 @@
 
 .currentDeviceText {
   color: var(--color-text-secondary);
-  font-size: 14px;
+  font-size: var(--font-size-base);
 }
 
 /* Toggle Switch */
@@ -287,7 +346,7 @@
   inset-inline-start: 4px;
   width: 16px;
   height: 16px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background: var(--color-white);
   transition: inset-inline-start 0.2s;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
@@ -295,4 +354,57 @@
 
 .toggleOn .toggleThumb {
   inset-inline-start: 24px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .profileHeader {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+
+  .profileMeta {
+    justify-content: center;
+  }
+
+  .profileName::after {
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: var(--space-4);
+  }
+
+  .cardBody {
+    padding: var(--space-4);
+  }
+
+  .cardHeader {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: var(--space-3);
+    gap: var(--space-3);
+  }
+
+  .profileHeader {
+    padding: var(--space-4);
+    gap: var(--space-3);
+  }
+
+  .avatarCircle {
+    width: 64px;
+    height: 64px;
+    font-size: var(--font-size-xl);
+  }
 }

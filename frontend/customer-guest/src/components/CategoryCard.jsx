@@ -10,9 +10,9 @@ export function CategoryCard({ name, icon: Icon, count, onClick }) {
       role="button"
       aria-label={name}
     >
-      {Icon && (
+      {Icon ? (
         <Icon size={44} className={styles.icon} />
-      )}
+      ) : null}
       <p className={styles.name}>{name}</p>
       <p className={styles.count}>{count} منتج</p>
     </article>

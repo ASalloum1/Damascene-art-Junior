@@ -1,7 +1,7 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-5);
 }
 
 .pageHeader {
@@ -9,46 +9,76 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .pageTitle {
-  font-size: 22px;
-  font-weight: 800;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-black);
   color: var(--color-navy);
   margin: 0;
 }
 
-/* Stores Grid */
+.pageTitle::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 3px;
+  background: var(--color-gold);
+  border-radius: var(--radius-full);
+  margin-block-start: var(--space-2);
+}
+
+/* Stores Grid — staggered entrance */
 .storesGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  gap: var(--space-4);
 }
 
+.storesGrid > * {
+  animation: fadeInUp 0.4s ease-out backwards;
+}
+
+.storesGrid > *:nth-child(1) { animation-delay: 0s; }
+.storesGrid > *:nth-child(2) { animation-delay: 0.06s; }
+.storesGrid > *:nth-child(3) { animation-delay: 0.12s; }
+.storesGrid > *:nth-child(4) { animation-delay: 0.18s; }
+.storesGrid > *:nth-child(5) { animation-delay: 0.24s; }
+.storesGrid > *:nth-child(6) { animation-delay: 0.30s; }
+
+/* Store Card — hover elevation + gold top border transition */
 .storeCard {
   background: var(--color-white);
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-card);
   border: 1px solid var(--color-cream-dark);
+  border-block-start: 2px solid transparent;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--space-3);
+  transition: box-shadow var(--transition-base), transform var(--transition-base), border-color var(--transition-base);
+}
+
+.storeCard:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+  border-block-start-color: var(--color-gold);
 }
 
 /* Card Header */
 .storeCardHeader {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .storeIconWrapper {
   width: 44px;
   height: 44px;
-  background: var(--color-gold-bg, #f5e9d4);
-  border-radius: 10px;
+  background: var(--color-gold-bg);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,37 +94,45 @@
 }
 
 .storeName {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
   color: var(--color-navy);
-  margin: 0 0 4px;
+  margin: 0;
+  margin-block-end: var(--space-1);
 }
 
 .storeManager {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
 }
 
+/* Divider — gradient fade line */
 .divider {
   height: 1px;
-  background: var(--color-cream-dark);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(200, 164, 90, 0.3) 30%,
+    rgba(200, 164, 90, 0.3) 70%,
+    transparent 100%
+  );
 }
 
 /* Stats */
 .storeStats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .statItem {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 8px;
+  gap: var(--space-1);
+  padding: var(--space-2);
   background: var(--color-cream);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
 .statIcon {
@@ -102,25 +140,26 @@
 }
 
 .statLabel {
-  font-size: 11px;
+  font-size: var(--font-size-tiny);
   color: var(--color-text-secondary);
 }
 
 .statValue {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
   color: var(--color-navy);
 }
 
 .revenueRow {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-2);
 }
 
+/* Revenue value — bold green */
 .revenueValue {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
   color: var(--color-green);
   margin-inline-start: auto;
 }
@@ -128,7 +167,7 @@
 /* Actions */
 .storeActions {
   display: flex;
-  gap: 8px;
+  gap: var(--space-2);
   flex-wrap: wrap;
 }
 
@@ -136,7 +175,7 @@
 .formGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: var(--space-4);
 }
 
 .formFull {
@@ -144,9 +183,25 @@
 }
 
 /* Responsive */
-@media (max-width: 1100px) {
+@media (max-width: 1200px) {
   .storesGrid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .storesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .storesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -157,5 +212,19 @@
 
   .formGrid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    gap: var(--space-3);
+  }
+
+  .storeCard {
+    padding: var(--space-3);
+  }
+
+  .storesGrid {
+    gap: var(--space-3);
   }
 }

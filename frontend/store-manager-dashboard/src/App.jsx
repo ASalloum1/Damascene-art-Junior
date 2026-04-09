@@ -48,7 +48,9 @@ export default function App() {
           onMobileMenuOpen={() => setMobileOpen(true)}
         />
         <main id="main-content" className={styles.content} aria-label="محتوى الصفحة">
-          <ActivePage />
+          <div key={activePage} className={styles.pageWrapper}>
+            <ActivePage />
+          </div>
         </main>
       </div>
     </div>

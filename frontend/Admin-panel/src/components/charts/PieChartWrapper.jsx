@@ -53,7 +53,7 @@ export default function PieChartWrapper({
 }) {
   return (
     <div className={styles.wrapper}>
-      {title && <h3 className={styles.title}>{title}</h3>}
+      {title ? <h3 className={styles.title}>{title}</h3> : null}
       <ResponsiveContainer width="100%" height={height}>
         <PieChart>
           <Pie
@@ -82,11 +82,11 @@ export default function PieChartWrapper({
               direction: 'rtl',
             }}
           />
-          {showLegend && (
+          {showLegend ? (
             <Legend
               content={<CustomLegend />}
             />
-          )}
+          ) : null}
         </PieChart>
       </ResponsiveContainer>
     </div>

@@ -1,28 +1,104 @@
 /**
  * Damascene Art — Shared Page Styles
- * Used across all page components
+ * Used across all page components — Luxury / Refined (Gold + Navy + Cream)
  */
 
 /* ─── Page Wrapper ───────────────────────────────────────────── */
 .page {
   /* inherits page-enter animation from global.css */
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 var(--space-10); /* generous bottom padding for museum feel */
+  gap: var(--space-10); /* standardized section spacing */
+  max-width: 1440px;
+  width: 100%;
+}
+
+/* ─── Page & Section Titles (gold underline accent) ──────────── */
+.page h1, .pageTitle, .h1Title {
+  position: relative;
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
+  color: var(--color-ink);
+  font-family: var(--font-arabic);
+  margin: 0;
+  padding-block-end: var(--space-2);
+  letter-spacing: -0.01em;
+}
+
+.page h2, .h2Title {
+  position: relative;
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-ink);
+  font-family: var(--font-arabic);
+  margin: 0;
+  padding-block-end: var(--space-1);
+}
+
+.page h1::after, .pageTitle::after, .h1Title::after,
+.page h2::after, .h2Title::after {
+  content: '';
+  display: block;
+  background: var(--gradient-gold, var(--color-wood-mid));
+  border-radius: var(--radius-full);
+  transition: width var(--transition-base);
+}
+
+.page h1::after, .pageTitle::after, .h1Title::after {
+  width: 45px;
+  height: 3px;
+  margin-block-start: var(--space-2);
+}
+
+.page h2::after, .h2Title::after {
+  width: 30px;
+  height: 2px;
+  margin-block-start: var(--space-1);
+}
+
+.page h1:hover::after, .pageTitle:hover::after, .h1Title:hover::after {
+  width: 70px;
+}
+
+.page h2:hover::after, .h2Title:hover::after {
+  width: 50px;
 }
 
 /* ─── Stat Cards Row ─────────────────────────────────────────── */
 .statRow {
   display: flex;
-  gap: var(--space-4);
+  gap: var(--space-5);
   flex-wrap: wrap;
-  margin-bottom: var(--space-5);
+  margin-bottom: 0; /* managed by .page gap */
 }
+
+/* Staggered entrance for direct children */
+.statRow > * {
+  animation: fadeInUp 0.4s ease-out backwards;
+}
+.statRow > *:nth-child(1) { animation-delay: 0s; }
+.statRow > *:nth-child(2) { animation-delay: 0.06s; }
+.statRow > *:nth-child(3) { animation-delay: 0.12s; }
+.statRow > *:nth-child(4) { animation-delay: 0.18s; }
+.statRow > *:nth-child(5) { animation-delay: 0.24s; }
+.statRow > *:nth-child(6) { animation-delay: 0.30s; }
 
 /* ─── 2-Column Grid ──────────────────────────────────────────── */
 .grid2 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--space-5);
-  margin-bottom: var(--space-5);
+  gap: var(--space-8);
+  margin-bottom: 0;
 }
+
+.grid2 > * {
+  animation: fadeInScale 0.45s ease-out backwards;
+}
+.grid2 > *:nth-child(1) { animation-delay: 0.08s; }
+.grid2 > *:nth-child(2) { animation-delay: 0.16s; }
+.grid2 > *:nth-child(3) { animation-delay: 0.24s; }
+.grid2 > *:nth-child(4) { animation-delay: 0.32s; }
 
 /* ─── 4-Column Grid ──────────────────────────────────────────── */
 .grid4 {
@@ -31,6 +107,16 @@
   gap: var(--space-4);
 }
 
+.grid4 > * {
+  animation: fadeInUp 0.4s ease-out backwards;
+}
+.grid4 > *:nth-child(1) { animation-delay: 0.05s; }
+.grid4 > *:nth-child(2) { animation-delay: 0.10s; }
+.grid4 > *:nth-child(3) { animation-delay: 0.15s; }
+.grid4 > *:nth-child(4) { animation-delay: 0.20s; }
+.grid4 > *:nth-child(5) { animation-delay: 0.25s; }
+.grid4 > *:nth-child(6) { animation-delay: 0.30s; }
+
 /* ─── Card Heading ───────────────────────────────────────────── */
 .cardTitle {
   font-size: var(--font-size-md);
@@ -38,6 +124,19 @@
   color: var(--color-ink);
   margin: 0 0 var(--space-4);
   font-family: var(--font-arabic);
+  position: relative;
+  padding-inline-start: var(--space-3);
+}
+
+/* Vertical gold accent before card title */
+.cardTitle::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block: 2px;
+  width: 3px;
+  background: var(--gradient-gold, var(--color-wood-mid));
+  border-radius: var(--radius-full);
 }
 
 /* ─── Bar Chart (Dashboard) ──────────────────────────────────── */
@@ -46,6 +145,7 @@
   align-items: flex-end;
   gap: 8px;
   height: 120px;
+  padding-block-start: var(--space-2);
 }
 
 .barCol {
@@ -56,24 +156,46 @@
   gap: 4px;
   height: 100%;
   justify-content: flex-end;
+  animation: fadeInUp 0.5s ease-out backwards;
 }
+.barCol:nth-child(1) { animation-delay: 0.05s; }
+.barCol:nth-child(2) { animation-delay: 0.10s; }
+.barCol:nth-child(3) { animation-delay: 0.15s; }
+.barCol:nth-child(4) { animation-delay: 0.20s; }
+.barCol:nth-child(5) { animation-delay: 0.25s; }
+.barCol:nth-child(6) { animation-delay: 0.30s; }
+.barCol:nth-child(7) { animation-delay: 0.35s; }
 
 .barLabel {
   font-size: var(--font-size-xs);
   color: var(--color-stone);
   text-align: center;
+  font-weight: 600;
 }
 
 .bar {
   width: 100%;
-  background: linear-gradient(180deg, var(--color-wood-light), var(--color-wood-dark));
-  border-radius: 5px 5px 0 0;
-  transition: height var(--transition-slow);
+  background: linear-gradient(180deg, var(--color-wood-light), var(--color-wood-mid) 60%, var(--color-wood-dark));
+  border-radius: 6px 6px 0 0;
+  transition: filter var(--transition-base), transform var(--transition-base), box-shadow var(--transition-base);
   min-height: 4px;
+  box-shadow: 0 2px 6px rgba(200, 164, 90, 0.18);
+  position: relative;
+  overflow: hidden;
+}
+
+.bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.35), transparent 50%);
+  pointer-events: none;
 }
 
 .bar:hover {
-  background: linear-gradient(180deg, var(--color-wood-faint), var(--color-wood-mid));
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(200, 164, 90, 0.32);
 }
 
 /* ─── Top Products List ──────────────────────────────────────── */
@@ -87,20 +209,39 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast), transform var(--transition-fast);
+  animation: slideInRight 0.35s ease-out backwards;
+}
+
+.productRow:nth-child(1) { animation-delay: 0.06s; }
+.productRow:nth-child(2) { animation-delay: 0.12s; }
+.productRow:nth-child(3) { animation-delay: 0.18s; }
+.productRow:nth-child(4) { animation-delay: 0.24s; }
+.productRow:nth-child(5) { animation-delay: 0.30s; }
+.productRow:nth-child(6) { animation-delay: 0.36s; }
+
+.productRow:hover {
+  background: rgba(200, 164, 90, 0.06);
+  transform: translateX(-2px);
 }
 
 .rank {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: var(--radius-full);
-  background: var(--color-ink);
-  color: var(--color-ivory-mid);
+  background: var(--gradient-gold, var(--color-wood-mid));
+  color: var(--color-ink);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: var(--font-size-xs);
-  font-weight: 700;
+  font-weight: 800;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(200, 164, 90, 0.30);
+  border: 1px solid rgba(200, 164, 90, 0.45);
 }
 
 .productInfo {
@@ -129,19 +270,25 @@
   margin-bottom: var(--space-4);
   flex-wrap: wrap;
   align-items: center;
+  padding-block-end: var(--space-4);
+  border-block-end: 1px solid var(--color-ivory-dark);
 }
 
 .filterInput,
 .filterSelect {
-  padding: 9px 12px;
+  padding-block: 10px;
+  padding-inline: 14px;
   border: 1px solid var(--color-ivory-dark);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
   font-family: var(--font-arabic);
   direction: rtl;
   background: var(--color-white);
   color: var(--color-ink-soft);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    background var(--transition-base);
   outline: none;
 }
 
@@ -150,22 +297,47 @@
   min-width: 200px;
 }
 
+.filterInput:hover,
+.filterSelect:hover {
+  border-color: var(--color-wood-light);
+}
+
 .filterInput:focus,
 .filterSelect:focus {
   border-color: var(--color-wood-mid);
-  box-shadow: 0 0 0 3px rgba(92, 61, 46, 0.12);
+  box-shadow: 0 0 0 3px rgba(200, 164, 90, 0.18);
+  background: var(--color-ivory);
+}
+
+.filterInput::placeholder {
+  color: var(--color-stone);
+  opacity: 0.7;
 }
 
 /* ─── Tab Filters (Orders page) ──────────────────────────────── */
 .tabBar {
   display: flex;
   gap: var(--space-2);
-  margin-bottom: var(--space-5);
+  margin-bottom: 0;
   flex-wrap: wrap;
+  padding-block-end: var(--space-2);
+  position: relative;
 }
 
+.tabBar > * {
+  animation: fadeInUp 0.35s ease-out backwards;
+}
+.tabBar > *:nth-child(1) { animation-delay: 0.04s; }
+.tabBar > *:nth-child(2) { animation-delay: 0.08s; }
+.tabBar > *:nth-child(3) { animation-delay: 0.12s; }
+.tabBar > *:nth-child(4) { animation-delay: 0.16s; }
+.tabBar > *:nth-child(5) { animation-delay: 0.20s; }
+.tabBar > *:nth-child(6) { animation-delay: 0.24s; }
+.tabBar > *:nth-child(7) { animation-delay: 0.28s; }
+
 .tab {
-  padding: 7px 16px;
+  padding-block: 8px;
+  padding-inline: 18px;
   border-radius: var(--radius-full);
   border: 1px solid var(--color-ivory-dark);
   background: var(--color-white);
@@ -175,21 +347,39 @@
   font-family: var(--font-arabic);
   font-weight: 500;
   transition:
-    background var(--transition-fast),
-    color var(--transition-fast),
-    border-color var(--transition-fast),
-    box-shadow var(--transition-fast);
+    background var(--transition-base),
+    color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    transform var(--transition-base);
+  position: relative;
 }
 
 .tab:hover {
-  background: var(--color-ivory-dark);
+  background: var(--color-ivory-mid);
+  border-color: var(--color-wood-light);
+  color: var(--color-ink);
+  transform: translateY(-1px);
+}
+
+.tab:focus-visible {
+  outline: none;
+  border-color: var(--color-wood-mid);
+  box-shadow: 0 0 0 3px rgba(200, 164, 90, 0.20);
 }
 
 .tab.activeTab {
-  background: var(--color-ink);
-  color: var(--color-ivory-mid);
-  border-color: var(--color-ink);
-  font-weight: 700;
+  background: var(--gradient-gold, var(--color-wood-mid));
+  color: var(--color-ink);
+  border-color: var(--color-wood-mid);
+  font-weight: 800;
+  box-shadow: 0 4px 14px rgba(200, 164, 90, 0.32),
+              inset 0 1px 0 rgba(255, 255, 255, 0.30);
+  transform: translateY(-1px);
+}
+
+.tab.activeTab:hover {
+  filter: brightness(1.05);
 }
 
 /* ─── Reviews List ───────────────────────────────────────────── */
@@ -341,22 +531,30 @@
 .formInput,
 .formSelect {
   width: 100%;
-  padding: 9px 12px;
+  padding-block: 10px;
+  padding-inline: 14px;
   border: 1px solid var(--color-ivory-dark);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
   font-family: var(--font-arabic);
   direction: rtl;
   background: var(--color-ivory);
   color: var(--color-ink-soft);
   box-sizing: border-box;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    background var(--transition-base);
   outline: none;
+}
+.formInput:hover,
+.formSelect:hover {
+  border-color: var(--color-wood-light);
 }
 .formInput:focus,
 .formSelect:focus {
   border-color: var(--color-wood-mid);
-  box-shadow: 0 0 0 3px rgba(92, 61, 46, 0.12);
+  box-shadow: 0 0 0 3px rgba(200, 164, 90, 0.18);
   background: var(--color-white);
 }
 
@@ -453,16 +651,50 @@
 /* ─── Performance Metrics Grid ───────────────────────────────── */
 .metricCard {
   text-align: center;
-  padding: var(--space-4);
-  background: var(--color-ivory-mid);
+  padding: var(--space-5) var(--space-4);
+  background: var(--color-ivory);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-ivory-dark);
+  border-block-start: 2px solid rgba(200, 164, 90, 0.30);
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    border-color var(--transition-base);
+}
+
+/* Subtle gold gradient backdrop on hover */
+.metricCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-gold-subtle, linear-gradient(135deg, rgba(200,164,90,0.04), rgba(232,213,163,0.08)));
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  pointer-events: none;
+}
+
+.metricCard:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover, 0 8px 24px rgba(200,164,90,0.18));
+  border-block-start-color: var(--color-wood-mid);
+}
+
+.metricCard:hover::before {
+  opacity: 1;
+}
+
+.metricCard > * {
+  position: relative;
 }
 
 .metricLabel {
   font-size: var(--font-size-xs);
   color: var(--color-stone);
   margin-bottom: var(--space-2);
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .metricValue {
@@ -470,15 +702,26 @@
   font-weight: 800;
   color: var(--color-ink);
   font-family: var(--font-arabic);
+  line-height: 1.1;
 }
 
 .metricChange {
   font-size: var(--font-size-xs);
-  font-weight: 600;
-  margin-top: var(--space-1);
+  font-weight: 700;
+  margin-top: var(--space-2);
+  display: inline-block;
+  padding-block: 3px;
+  padding-inline: 8px;
+  border-radius: var(--radius-full);
 }
-.metricChange.up   { color: var(--color-success); }
-.metricChange.down { color: var(--color-error); }
+.metricChange.up {
+  color: var(--color-success);
+  background: var(--color-success-bg);
+}
+.metricChange.down {
+  color: var(--color-error);
+  background: var(--color-error-bg);
+}
 
 /* ─── Category Breakdown ─────────────────────────────────────── */
 .catRow {
@@ -486,7 +729,14 @@
   align-items: center;
   gap: var(--space-3);
   margin-bottom: var(--space-4);
+  animation: slideInRight 0.4s ease-out backwards;
 }
+.catRow:nth-child(1) { animation-delay: 0.05s; }
+.catRow:nth-child(2) { animation-delay: 0.10s; }
+.catRow:nth-child(3) { animation-delay: 0.15s; }
+.catRow:nth-child(4) { animation-delay: 0.20s; }
+.catRow:nth-child(5) { animation-delay: 0.25s; }
+.catRow:nth-child(6) { animation-delay: 0.30s; }
 .catRow:last-child {
   margin-bottom: 0;
 }
@@ -499,10 +749,11 @@
 }
 .catPct {
   font-size: var(--font-size-sm);
-  font-weight: 700;
-  color: var(--color-wood-mid);
-  width: 36px;
-  text-align: left;
+  font-weight: 800;
+  color: var(--color-wood-dark);
+  width: 42px;
+  text-align: end;
+  font-family: var(--font-arabic);
 }
 
 /* ─── Monthly Bar Chart ──────────────────────────────────────── */
@@ -511,6 +762,7 @@
   align-items: flex-end;
   gap: 6px;
   height: 140px;
+  padding-block-start: var(--space-2);
 }
 .monthCol {
   flex: 1;
@@ -520,31 +772,233 @@
   gap: 4px;
   height: 100%;
   justify-content: flex-end;
+  animation: fadeInUp 0.4s ease-out backwards;
 }
+.monthCol:nth-child(1)  { animation-delay: 0.03s; }
+.monthCol:nth-child(2)  { animation-delay: 0.06s; }
+.monthCol:nth-child(3)  { animation-delay: 0.09s; }
+.monthCol:nth-child(4)  { animation-delay: 0.12s; }
+.monthCol:nth-child(5)  { animation-delay: 0.15s; }
+.monthCol:nth-child(6)  { animation-delay: 0.18s; }
+.monthCol:nth-child(7)  { animation-delay: 0.21s; }
+.monthCol:nth-child(8)  { animation-delay: 0.24s; }
+.monthCol:nth-child(9)  { animation-delay: 0.27s; }
+.monthCol:nth-child(10) { animation-delay: 0.30s; }
+.monthCol:nth-child(11) { animation-delay: 0.33s; }
+.monthCol:nth-child(12) { animation-delay: 0.36s; }
+
 .monthBar {
   width: 100%;
-  border-radius: 3px 3px 0 0;
+  border-radius: 4px 4px 0 0;
   min-height: 4px;
-  transition: opacity var(--transition-fast);
+  transition:
+    filter var(--transition-base),
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+.monthBar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.30), transparent 60%);
+  pointer-events: none;
 }
 .monthBar:hover {
-  opacity: 0.8;
+  filter: brightness(1.10);
+  transform: translateY(-2px);
 }
 .monthBar.current {
-  background: linear-gradient(180deg, var(--color-wood-light), var(--color-wood-dark));
+  background: linear-gradient(180deg, var(--color-wood-light), var(--color-wood-mid) 60%, var(--color-wood-dark));
+  box-shadow: 0 4px 12px rgba(200, 164, 90, 0.30);
+}
+.monthBar.current:hover {
+  box-shadow: 0 6px 20px rgba(200, 164, 90, 0.40);
 }
 .monthBar.other {
-  background: var(--color-stone-light);
+  background: linear-gradient(180deg, var(--color-stone-light), var(--color-stone));
+  opacity: 0.55;
+}
+.monthBar.other:hover {
+  opacity: 0.85;
 }
 .monthLabel {
-  font-size: 9px;
+  font-size: 10px;
   color: var(--color-stone);
+  font-weight: 600;
 }
 
-/* ─── Inventory Alert Icon ───────────────────────────────────── */
+/* ─── Inventory Alert Icon / Image Placeholder ───────────────── */
 .iconCell {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-stone-mid);
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  color: var(--color-wood-dark);
+  background: var(--gradient-gold-subtle, linear-gradient(135deg, rgba(200,164,90,0.08), rgba(232,213,163,0.15)));
+  background-size: 200% 100%;
+  border: 1px solid rgba(200, 164, 90, 0.18);
+  animation: shimmer 6s linear infinite;
+  transition: transform var(--transition-base), border-color var(--transition-base);
+}
+
+.iconCell:hover {
+  transform: scale(1.05);
+  border-color: var(--color-wood-mid);
+}
+
+/* ══════════════════════════════════════════════════
+   Local Keyframes (fallback if global.css not loaded)
+   ══════════════════════════════════════════════════ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* ══════════════════════════════════════════════════
+   Reduced motion
+   ══════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .statRow > *,
+  .grid2 > *,
+  .grid4 > *,
+  .tabBar > *,
+  .barCol,
+  .monthCol,
+  .productRow,
+  .catRow,
+  .iconCell {
+    animation: none !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   Responsive Breakpoints
+   ══════════════════════════════════════════════════ */
+
+/* Large desktop */
+@media (max-width: 1200px) {
+  .grid2 {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-4);
+  }
+}
+
+/* Tablet landscape */
+@media (max-width: 1024px) {
+  .grid4 {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+  .pageTitle {
+    font-size: var(--font-size-xl);
+  }
+  .barChart,
+  .monthChart {
+    height: 120px;
+  }
+}
+
+/* Tablet portrait */
+@media (max-width: 768px) {
+  .statRow {
+    gap: var(--space-3);
+  }
+  .grid2 {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  .grid4 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+  .filterBar {
+    gap: var(--space-2);
+  }
+  .filterInput {
+    min-width: 100%;
+    flex: 1 1 100%;
+  }
+  .tabBar {
+    gap: 6px;
+  }
+  .tab {
+    padding-block: 6px;
+    padding-inline: 14px;
+    font-size: var(--font-size-xs);
+  }
+  .catName {
+    width: 110px;
+  }
+  .barChart {
+    height: 100px;
+    gap: 5px;
+  }
+  .monthChart {
+    height: 110px;
+    gap: 4px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .pageTitle {
+    font-size: var(--font-size-lg);
+  }
+  .grid4 {
+    grid-template-columns: 1fr;
+  }
+  .metricCard {
+    padding: var(--space-4) var(--space-3);
+  }
+  .metricValue {
+    font-size: var(--font-size-xl);
+  }
+  .barChart {
+    height: 90px;
+    gap: 4px;
+  }
+  .monthChart {
+    height: 100px;
+    gap: 3px;
+  }
+  .monthLabel {
+    font-size: 8px;
+  }
+  .tabBar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-block-end: var(--space-2);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  .tab {
+    flex-shrink: 0;
+  }
+  .catName {
+    width: 90px;
+    font-size: var(--font-size-xs);
+  }
+  .filterInput,
+  .filterSelect {
+    width: 100%;
+    flex: 1 1 100%;
+  }
 }

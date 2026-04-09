@@ -34,12 +34,12 @@ export default function TextArea({
 
   return (
     <div className={styles.fieldGroup}>
-      {label && (
+      {label ? (
         <label htmlFor={textareaId} className={styles.label}>
           {label}
-          {required && <span className={styles.required} aria-hidden="true"> *</span>}
+          {required ? <span className={styles.required} aria-hidden="true"> *</span> : null}
         </label>
-      )}
+      ) : null}
       <textarea
         id={textareaId}
         name={name}
@@ -56,12 +56,12 @@ export default function TextArea({
           .join(' ')}
       />
       <div className={styles.footer}>
-        {error && (
+        {error ? (
           <span className={styles.errorMsg} role="alert">
             {error}
           </span>
-        )}
-        {maxLength && (
+        ) : null}
+        {maxLength ? (
           <span
             className={[
               styles.counter,
@@ -72,7 +72,7 @@ export default function TextArea({
           >
             {toArabicNum(currentLength)}/{toArabicNum(maxLength)}
           </span>
-        )}
+        ) : null}
       </div>
     </div>
   );

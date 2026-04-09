@@ -2,7 +2,7 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: var(--color-ink);
+  background-color: var(--color-navy);
   height: var(--navbar-height);
 }
 
@@ -116,7 +116,7 @@
   position: absolute;
   top: -8px;
   inset-inline-end: -8px;
-  background-color: var(--color-error);
+  background-color: var(--color-red);
   color: var(--color-white);
   font-size: 10px;
   width: 16px;
@@ -176,7 +176,7 @@
   inset-inline-start: 0;
   width: 280px;
   height: 100%;
-  background-color: var(--color-ink);
+  background-color: var(--color-navy);
   z-index: 201;
   transform: translateX(-100%);
   transition: transform var(--transition-base);

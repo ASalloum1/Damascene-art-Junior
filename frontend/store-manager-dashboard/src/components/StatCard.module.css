@@ -5,22 +5,25 @@
   box-shadow: var(--shadow-sm);
   flex: 1 1 170px;
   min-width: 160px;
-  border-top: 3px solid transparent;
+  /* Gold top accent line */
+  border-block-start: 2px solid var(--color-gold);
+  position: relative;
   transition:
     transform var(--transition-base),
-    box-shadow var(--transition-base);
+    box-shadow var(--transition-base),
+    border-color var(--transition-base);
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: var(--space-3);
+  margin-block-end: var(--space-3);
 }
 
 .iconWrap {
@@ -30,15 +33,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-ivory-mid);
+  /* Radial gradient for depth */
+  background-image: radial-gradient(circle at 30% 30%, var(--color-white-alpha-25), transparent 70%);
+  background-color: var(--color-ivory-mid);
+  transition: background-color var(--transition-base);
 }
+
 
 .sub {
   font-size: var(--font-size-xs);
   color: var(--color-stone);
   background: var(--color-ivory-dark);
   border-radius: var(--radius-full);
-  padding: 3px 9px;
+  padding-block: 3px;
+  padding-inline: 9px;
   white-space: nowrap;
 }
 
@@ -47,7 +55,7 @@
   font-weight: 800;
   color: var(--color-ink);
   line-height: 1;
-  margin-bottom: var(--space-1);
+  margin-block-end: var(--space-1);
   font-family: var(--font-arabic);
 }
 
@@ -56,43 +64,28 @@
   color: var(--color-stone);
 }
 
-/* ─── Accent Variants (top border + icon bg) ─────────────────── */
-.primary {
-  border-top-color: var(--color-wood-mid);
-}
+/* ─── Accent Variants (Icon/Identity) ─────────────────── */
 .primary .iconWrap {
-  background: rgba(92, 61, 46, 0.1);
-  color: var(--color-wood-mid);
+  background-color: var(--color-gold-bg);
+  color: var(--color-gold-dark);
 }
 
-.success {
-  border-top-color: var(--color-success);
-}
 .success .iconWrap {
-  background: var(--color-success-bg);
+  background-color: var(--color-success-bg);
   color: var(--color-success);
 }
 
-.warning {
-  border-top-color: var(--color-warning);
-}
 .warning .iconWrap {
-  background: var(--color-warning-bg);
+  background-color: var(--color-warning-bg);
   color: var(--color-warning);
 }
 
-.error {
-  border-top-color: var(--color-error);
-}
 .error .iconWrap {
-  background: var(--color-error-bg);
+  background-color: var(--color-error-bg);
   color: var(--color-error);
 }
 
-.info {
-  border-top-color: var(--color-info);
-}
 .info .iconWrap {
-  background: var(--color-info-bg);
+  background-color: var(--color-info-bg);
   color: var(--color-info);
 }

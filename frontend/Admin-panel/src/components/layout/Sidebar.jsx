@@ -21,12 +21,12 @@ export default function Sidebar({
   return (
     <nav className={`${styles.sidebar} ${collapsed ? styles.collapsed : ''}`}>
       <div className={styles.logo}>
-        {!collapsed && (
+        {!collapsed ? (
           <>
             <span className={styles.logoTitle}>الفن الدمشقي</span>
             <span className={styles.logoSub}>لوحة المشرف العام</span>
           </>
-        )}
+        ) : null}
       </div>
 
       <div className={styles.nav}>
@@ -42,10 +42,10 @@ export default function Sidebar({
               title={collapsed ? item.label : undefined}
             >
               <Icon size={20} strokeWidth={1.8} />
-              {!collapsed && <span className={styles.navLabel}>{item.label}</span>}
-              {!collapsed && badgeCount > 0 && (
+              {!collapsed ? <span className={styles.navLabel}>{item.label}</span> : null}
+              {!collapsed && badgeCount > 0 ? (
                 <span className={styles.badge}>{badgeCount}</span>
-              )}
+              ) : null}
             </button>
           );
         })}

@@ -17,24 +17,24 @@ export default function Timeline({ steps = [] }) {
           : styles.pending;
 
         return (
-          <li key={index} className={[styles.step, statusClass].join(' ')}>
+          <li key={index} className={[styles.step, statusClass].join(' ')} style={{ '--index': index }}>
             {/* Connector line (not on last item) */}
-            {!isLast && <div className={styles.connector} />}
+            {!isLast ? <div className={styles.connector} /> : null}
 
             {/* Dot */}
             <div className={styles.dot} aria-hidden="true">
-              {step.active && <div className={styles.pulse} />}
+              {step.active ? <div className={styles.pulse} /> : null}
             </div>
 
             {/* Content */}
             <div className={styles.content}>
               <span className={styles.label}>{step.label}</span>
-              {step.description && (
+              {step.description ? (
                 <span className={styles.description}>{step.description}</span>
-              )}
-              {step.date && (
+              ) : null}
+              {step.date ? (
                 <span className={styles.date}>{step.date}</span>
-              )}
+              ) : null}
             </div>
           </li>
         );

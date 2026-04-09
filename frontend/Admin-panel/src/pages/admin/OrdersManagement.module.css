@@ -1,7 +1,7 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-5);
 }
 
 .pageHeader {
@@ -9,22 +9,39 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .pageTitle {
-  font-size: 22px;
-  font-weight: 800;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-black);
   color: var(--color-navy);
   margin: 0;
 }
 
+.pageTitle::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 3px;
+  background: var(--color-gold);
+  border-radius: var(--radius-full);
+  margin-block-start: var(--space-2);
+}
+
+/* Table Card — gold top border + subtle bottom shadow separator for tabs */
 .tableCard {
   background: var(--color-white);
-  border-radius: 14px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
   border: 1px solid var(--color-cream-dark);
+  border-block-start: 2px solid var(--color-gold);
   overflow: hidden;
+  transition: box-shadow var(--transition-base);
+}
+
+.tableCard:hover {
+  box-shadow: var(--shadow-card-hover);
 }
 
 .customerCell {
@@ -34,12 +51,26 @@
 }
 
 .customerName {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
 }
 
 .customerEmail {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pageHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    gap: var(--space-3);
+  }
 }

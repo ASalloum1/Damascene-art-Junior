@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styles from './pages.module.css';
 import SectionTitle from '../components/SectionTitle';
 import PageCard from '../components/PageCard';
@@ -49,6 +48,8 @@ export function ProductsPage() {
         <Table
           headers={['الصورة', 'اسم المنتج', 'التصنيف', 'السعر', 'المخزون', 'الحالة', 'إجراءات']}
           rows={rows}
+          emptyTitle="جناح العرض فارغ"
+          emptyDesc="لم يتم إضافة أي قطع فنية بعد. ابدأ بإضافة أول تحفة يدوية إلى متجرك."
         />
       </PageCard>
     </div>

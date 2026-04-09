@@ -1,22 +1,40 @@
 /**
  * Damascene Art — Design Tokens
- * Brand-aligned CSS custom properties
+ * Brand-aligned CSS custom properties — unified with Admin Panel palette
  */
 
 :root {
-  /* ─── Color Palette ─────────────────────────────────────────── */
+  /* ─── Primary Brand Palette (Unified with Admin Panel) ────────── */
+  --color-gold:        #C8A45A;
+  --color-gold-light:  #E8D5A3;
+  --color-gold-dark:   #A07830;
+  --color-gold-bg:     #C8A45A26; /* 15% opacity */
 
-  /* Dark Wood Brown — Primary */
-  --color-wood-dark:   #3D2B1F;
-  --color-wood-mid:    #5C3D2E;
-  --color-wood-light:  #7A5240;
-  --color-wood-faint:  #A0745A;
+  --color-navy:        #1A1F3A;
+  --color-navy-light:  #252B4A;
+  --color-navy-mid:    #2D3460;
 
-  /* Pearl / Ivory — Secondary */
-  --color-ivory:       #FAF6EF;
-  --color-ivory-mid:   #F5EFE6;
-  --color-ivory-dark:  #EDE3D4;
-  --color-ivory-deep:  #DDD0BE;
+  /* ── Page Backgrounds ── */
+  --color-cream:       #FFF8F0;
+  --color-cream-dark:  #F5EDE0;
+  --color-cream-mid:   #EDE3D4;
+  --color-cream-deep:  #DDD0BE;
+  --color-white:       #FFFFFF;
+  --color-bg-primary:  var(--color-cream);
+
+  /* ─── Legacy/Semantic Aliases ────────────────────────────────── */
+  --color-wood-dark:   var(--color-gold-dark);
+  --color-wood-mid:    var(--color-gold);
+  --color-wood-light:  var(--color-gold-light);
+  --color-wood-faint:  var(--color-gold-bg);
+
+  --color-ivory:       var(--color-cream);
+  --color-ivory-mid:   var(--color-cream-dark);
+  --color-ivory-dark:  var(--color-cream-mid);
+  --color-ivory-deep:  var(--color-cream-deep);
+
+  --color-ink:         var(--color-navy);
+  --color-ink-soft:    var(--color-navy-light);
 
   /* Damascene Stone Gray — Neutral */
   --color-stone-light: #D8D4CF;
@@ -24,28 +42,33 @@
   --color-stone-mid:   #6E6660;
   --color-stone-dark:  #3D3830;
 
-  /* Luxury Black — Contrast */
-  --color-ink:         #1A1614;
-  --color-ink-soft:    #2C2420;
+  /* ── Semantic Colors (Synchronized with Admin Panel) ── */
+  --color-red:         #C0392B;
+  --color-red-bg:      #C0392B22;
+  --color-green:       #27AE60;
+  --color-green-bg:    #27AE6022;
+  --color-blue:        #2980B9;
+  --color-blue-bg:     #2980B922;
+  --color-orange:      #E67E22;
+  --color-orange-bg:   #E67E2222;
+  --color-purple:      #8E44AD;
+  --color-purple-bg:   #8E44AD22;
 
-  /* Semantic — Calm, Muted Tones */
-  --color-success:     #4A7C59;
-  --color-success-bg:  #EBF4EE;
-  --color-warning:     #C17F3A;
-  --color-warning-bg:  #FBF3E8;
-  --color-error:       #8B3A3A;
-  --color-error-bg:    #F7EAEA;
-  --color-info:        #3A5F8B;
-  --color-info-bg:     #EAF0F7;
-
-  /* White */
-  --color-white:       #FFFFFF;
+  /* Aliases for functional use */
+  --color-success:     var(--color-green);
+  --color-success-bg:  var(--color-green-bg);
+  --color-warning:     var(--color-orange);
+  --color-warning-bg:  var(--color-orange-bg);
+  --color-error:       var(--color-red);
+  --color-error-bg:    var(--color-red-bg);
+  --color-info:        var(--color-blue);
+  --color-info-bg:     var(--color-blue-bg);
 
   /* ─── Sidebar ────────────────────────────────────────────────── */
-  --sidebar-bg:        var(--color-ink);
-  --sidebar-active-bg: var(--color-ink-soft);
+  --sidebar-bg:        var(--color-navy);
+  --sidebar-active-bg: var(--color-navy-light);
   --sidebar-text:      var(--color-stone-light);
-  --sidebar-accent:    var(--color-ivory-mid);
+  --sidebar-accent:    var(--color-cream-dark);
   --sidebar-width:     248px;
   --sidebar-collapsed: 64px;
 
@@ -77,29 +100,67 @@
   --radius-full: 9999px;
 
   /* ─── Shadows ────────────────────────────────────────────────── */
-  --shadow-xs:  0 1px 3px rgba(26,22,20,0.08);
-  --shadow-sm:  0 2px 8px  rgba(26,22,20,0.07);
-  --shadow-md:  0 4px 16px rgba(26,22,20,0.09);
-  --shadow-lg:  0 8px 32px rgba(26,22,20,0.12);
+  --shadow-xs:  0 1px 3px rgba(26,31,58,0.08);
+  --shadow-sm:  0 2px 8px  rgba(26,31,58,0.07);
+  --shadow-md:  0 4px 16px rgba(26,31,58,0.09);
+  --shadow-lg:  0 8px 32px rgba(26,31,58,0.12);
 
   /* ─── Transitions ────────────────────────────────────────────── */
   --transition-fast:   120ms ease;
   --transition-base:   200ms ease;
   --transition-slow:   320ms ease;
   --transition-layout: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  --delay-1: 100ms;
+  --delay-2: 200ms;
+  --delay-3: 300ms;
+  --delay-4: 400ms;
+  --delay-5: 500ms;
+
+  /* ── Gradients ── */
+  --gradient-sidebar:      linear-gradient(180deg, var(--color-navy) 0%, #111528 100%);
+  --gradient-gold:         linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-light) 40%, var(--color-gold) 60%, var(--color-gold-dark) 100%);
+  --gradient-gold-subtle:  linear-gradient(135deg, rgba(200,164,90,0.04) 0%, rgba(232,213,163,0.08) 50%, rgba(200,164,90,0.04) 100%);
+
+  /* ── Alpha colors (Transparency) ── */
+  --color-gold-alpha-04: rgba(200, 164, 90, 0.04);
+  --color-gold-alpha-08: rgba(200, 164, 90, 0.08);
+  --color-gold-alpha-10: rgba(200, 164, 90, 0.10);
+  --color-gold-alpha-12: rgba(200, 164, 90, 0.12);
+  --color-gold-alpha-15: rgba(200, 164, 90, 0.15);
+  --color-gold-alpha-18: rgba(200, 164, 90, 0.18);
+  --color-gold-alpha-25: rgba(200, 164, 90, 0.25);
+  --color-gold-alpha-30: rgba(200, 164, 90, 0.30);
+  --color-gold-alpha-35: rgba(200, 164, 90, 0.35);
+  --color-gold-alpha-70: rgba(200, 164, 90, 0.70);
+  --color-white-alpha-03: rgba(255, 255, 255, 0.03);
+  --color-white-alpha-07: rgba(255, 255, 255, 0.07);
+  --color-white-alpha-15: rgba(255, 255, 255, 0.15);
+  --color-white-alpha-25: rgba(255, 255, 255, 0.25);
+  --color-white-alpha-65: rgba(255, 255, 255, 0.65);
+  --color-white-alpha-70: rgba(255, 255, 255, 0.70);
+  --color-white-alpha-85: rgba(255, 255, 255, 0.85);
+  --color-navy-alpha-60: rgba(26, 31, 58, 0.60);
+  --color-black-alpha-15: rgba(0, 0, 0, 0.15);
+  --color-black-alpha-40: rgba(0, 0, 0, 0.40);
+
+  /* ── Glass ── */
+  --glass-bg:     var(--color-white-alpha-85);
+  --glass-border: var(--color-gold-alpha-15);
+
+  /* ── Glow / Elevated Shadows ── */
+  --glow-gold:          0 0 0 1px var(--color-gold-alpha-25), 0 4px 16px rgba(200,164,90,0.15);
+  --glow-error:         0 0 0 2px rgba(192, 57, 43, 0.2), 0 0 8px rgba(192, 57, 43, 0.4);
+  --shadow-card-hover:  0 8px 32px rgba(0,0,0,0.12), 0 2px 8px var(--color-gold-alpha-12);
+  --shadow-elevated:    0 12px 40px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.10);
+
+  /* ── Backdrop ── */
+  --backdrop-blur: blur(12px);
+
+  /* ── Text Colors (Synchronized with Admin Panel) ── */
+  --color-text-primary:   #2C2C2C;
+  --color-text-secondary: #7A7A7A;
+  --color-text-on-navy:   #FFFFFF;
+  --color-text-on-gold:   #1A1F3A;
 }
 
-/* ─── Dark-mode overrides ───────────────────────────────────────── */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-ivory:      #1E1A17;
-    --color-ivory-mid:  #252018;
-    --color-ivory-dark: #2E2820;
-    --color-ivory-deep: #3A3228;
-    --color-white:      #1A1614;
-    --color-ink:        #F5EFE6;
-    --color-ink-soft:   #EDE3D4;
-    --sidebar-text:     #C4BFB8;
-    --sidebar-accent:   var(--color-ivory-mid);
-  }
-}

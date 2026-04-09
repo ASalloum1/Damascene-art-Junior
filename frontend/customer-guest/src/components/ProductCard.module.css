@@ -15,13 +15,13 @@
 }
 
 .card:focus-visible {
-  outline: 2px solid var(--color-wood-mid);
+  outline: 2px solid var(--color-gold);
   outline-offset: 2px;
 }
 
 .imageArea {
   height: 220px;
-  background: linear-gradient(135deg, var(--color-ivory-dark), var(--color-ivory));
+  background: linear-gradient(135deg, var(--color-cream-mid), var(--color-cream));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,7 +48,7 @@
 
 .category {
   font-size: var(--font-size-xs);
-  color: var(--color-wood-mid);
+  color: var(--color-gold);
   font-weight: 600;
   margin-bottom: var(--space-1);
   margin-top: 0;
@@ -57,7 +57,7 @@
 .name {
   font-size: var(--font-size-base);
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--color-navy);
   margin-bottom: var(--space-2);
   line-height: 1.5;
 }
@@ -83,7 +83,7 @@
 .price {
   font-size: var(--font-size-lg);
   font-weight: 800;
-  color: var(--color-ink);
+  color: var(--color-navy);
 }
 
 .oldPrice {

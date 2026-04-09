@@ -10,11 +10,32 @@
   flex-direction: column;
   overflow: hidden;
   min-width: 0;
+  /* Smooth reflow when sidebar collapses */
+  transition: margin-inline-start var(--transition-layout);
 }
 
 .content {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-6);
-  background: var(--color-ivory);
+  padding: var(--space-8);
+  background: var(--color-cream);
+  transition: background var(--transition-slow);
+}
+
+.pageWrapper {
+  animation: fadeInUp var(--transition-slow) ease-out both;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

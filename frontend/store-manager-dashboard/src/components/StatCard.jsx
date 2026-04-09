@@ -9,7 +9,7 @@ export function StatCard({ icon: IconComponent, label, value, accentVariant = 'p
     <div className={`${styles.card} ${styles[accentVariant]}`} role="region" aria-label={label}>
       <div className={styles.header}>
         <div className={styles.iconWrap}>
-          {IconComponent && <IconComponent size={20} aria-hidden="true" />}
+          {IconComponent ? <IconComponent size={20} aria-hidden="true" /> : null}
         </div>
         <span className={styles.sub}>{sub}</span>
       </div>

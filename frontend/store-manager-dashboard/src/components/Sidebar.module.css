@@ -1,6 +1,10 @@
+/* ===================================================
+   Sidebar — Premium Damascene Art Store Manager
+   =================================================== */
+
 .sidebar {
   width: var(--sidebar-width);
-  background: var(--color-ink);
+  background: var(--gradient-sidebar);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -10,6 +14,18 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  /* Stacking context for ::before overlay */
+  isolation: isolate;
+}
+
+/* Subtle gold dust overlay for depth */
+.sidebar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-gold-subtle);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .collapsed {
@@ -22,20 +38,41 @@
   align-items: center;
   gap: var(--space-3);
   padding: 18px 14px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  border-block-end: 1px solid var(--color-gold-alpha-18);
   min-height: 64px;
   overflow: hidden;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+/* Gold accent line below logo */
+.logo::after {
+  content: '';
+  position: absolute;
+  inset-inline: var(--space-3);
+  bottom: -1px;
+  height: 1px;
+  background: var(--gradient-gold);
+  opacity: 0.5;
 }
 
 .logoMark {
   width: 38px;
   height: 38px;
   border-radius: var(--radius-md);
-  background: var(--color-wood-mid);
+  background: var(--color-gold-bg);
+  border: 1px solid var(--color-gold-alpha-30);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  color: var(--color-gold);
+  transition: background var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.sidebar:hover .logoMark {
+  box-shadow: var(--glow-gold);
 }
 
 .logoText {
@@ -46,39 +83,44 @@
 }
 
 .logoName {
-  color: var(--color-ivory-mid);
+  color: var(--color-gold);
   font-weight: 800;
   font-size: var(--font-size-md);
   white-space: nowrap;
   line-height: 1.2;
+  text-shadow: 0 0 20px var(--color-gold-alpha-35), 0 1px 2px var(--color-black-alpha-40);
 }
 
 .logoSub {
-  color: var(--color-stone);
+  color: var(--color-text-on-navy);
   font-size: var(--font-size-xs);
   white-space: nowrap;
-  margin-top: 2px;
+  margin-block-start: 2px;
+  opacity: 0.6;
 }
 
 /* ─── Toggle Button ──────────────────────────────────────────── */
 .toggleBtn {
-  background: rgba(255,255,255,0.05);
+  background: var(--color-black-alpha-15);
   border: none;
-  color: var(--color-stone);
-  padding: 7px;
+  border-block-start: 1px solid var(--color-gold-alpha-18);
+  color: var(--color-white-alpha-65);
+  padding: var(--space-4);
   cursor: pointer;
   font-size: 14px;
-  margin: var(--space-2) var(--space-2);
-  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background var(--transition-fast), color var(--transition-fast);
-  align-self: flex-end;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  align-self: stretch;
 }
+
 .toggleBtn:hover {
-  background: rgba(255,255,255,0.1);
-  color: var(--color-ivory-mid);
+  background: var(--color-gold-alpha-10);
+  color: var(--color-gold);
 }
 
 /* ─── Nav ─────────────────────────────────────────────────────── */
@@ -86,75 +128,128 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: var(--space-2);
+  padding: var(--space-3);
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-1);
+  position: relative;
+  z-index: 1;
+  /* Ultra-thin gold scrollbar, visible only on hover */
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.1) transparent;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color var(--transition-base);
 }
 
+.nav:hover {
+  scrollbar-color: var(--color-gold-alpha-30) transparent;
+}
+
+.nav::-webkit-scrollbar {
+  width: 3px;
+}
+
+.nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.nav::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: var(--radius-full);
+}
+
+.nav:hover::-webkit-scrollbar-thumb {
+  background: var(--color-gold-alpha-30);
+}
+
+/* ─── Nav Items ──────────────────────────────────────────────── */
 .navItem {
   display: flex;
   align-items: center;
   gap: var(--space-3);
   width: 100%;
-  padding: 10px 12px;
+  padding: var(--space-3) var(--space-4);
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
-  color: var(--color-stone);
+  border-radius: var(--radius-md);
+  color: var(--color-text-on-navy);
+  opacity: 0.72;
   cursor: pointer;
   font-size: var(--font-size-sm);
   font-family: var(--font-arabic);
   font-weight: 500;
-  text-align: right;
+  text-align: start;
   transition:
     background var(--transition-fast),
     color var(--transition-fast),
-    padding-right var(--transition-base);
+    opacity var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
   position: relative;
   white-space: nowrap;
   overflow: hidden;
-  border-right: 3px solid transparent;
-}
-
-.collapsed .navItem {
-  justify-content: center;
-  padding: 10px 0;
+  /* Fixed left border accent for active state */
+  border-left: 3px solid transparent;
+  transform: translateX(0);
 }
 
 .navItem:hover {
-  background: rgba(255,255,255,0.06);
-  color: var(--color-ivory-mid);
+  background: var(--color-white-alpha-07);
+  color: var(--color-gold);
+  opacity: 1;
+  /* Premium hover: slide and scale slightly */
+  transform: translateX(4px) scale(1.02);
+  box-shadow: inset 0 0 10px var(--color-white-alpha-03);
 }
 
 .navItem.active {
-  background: rgba(255,255,255,0.08);
-  color: var(--color-ivory-mid);
+  background: var(--color-gold-alpha-08);
+  color: var(--color-gold);
+  opacity: 1;
   font-weight: 700;
-  border-right-color: var(--color-wood-faint);
+  border-left: 3px solid var(--color-gold);
+  box-shadow: inset 0 0 12px var(--color-gold-alpha-06), var(--glow-gold);
+  transform: translateX(0) !important;
+}
+
+.navItem.active:hover {
+  background: var(--color-gold-alpha-12);
 }
 
 .navIcon {
   flex-shrink: 0;
-  opacity: 0.8;
 }
 
-.navItem:hover .navIcon,
-.navItem.active .navIcon {
-  opacity: 1;
-}
-
+/* Label fades gracefully during collapse */
 .navLabel {
-  animation: fadeIn var(--transition-base) ease both;
+  flex: 1;
+  transition: opacity var(--transition-base);
+}
+
+.collapsed .navLabel {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ─── Collapsed State Adjustments ───────────────────────────── */
+.collapsed .navItem {
+  justify-content: center;
+  padding: var(--space-3);
+  border-left: 3px solid transparent;
+}
+
+.collapsed .navItem.active {
+  border-left: 3px solid var(--color-gold);
+}
+
+.collapsed .logo {
+  padding: var(--space-4);
 }
 
 /* ─── Mobile Responsive ──────────────────────────────────────── */
 .backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(26,22,20,0.55);
+  background: var(--color-navy-alpha-60);
   z-index: 99;
   backdrop-filter: blur(2px);
 }
@@ -163,7 +258,7 @@
   .sidebar {
     position: fixed;
     top: 0;
-    right: 0;
+    inset-inline-end: 0;
     height: 100%;
     transform: translateX(100%);
     transition: transform var(--transition-layout);

@@ -1,5 +1,5 @@
 .container {
-  background: linear-gradient(135deg, var(--color-ink), var(--color-wood-mid));
+  background: linear-gradient(135deg, var(--color-navy), var(--color-gold));
   padding: var(--space-12) var(--space-6);
   text-align: center;
   position: relative;

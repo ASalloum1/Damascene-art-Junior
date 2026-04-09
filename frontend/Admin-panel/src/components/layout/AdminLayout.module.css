@@ -10,6 +10,7 @@
   flex-direction: column;
   flex: 1;
   overflow: hidden;
+  transition: margin-inline-start var(--transition-base);
 }
 
 .content {
@@ -17,4 +18,9 @@
   overflow-y: auto;
   padding: var(--space-6);
   background: var(--color-cream);
+}
+
+/* Page enter transition support */
+.content > .pageEnter {
+  animation: fadeInUp 0.4s ease-out both;
 }

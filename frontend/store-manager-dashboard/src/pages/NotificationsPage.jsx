@@ -1,4 +1,5 @@
 import styles from './pages.module.css';
+import notifStyles from './NotificationsPage.module.css';
 import SectionTitle from '../components/SectionTitle';
 import PageCard from '../components/PageCard';
 import Badge from '../components/Badge';
@@ -56,17 +57,34 @@ export function NotificationsPage() {
       <PageCard>
         {notifications.map((n, i) => {
           const IconComponent = n.icon;
+          const rowClass = [
+            styles.notifRow,
+            notifStyles.notifRow,
+            !n.read ? styles.unread : '',
+            !n.read ? notifStyles.notifRowUnread : '',
+          ].filter(Boolean).join(' ');
+
+          const iconClass = [
+            styles.notifIconWrap,
+            !n.read ? notifStyles.notifIconWrapUnread : '',
+          ].filter(Boolean).join(' ');
+
           return (
-            <div key={i} className={`${styles.notifRow} ${!n.read ? styles.unread : ''}`}>
-              <div className={styles.notifIconWrap}>
-                <IconComponent size={20} />
+            <div key={i} className={rowClass}>
+              <div className={iconClass}>
+                <IconComponent size={20} aria-hidden="true" />
               </div>
               <div className={styles.notifContent}>
                 <div className={`${styles.notifText} ${!n.read ? styles.bold : ''}`}>{n.text}</div>
                 <div className={styles.notifTime}>{n.time}</div>
               </div>
               <Badge text={n.type} variant="neutral" />
-              {!n.read && <div className={styles.notifDot} />}
+              {!n.read ? (
+                <div
+                  className={notifStyles.notifDotUnread}
+                  aria-label="إشعار غير مقروء"
+                />
+              ) : null}
             </div>
           );
         })}

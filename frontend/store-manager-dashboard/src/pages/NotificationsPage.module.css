@@ -1,0 +1,125 @@
+/**
+ * NotificationsPage — Premium aesthetic layer
+ * Gold / Navy / Cream palette — RTL-first logical properties
+ */
+
+/* ─── Keyframes ──────────────────────────────────────────────── */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* RTL: slide from the inline-end (visual left in RTL).
+   @keyframes can't live inside a selector, so we declare a separate
+   keyframe and apply it via an [dir='rtl'] selector below. */
+@keyframes slideInRightRTL {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes goldPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(200, 164, 90, 0.7);
+    background: var(--color-wood-mid);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(200, 164, 90, 0);
+    background: var(--color-wood-light);
+  }
+}
+
+/* ─── Staggered Notification Rows ───────────────────────────── */
+.notifRow {
+  opacity: 0;
+  animation: slideInRight 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transition:
+    background var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+[dir='rtl'] .notifRow {
+  animation-name: slideInRightRTL;
+}
+
+.notifRow:hover {
+  background: var(--color-ivory-mid) !important;
+  box-shadow: var(--shadow-xs);
+}
+
+/* Stagger delays */
+.notifRow:nth-child(1) { animation-delay:  40ms; }
+.notifRow:nth-child(2) { animation-delay:  90ms; }
+.notifRow:nth-child(3) { animation-delay: 140ms; }
+.notifRow:nth-child(4) { animation-delay: 190ms; }
+.notifRow:nth-child(5) { animation-delay: 240ms; }
+.notifRow:nth-child(6) { animation-delay: 290ms; }
+.notifRow:nth-child(7) { animation-delay: 340ms; }
+.notifRow:nth-child(8) { animation-delay: 390ms; }
+
+/* ─── Unread items: gold inline-start border + warm bg tint ── */
+.notifRowUnread {
+  border-inline-start: 3px solid var(--color-wood-mid);
+  background: rgba(200, 164, 90, 0.04) !important;
+  padding-inline-start: calc(var(--space-2) + 1px);
+}
+
+/* ─── Gold Pulse Dot for unread ──────────────────────────────── */
+.notifDotUnread {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-wood-mid);
+  flex-shrink: 0;
+  animation: goldPulse 1.8s ease-in-out infinite;
+}
+
+/* ─── Icon wrap accent for unread ────────────────────────────── */
+.notifIconWrapUnread {
+  background: rgba(200, 164, 90, 0.12);
+  color: var(--color-wood-mid);
+}
+
+/* ─── Group Section Separator ────────────────────────────────── */
+.groupSeparator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-block: var(--space-4);
+}
+
+.groupLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-stone);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  font-family: var(--font-arabic);
+}
+
+.groupLine {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    to inline-end,
+    var(--color-ivory-dark),
+    transparent
+  );
+  background: linear-gradient(
+    90deg,
+    var(--color-ivory-dark),
+    transparent
+  );
+}

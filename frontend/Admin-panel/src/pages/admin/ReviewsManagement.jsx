@@ -213,8 +213,8 @@ export default function ReviewsManagementPage() {
         <div className={styles.emptyWrapper}>
           <EmptyState
             icon={Star}
-            title="لا توجد تقييمات"
-            description="لا توجد تقييمات تطابق معايير البحث."
+            title="في انتظار صدى الإعجاب"
+            description="لا توجد تقييمات جديدة حالياً. كل الآراء السابقة قد تم الاعتناء بها وتوثيقها في سجلاتنا الفنية."
           />
         </div>
       ) : (
@@ -241,7 +241,7 @@ export default function ReviewsManagementPage() {
               <div className={styles.reviewFooter}>
                 <span className={styles.reviewStore}>{review.store}</span>
                 <div className={styles.reviewActions}>
-                  {review.status !== 'منشور' && (
+                  {review.status !== 'منشور' ? (
                     <button
                       type="button"
                       className={[styles.actionBtn, styles.actionApprove].join(' ')}
@@ -250,8 +250,8 @@ export default function ReviewsManagementPage() {
                     >
                       <Check size={15} strokeWidth={2} />
                     </button>
-                  )}
-                  {review.status !== 'مرفوض' && (
+                  ) : null}
+                  {review.status !== 'مرفوض' ? (
                     <button
                       type="button"
                       className={[styles.actionBtn, styles.actionReject].join(' ')}
@@ -260,7 +260,7 @@ export default function ReviewsManagementPage() {
                     >
                       <X size={15} strokeWidth={2} />
                     </button>
-                  )}
+                  ) : null}
                   <button
                     type="button"
                     className={[styles.actionBtn, styles.actionDelete].join(' ')}

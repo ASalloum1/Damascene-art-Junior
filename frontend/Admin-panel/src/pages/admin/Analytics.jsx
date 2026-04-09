@@ -238,24 +238,24 @@ export default function AnalyticsPage() {
         />
 
         <div className={styles.tableCard}>
-          {reportTab === 'products' && (
+          {reportTab === 'products' ? (
             <DataTable
               headers={productReportHeaders}
               rows={mockProducts}
             />
-          )}
-          {reportTab === 'customers' && (
+          ) : null}
+          {reportTab === 'customers' ? (
             <DataTable
               headers={customerReportHeaders}
               rows={customerReportData}
             />
-          )}
-          {reportTab === 'stores' && (
+          ) : null}
+          {reportTab === 'stores' ? (
             <DataTable
               headers={storeReportHeaders}
               rows={mockStores}
             />
-          )}
+          ) : null}
         </div>
       </div>
     </div>

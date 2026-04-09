@@ -33,7 +33,7 @@
 .itemImage {
   width: 80px;
   height: 80px;
-  background: var(--color-ivory-dark);
+  background: var(--color-cream-mid);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -48,7 +48,7 @@
 
 .itemName {
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--color-navy);
   font-size: var(--font-size-base);
   margin-block-end: var(--space-1);
 }
@@ -61,7 +61,7 @@
 
 .itemPrice {
   font-weight: 800;
-  color: var(--color-ink);
+  color: var(--color-navy);
   font-size: var(--font-size-md);
   min-width: 80px;
   text-align: center;
@@ -71,7 +71,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--color-error);
+  color: var(--color-red);
   display: flex;
   align-items: center;
   padding: var(--space-2);

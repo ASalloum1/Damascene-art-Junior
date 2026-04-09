@@ -35,29 +35,29 @@ const ACTIVITY_ACTION_VARIANT = {
 };
 
 const recentOrderHeaders = [
-  { key: 'orderNumber', label: 'رقم الطلب' },
-  { key: 'store',       label: 'المتجر' },
-  { key: 'customer',    label: 'العميل' },
+  { key: 'orderNumber', label: 'معرف الطلبية' },
+  { key: 'store',       label: 'رواق المتجر' },
+  { key: 'customer',    label: 'المقتني' },
   {
     key: 'productsCount',
-    label: 'المنتجات',
-    render: (val) => `${toArabicNum(val)} منتج`,
+    label: 'المقتنيات',
+    render: (val) => `${toArabicNum(val)} مقتنى`,
   },
   {
     key: 'amount',
-    label: 'المبلغ',
+    label: 'القيمة الإجمالية',
     render: (val) => formatCurrency(val),
   },
   {
     key: 'status',
-    label: 'الحالة',
+    label: 'مسار الطلب',
     render: (val) => (
       <Badge text={val} variant={ORDER_STATUS_VARIANT[val] || 'default'} />
     ),
   },
   {
     key: 'date',
-    label: 'التاريخ',
+    label: 'تاريخ الاقتناء',
     render: (val) => formatDate(val),
   },
 ];
@@ -69,31 +69,31 @@ export default function DashboardPage() {
       <div className={styles.statsRow}>
         <StatCard
           icon={DollarSign}
-          label="إجمالي الإيرادات"
+          label="إجمالي العوائد الملكية"
           value="١٢٥,٤٣٠ $"
           color="green"
-          subtitle="هذا الشهر"
+          subtitle="خلال الشهر الحالي"
         />
         <StatCard
           icon={ShoppingCart}
-          label="إجمالي الطلبات"
+          label="مجموع الطلبيات"
           value="٤٨٦"
           color="blue"
-          subtitle="هذا الشهر"
+          subtitle="خلال الشهر الحالي"
         />
         <StatCard
           icon={Users}
-          label="إجمالي المستخدمين"
+          label="إجمالي رواد المنصة"
           value="١,٢٤٥"
           color="gold"
-          subtitle="مسجلين"
+          subtitle="عضوية نشطة"
         />
         <StatCard
           icon={Store}
-          label="المتاجر النشطة"
+          label="الأروقة النشطة"
           value="٣"
           color="orange"
-          subtitle="من أصل ٤"
+          subtitle="من أصل ٤ دور عرض"
         />
       </div>
 
@@ -105,7 +105,7 @@ export default function DashboardPage() {
             xKey="name"
             yKey="value"
             color={COLORS.gold}
-            title="الإيرادات الشهرية"
+            title="بيان العوائد الشهري"
             height={280}
             formatValue={(v) => `${Math.round(v / 1000)}k`}
           />
@@ -114,7 +114,7 @@ export default function DashboardPage() {
         <div className={styles.topProductsCard}>
           <div className={styles.cardHeader}>
             <Award size={18} strokeWidth={1.8} className={styles.cardHeaderIcon} />
-            <h3 className={styles.cardTitle}>المنتجات الأكثر مبيعاً</h3>
+            <h3 className={styles.cardTitle}>المقتنيات الأكثر تفضيلاً</h3>
           </div>
           <div className={styles.productsList}>
             {topProducts.map((product, index) => (
@@ -123,7 +123,7 @@ export default function DashboardPage() {
                 <div className={styles.productBarWrapper}>
                   <MiniBar
                     label={product.name}
-                    value={`${toArabicNum(product.sold)} مبيعة`}
+                    value={`${toArabicNum(product.sold)} عملية اقتناء`}
                     percentage={Math.round((product.sold / product.total) * 100)}
                     color={COLORS.gold}
                     height={6}
@@ -140,7 +140,7 @@ export default function DashboardPage() {
         <div className={styles.pieCard}>
           <PieChartWrapper
             data={ordersByStatus}
-            title="الطلبات حسب الحالة"
+            title="توزع الطلبيات حسب المسار"
             height={280}
             donut
           />
@@ -149,7 +149,7 @@ export default function DashboardPage() {
         <div className={styles.activitiesCard}>
           <div className={styles.cardHeader}>
             <Clock size={18} strokeWidth={1.8} className={styles.cardHeaderIcon} />
-            <h3 className={styles.cardTitle}>آخر النشاطات</h3>
+            <h3 className={styles.cardTitle}>سجل النشاطات الأخير</h3>
           </div>
           <div className={styles.activitiesList}>
             {recentActivities.map((activity) => (
@@ -168,7 +168,7 @@ export default function DashboardPage() {
           </div>
           <div className={styles.viewAllLink}>
             <ArrowLeft size={14} strokeWidth={1.8} />
-            <span>عرض الكل</span>
+            <span>مطالعة السجل الكامل</span>
           </div>
         </div>
       </div>
@@ -178,11 +178,11 @@ export default function DashboardPage() {
         <div className={styles.tableCardHeader}>
           <div className={styles.cardHeader}>
             <ShoppingCart size={18} strokeWidth={1.8} className={styles.cardHeaderIcon} />
-            <h3 className={styles.cardTitle}>آخر الطلبات</h3>
+            <h3 className={styles.cardTitle}>أحدث الطلبيات</h3>
           </div>
           <div className={styles.viewAllLink}>
             <ArrowLeft size={14} strokeWidth={1.8} />
-            <span>عرض كل الطلبات</span>
+            <span>عرض كافة الطلبيات</span>
           </div>
         </div>
         <DataTable

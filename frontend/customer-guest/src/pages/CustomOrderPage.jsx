@@ -1,7 +1,7 @@
 import { Paperclip } from 'lucide-react';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { InputField } from '../components/InputField.jsx';
-import { Btn } from '../components/Btn.jsx';
+import { Button } from '../components/Button.jsx';
 import styles from './CustomOrderPage.module.css';
 
 export function CustomOrderPage() {
@@ -45,9 +45,9 @@ export function CustomOrderPage() {
           <span className={styles.uploadText}>ارفع صورة مرجعية (اختياري)</span>
         </div>
 
-        <Btn variant="primary" full>
+        <Button variant="primary" full>
           إرسال الطلب
-        </Btn>
+        </Button>
       </div>
     </div>
   );

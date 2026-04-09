@@ -29,7 +29,7 @@ export default function AreaChartWrapper({
 }) {
   return (
     <div className={styles.wrapper}>
-      {title && <h3 className={styles.title}>{title}</h3>}
+      {title ? <h3 className={styles.title}>{title}</h3> : null}
       <ResponsiveContainer width="100%" height={height}>
         <AreaChart
           data={data}
@@ -90,11 +90,11 @@ export default function AreaChartWrapper({
                 : undefined
             }
           />
-          {areas.length > 1 && (
+          {areas.length > 1 ? (
             <Legend
               wrapperStyle={{ fontFamily: 'Tajawal', fontSize: '12px', direction: 'rtl' }}
             />
-          )}
+          ) : null}
           {areas.map((area) => (
             <Area
               key={area.key}

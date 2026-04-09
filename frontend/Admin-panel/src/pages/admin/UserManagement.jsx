@@ -305,15 +305,15 @@ export default function UserManagementPage() {
               { value: 'عميل', label: 'عميل' },
             ]}
           />
-          {form.role === 'مدير متجر' && (
-            <SelectField
-              label="المتجر"
-              placeholder="اختر المتجر"
-              value={form.store}
-              onChange={(e) => setForm((f) => ({ ...f, store: e.target.value }))}
-              options={storeOptions}
-            />
-          )}
+            {form.role === 'مدير متجر' ? (
+              <SelectField
+                label="المتجر"
+                placeholder="اختر المتجر"
+                value={form.store}
+                onChange={(e) => setForm((f) => ({ ...f, store: e.target.value }))}
+                options={storeOptions}
+              />
+            ) : null}
           <SelectField
             label="الحالة"
             value={form.status}

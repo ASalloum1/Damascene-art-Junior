@@ -82,7 +82,7 @@ export default function DataTable({
         <table className={styles.table}>
           <thead className={styles.thead}>
             <tr>
-              {selectable && (
+              {selectable ? (
                 <th className={[styles.th, styles.checkboxTh].join(' ')}>
                   <input
                     type="checkbox"
@@ -95,7 +95,7 @@ export default function DataTable({
                     aria-label="تحديد الكل"
                   />
                 </th>
-              )}
+              ) : null}
               {headers.map((col) => (
                 <th
                   key={col.key}
@@ -117,7 +117,7 @@ export default function DataTable({
                 >
                   <span className={styles.thContent}>
                     {col.label}
-                    {col.sortable && getSortIcon(col.key)}
+                    {col.sortable ? getSortIcon(col.key) : null}
                   </span>
                 </th>
               ))}
@@ -128,11 +128,11 @@ export default function DataTable({
             {loading ? (
               skeletonRows.map((i) => (
                 <tr key={i} className={styles.tr}>
-                  {selectable && (
+                  {selectable ? (
                     <td className={styles.td}>
                       <div className={`${styles.skeletonCell} skeleton`} style={{ width: '16px', height: '16px' }} />
                     </td>
-                  )}
+                  ) : null}
                   {headers.map((col) => (
                     <td key={col.key} className={styles.td}>
                       <div
@@ -172,7 +172,7 @@ export default function DataTable({
                       .filter(Boolean)
                       .join(' ')}
                   >
-                    {selectable && (
+                    {selectable ? (
                       <td className={styles.td}>
                         <input
                           type="checkbox"
@@ -182,7 +182,7 @@ export default function DataTable({
                           aria-label={`تحديد الصف ${toArabicNum(rowIndex + 1)}`}
                         />
                       </td>
-                    )}
+                    ) : null}
                     {headers.map((col) => (
                       <td key={col.key} className={styles.td}>
                         {col.render
@@ -199,7 +199,7 @@ export default function DataTable({
       </div>
 
       {/* Pagination Footer */}
-      {pagination && (
+      {pagination ? (
         <div className={styles.paginationBar}>
           <div className={styles.paginationInfo}>
             <span className={styles.infoText}>
@@ -277,7 +277,7 @@ export default function DataTable({
             </div>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

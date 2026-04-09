@@ -38,7 +38,7 @@ function ToggleSwitch({ checked, onChange, label }) {
       >
         <span className={styles.toggleThumb} />
       </button>
-      {label && <span className={styles.toggleText}>{label}</span>}
+      {label ? <span className={styles.toggleText}>{label}</span> : null}
     </label>
   );
 }
@@ -143,7 +143,7 @@ export default function SiteSettingsPage() {
         <div className={styles.sectionBody}>
 
           {/* Section 1: Site Info */}
-          {activeSection === 'info' && (
+          {activeSection === 'info' ? (
             <div className={styles.section}>
               <div className={styles.formGrid}>
                 <InputField
@@ -217,10 +217,10 @@ export default function SiteSettingsPage() {
                 </Button>
               </div>
             </div>
-          )}
+          ) : null}
 
           {/* Section 2: Locale */}
-          {activeSection === 'locale' && (
+          {activeSection === 'locale' ? (
             <div className={styles.section}>
               <div className={styles.formGrid}>
                 <SelectField
@@ -301,10 +301,10 @@ export default function SiteSettingsPage() {
                 </Button>
               </div>
             </div>
-          )}
+          ) : null}
 
           {/* Section 3: Email */}
-          {activeSection === 'email' && (
+          {activeSection === 'email' ? (
             <div className={styles.section}>
               <h4 className={styles.subTitle}>
                 <Mail size={16} strokeWidth={1.8} /> إعدادات SMTP
@@ -383,10 +383,10 @@ export default function SiteSettingsPage() {
                 </Button>
               </div>
             </div>
-          )}
+          ) : null}
 
           {/* Section 4: SEO */}
-          {activeSection === 'seo' && (
+          {activeSection === 'seo' ? (
             <div className={styles.section}>
               <InputField
                 label="عنوان الصفحة الرئيسية"
@@ -441,17 +441,17 @@ export default function SiteSettingsPage() {
                 </Button>
               </div>
             </div>
-          )}
+          ) : null}
 
           {/* Section 5: Maintenance */}
-          {activeSection === 'maintenance' && (
+          {activeSection === 'maintenance' ? (
             <div className={styles.section}>
-              {maintenance.enabled && (
+              {maintenance.enabled ? (
                 <div className={styles.maintenanceBanner}>
                   <AlertTriangle size={18} strokeWidth={1.8} />
                   <span>وضع الصيانة مفعّل — الموقع غير متاح للزوار حالياً</span>
                 </div>
-              )}
+              ) : null}
 
               <div className={styles.maintenanceToggleRow}>
                 <ToggleSwitch
@@ -482,7 +482,7 @@ export default function SiteSettingsPage() {
                 </Button>
               </div>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

@@ -1,20 +1,20 @@
 .page {
-  padding: 24px;
+  padding: var(--space-6);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-5);
 }
 
 .pageHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .headerIcon {
   width: 40px;
   height: 40px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background-color: var(--color-gold-bg);
   color: var(--color-gold);
   display: flex;
@@ -23,21 +23,32 @@
 }
 
 .pageTitle {
-  font-size: 22px;
-  font-weight: 700;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
   color: var(--color-navy);
   margin: 0;
+}
+
+.pageTitle::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 3px;
+  background: var(--color-gold);
+  border-radius: var(--radius-full);
+  margin-block-start: var(--space-2);
 }
 
 .filterBar {
   display: flex;
   align-items: flex-end;
-  gap: 12px;
+  gap: var(--space-3);
   flex-wrap: wrap;
   background: var(--color-white);
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  animation: fadeInUp 0.4s ease-out backwards;
 }
 
 .searchWrapper {
@@ -45,9 +56,36 @@
   min-width: 200px;
 }
 
+/* Table Card — gold top border + staggered entrance feel */
 .tableCard {
   background: var(--color-white);
-  border-radius: 14px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  border-block-start: 2px solid var(--color-gold);
   overflow: hidden;
+  animation: fadeInUp 0.4s ease-out 0.1s backwards;
+  transition: box-shadow var(--transition-base);
+}
+
+.tableCard:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page {
+    padding: var(--space-4);
+  }
+
+  .filterBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: var(--space-3);
+    gap: var(--space-3);
+  }
 }

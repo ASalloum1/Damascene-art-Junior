@@ -173,9 +173,9 @@ export default function NotificationsPage() {
           <Bell size={22} strokeWidth={1.8} />
         </div>
         <h1 className={styles.pageTitle}>إدارة الإشعارات</h1>
-        {unreadCount > 0 && (
+        {unreadCount > 0 ? (
           <span className={styles.unreadBadge}>{unreadCount}</span>
-        )}
+        ) : null}
       </div>
 
       <div className={styles.card}>
@@ -183,7 +183,7 @@ export default function NotificationsPage() {
           <Tabs tabs={MAIN_TABS} activeTab={mainTab} onChange={setMainTab} variant="underline" />
         </div>
 
-        {mainTab === 'center' && (
+        {mainTab === 'center' ? (
           <div className={styles.centerContent}>
             <div className={styles.centerToolbar}>
               <Tabs
@@ -208,8 +208,8 @@ export default function NotificationsPage() {
                 <div className={styles.notifEmpty}>
                   <EmptyState
                     icon={Bell}
-                    title="لا توجد إشعارات"
-                    description="لا توجد إشعارات تطابق الفلتر المحدد."
+                    title="سكون في الأرجاء"
+                    description="لا توجد تنبيهات جديدة في الوقت الحالي. سيتم إعلامك فور حدوث أي مستجدات تتعلق بالقطع التراثية."
                   />
                 </div>
               ) : (
@@ -247,16 +247,16 @@ export default function NotificationsPage() {
                         <p className={styles.notifDesc}>{notif.description}</p>
                         <span className={styles.notifTime}>{relativeTime(notif.timestamp)}</span>
                       </div>
-                      {!notif.read && <span className={styles.unreadDot} aria-label="غير مقروء" />}
+                      {!notif.read ? <span className={styles.unreadDot} aria-label="غير مقروء" /> : null}
                     </div>
                   );
                 })
               )}
             </div>
           </div>
-        )}
+        ) : null}
 
-        {mainTab === 'settings' && (
+        {mainTab === 'settings' ? (
           <div className={styles.settingsContent}>
             <p className={styles.settingsDesc}>
               حدد القنوات التي تريد تلقي الإشعارات عبرها لكل نوع من الأحداث.
@@ -298,7 +298,7 @@ export default function NotificationsPage() {
               </Button>
             </div>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

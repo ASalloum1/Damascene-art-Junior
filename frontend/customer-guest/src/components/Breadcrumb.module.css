@@ -17,7 +17,7 @@
 .link {
   background: transparent;
   border: none;
-  color: var(--color-wood-mid);
+  color: var(--color-gold);
   cursor: pointer;
   font-family: var(--font-arabic);
   font-size: var(--font-size-sm);
@@ -35,6 +35,6 @@
 }
 
 .current {
-  color: var(--color-ink);
+  color: var(--color-navy);
   font-weight: 600;
 }

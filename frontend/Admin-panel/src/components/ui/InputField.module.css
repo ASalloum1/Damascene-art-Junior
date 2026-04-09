@@ -9,6 +9,7 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
+  transition: color var(--transition-fast);
 }
 
 .required {
@@ -33,7 +34,7 @@
 .input:focus {
   outline: none;
   border-color: var(--color-gold);
-  box-shadow: 0 0 0 3px var(--color-gold-bg);
+  box-shadow: 0 0 0 3px rgba(200, 164, 90, 0.15);
 }
 
 .input:disabled {
@@ -49,11 +50,21 @@
 
 .inputError {
   border-color: var(--color-red);
+  animation: shake 0.3s ease-in-out;
 }
 
 .inputError:focus {
   border-color: var(--color-red);
-  box-shadow: 0 0 0 3px var(--color-red-bg);
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12);
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  16% { transform: translateX(-3px); }
+  33% { transform: translateX(3px); }
+  50% { transform: translateX(-3px); }
+  66% { transform: translateX(3px); }
+  83% { transform: translateX(-2px); }
 }
 
 .errorMsg {

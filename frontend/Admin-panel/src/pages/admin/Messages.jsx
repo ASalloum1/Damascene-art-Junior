@@ -128,8 +128,8 @@ export default function MessagesPage() {
               <div className={styles.emptyList}>
                 <EmptyState
                   icon={MessageSquare}
-                  title="لا توجد رسائل"
-                  description="لا توجد رسائل تطابق معايير البحث."
+                  title="سكون في صندوق الوارد"
+                  description="لا توجد رسائل بانتظار المراجعة. كل الاستفسارات والطلبات المخصصة قد تمت إدارتها بعناية."
                 />
               </div>
             ) : (
@@ -157,14 +157,14 @@ export default function MessagesPage() {
                         <span className={msg.unread ? styles.msgSubjectUnread : styles.msgSubject}>
                           {msg.subject}
                         </span>
-                        {msg.unread && <span className={styles.unreadDot} aria-label="غير مقروء" />}
+                        {msg.unread ? <span className={styles.unreadDot} aria-label="غير مقروء" /> : null}
                       </div>
                       <p className={styles.msgPreview}>{msg.preview}</p>
                       <div className={styles.msgMeta}>
                         <span className={styles.msgStore}>{msg.store}</span>
-                        {msg.urgent && (
+                        {msg.urgent ? (
                           <Badge text="عاجل" variant="danger" size="sm" />
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   </div>
@@ -180,8 +180,8 @@ export default function MessagesPage() {
             <div className={styles.detailEmpty}>
               <EmptyState
                 icon={MessageSquare}
-                title="اختر رسالة"
-                description="اختر رسالة من القائمة لعرض تفاصيلها والرد عليها."
+                title="تأمل في التفاصيل"
+                description="يرجى اختيار رسالة من القائمة لعرض تفاصيل الحوار وبدء الرد بأناقة تليق بحرفيتنا."
               />
             </div>
           ) : (

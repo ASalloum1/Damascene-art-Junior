@@ -19,7 +19,7 @@ export function Header({ activePage, onNavigate, onMobileMenuOpen }) {
 
       {/* Page title */}
       <h1 className={styles.pageTitle} role="status" aria-live="polite">
-        {PageIcon && <PageIcon size={18} style={{ color: 'var(--color-wood-mid)' }} />}
+        {PageIcon ? <PageIcon size={18} className={styles.pageTitleIcon} /> : null}
         <span>{currentItem?.label}</span>
       </h1>
 

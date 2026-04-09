@@ -1,6 +1,6 @@
 import { Layers, TreePine, Sparkles, Scissors, Flame, CircleDot, Diamond } from 'lucide-react';
 import { SectionHeader } from '../components/SectionHeader.jsx';
-import { Btn } from '../components/Btn.jsx';
+import { Button } from '../components/Button.jsx';
 import { ProductCard } from '../components/ProductCard.jsx';
 import { CategoryCard } from '../components/CategoryCard.jsx';
 import { TestimonialCard } from '../components/TestimonialCard.jsx';
@@ -27,20 +27,20 @@ export function HomePage({ onNavigate }) {
             <Diamond size={10} />
             <Diamond size={10} />
           </div>
-          <p className={styles.heroTagline}>✦ إرث دمشق في بيتك ✦</p>
+          <p className={styles.heroTagline}>✦ أناقة التاريخ تتجلى في منزلك ✦</p>
           <h1 className={styles.heroTitle}>
-            قطع فنية دمشقية أصيلة مصنوعة بأيدي أمهر الحرفيين
+            روائع دمشقية تروي حكايا الإبداع بأنامل كبار الحرفيين
           </h1>
           <p className={styles.heroSubtitle}>
-            اكتشف جمال الفسيفساء والبروكار والزجاج المنفوخ والخشب المطعّم بالصدف
+            انغمس في سحر الموزاييك والبروكار والزجاج المنفوخ والخشب المطعّم بعرق اللؤلؤ
           </p>
           <div className={styles.heroBtns}>
-            <Btn variant="primary" onClick={() => onNavigate?.('shop')}>
-              تصفّح المتجر
-            </Btn>
-            <Btn variant="outline" onClick={() => onNavigate?.('about')}>
-              اكتشف قصتنا
-            </Btn>
+            <Button variant="primary" onClick={() => onNavigate?.('shop')}>
+              استكشف المجموعة
+            </Button>
+            <Button variant="outline" onClick={() => onNavigate?.('about')}>
+              رحلتنا مع الأصالة
+            </Button>
           </div>
         </div>
       </section>
@@ -49,8 +49,8 @@ export function HomePage({ onNavigate }) {
       <section className={styles.categories}>
         <div className={styles.container}>
           <SectionHeader
-            title="تصنيفات الفن الدمشقي"
-            subtitle="اختر الحرفة التي تسحر قلبك"
+            title="روافد الإبداع الشامي"
+            subtitle="تجوّل بين روائع الفنون التي تأسر الحواس"
           />
           <div className={styles.categoryGrid}>
             {categories.map((cat) => (
@@ -70,8 +70,8 @@ export function HomePage({ onNavigate }) {
       <section className={styles.featured}>
         <div className={styles.container}>
           <SectionHeader
-            title="منتجات مميزة"
-            subtitle="قطع فنية مختارة بعناية"
+            title="مقتنيات مختارة"
+            subtitle="جواهر فنية نُسجت بعناية لتليق بذوقكم الرفيع"
           />
           <div className={styles.productGrid}>
             {products.slice(0, 4).map((product) => (
@@ -84,9 +84,9 @@ export function HomePage({ onNavigate }) {
             ))}
           </div>
           <div className={styles.featuredCta}>
-            <Btn variant="outline" onClick={() => onNavigate?.('shop')}>
-              عرض كل المنتجات ←
-            </Btn>
+            <Button variant="outline" onClick={() => onNavigate?.('shop')}>
+              مشاهدة المجموعة الكاملة ←
+            </Button>
           </div>
         </div>
       </section>
@@ -95,24 +95,23 @@ export function HomePage({ onNavigate }) {
       <section className={styles.story}>
         <div className={styles.storyContent}>
           <SectionHeader
-            title="قصة الفن الدمشقي"
-            subtitle="آلاف السنين من الإبداع والأصالة"
+            title="سيمفونية الإبداع الدمشقي"
+            subtitle="حكايات خُلّدت عبر آلاف السنين من الفن والأصالة"
             light
           />
           <p className={styles.storyText}>
-            منذ أكثر من ٥٠٠٠ عام، أبدعت أيدي الحرفيين في دمشق أجمل الفنون. من الفسيفساء التي
-            تزيّن القصور إلى البروكار الذي كان يُهدى للملوك، نحمل هذا الإرث ونوصله إلى بيتك.
+            منذ فجر التاريخ، أبدعت أيدي الحرفيين في دمشق أجمل الفنون التي حاكت الشمس ببريقها. من الموزاييك الذي يزيّن قصور الشرق إلى البروكار الذي كان خياراً للملوك، نحمل هذا الإرث العريق ليكون جزءاً من تفاصيل يومكم.
           </p>
-          <Btn variant="primary" onClick={() => onNavigate?.('about')}>
-            اقرأ المزيد
-          </Btn>
+          <Button variant="primary" onClick={() => onNavigate?.('about')}>
+            اكتشف المزيد عن إرثنا
+          </Button>
         </div>
       </section>
 
       {/* ── 5. Testimonials ── */}
       <section className={styles.testimonials}>
         <div className={styles.container}>
-          <SectionHeader title="ماذا يقول عملاؤنا" />
+          <SectionHeader title="أصداء الرضا من مقتني أعمالنا" />
           <div className={styles.testimonialGrid}>
             {testimonials.map((t) => (
               <TestimonialCard

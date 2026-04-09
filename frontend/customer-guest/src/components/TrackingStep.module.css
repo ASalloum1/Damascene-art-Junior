@@ -24,7 +24,7 @@
 }
 
 .done {
-  background-color: var(--color-success);
+  background-color: var(--color-green);
 }
 
 .active {
@@ -34,19 +34,19 @@
 }
 
 .pending {
-  background-color: var(--color-ivory-dark);
+  background-color: var(--color-cream-mid);
   color: var(--color-stone);
 }
 
 .line {
   width: 3px;
   height: 40px;
-  background-color: var(--color-ivory-dark);
+  background-color: var(--color-cream-mid);
   margin: 4px 0;
 }
 
 .lineDone {
-  background-color: var(--color-success);
+  background-color: var(--color-green);
 }
 
 .rightCol {
@@ -60,7 +60,7 @@
 }
 
 .label_done {
-  color: var(--color-success);
+  color: var(--color-green);
 }
 
 .label_active {

@@ -1,20 +1,20 @@
 .page {
-  padding: 24px;
+  padding: var(--space-6);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-5);
 }
 
 .pageHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .headerIcon {
   width: 40px;
   height: 40px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background-color: var(--color-blue-bg);
   color: var(--color-blue);
   display: flex;
@@ -23,56 +23,73 @@
 }
 
 .pageTitle {
-  font-size: 22px;
-  font-weight: 700;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
   color: var(--color-navy);
   margin: 0;
 }
 
+.pageTitle::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 3px;
+  background: var(--color-gold);
+  border-radius: var(--radius-full);
+  margin-block-start: var(--space-2);
+}
+
+/* Section cards — subtle different bg tints */
 .card {
   background: var(--color-white);
-  border-radius: 14px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
+  transition: box-shadow var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-card-hover);
 }
 
 .tabsRow {
-  padding: 0 24px;
+  padding: 0 var(--space-6);
   border-block-end: 1px solid var(--color-cream-dark);
   overflow-x: auto;
 }
 
 .sectionBody {
-  padding: 28px 24px;
+  padding: var(--space-6) var(--space-6);
+  background: var(--gradient-gold-subtle);
 }
 
 .section {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-5);
 }
 
 .formGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
+  gap: var(--space-4);
 }
 
 .subTitle {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
   color: var(--color-navy);
   margin: 0;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   border-block-start: 1px solid var(--color-cream-dark);
-  padding-block-start: 16px;
+  padding-block-start: var(--space-4);
 }
 
 .uploadRow {
   display: flex;
-  gap: 16px;
+  gap: var(--space-4);
   flex-wrap: wrap;
 }
 
@@ -80,14 +97,20 @@
   flex: 1;
   min-width: 200px;
   border: 2px dashed var(--color-cream-dark);
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   text-align: center;
   background: var(--color-cream);
+  transition: border-color var(--transition-base), background var(--transition-base);
+}
+
+.uploadArea:hover {
+  border-color: var(--color-gold-light);
+  background: rgba(200, 164, 90, 0.04);
 }
 
 .uploadIcon {
@@ -95,34 +118,34 @@
 }
 
 .uploadLabel {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
   color: var(--color-navy);
 }
 
 .uploadHint {
-  font-size: 11px;
+  font-size: var(--font-size-tiny);
   color: var(--color-text-secondary);
 }
 
 .sectionFooter {
   display: flex;
   justify-content: flex-end;
-  padding-block-start: 8px;
+  padding-block-start: var(--space-2);
 }
 
 /* Locale checkboxes */
 .checkGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .checkRow {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 14px;
+  gap: var(--space-2);
+  font-size: var(--font-size-base);
   color: var(--color-text-primary);
   cursor: pointer;
 }
@@ -145,7 +168,7 @@
   flex-direction: column;
   gap: 0;
   border: 1px solid var(--color-cream-dark);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
@@ -153,9 +176,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: var(--space-3) var(--space-4);
   border-block-start: 1px solid var(--color-cream-dark);
-  transition: background 0.15s;
+  transition: background var(--transition-fast);
 }
 
 .templateItem:first-child {
@@ -167,54 +190,57 @@
 }
 
 .templateName {
-  font-size: 14px;
+  font-size: var(--font-size-base);
   color: var(--color-text-primary);
 }
 
 .templateActions {
   display: flex;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 /* SEO keywords */
 .fieldGroup {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-2);
 }
 
 .fieldLabel {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
   color: var(--color-navy);
 }
 
+/* Form fields — consistent focus styling */
 .tagsInput {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: var(--space-2);
   border: 1.5px solid var(--color-cream-dark);
-  border-radius: 8px;
-  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
   min-height: 44px;
   background: var(--color-white);
   cursor: text;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .tagsInput:focus-within {
   border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(200, 164, 90, 0.12);
 }
 
 .tag {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
   background: var(--color-gold-bg);
   color: var(--color-gold-dark);
-  font-size: 12px;
-  padding: 2px 10px;
-  border-radius: 20px;
-  font-weight: 600;
+  font-size: var(--font-size-xs);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-xl);
+  font-weight: var(--font-weight-medium);
 }
 
 .tagRemove {
@@ -222,7 +248,7 @@
   border: none;
   cursor: pointer;
   color: var(--color-gold-dark);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   line-height: 1;
   padding: 0 2px;
 }
@@ -230,7 +256,7 @@
 .tagInput {
   border: none;
   outline: none;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   font-family: inherit;
   flex: 1;
   min-width: 140px;
@@ -242,14 +268,14 @@
 .maintenanceBanner {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-2);
   background: rgba(230, 126, 34, 0.12);
   color: var(--color-orange);
   border: 1px solid rgba(230, 126, 34, 0.3);
-  border-radius: 10px;
-  padding: 12px 16px;
-  font-size: 14px;
-  font-weight: 600;
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
 }
 
 .maintenanceToggleRow {
@@ -261,12 +287,12 @@
 .toggleLabel {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-2);
   cursor: pointer;
 }
 
 .toggleText {
-  font-size: 14px;
+  font-size: var(--font-size-base);
   color: var(--color-text-primary);
 }
 
@@ -293,7 +319,7 @@
   inset-inline-start: 4px;
   width: 16px;
   height: 16px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background: var(--color-white);
   transition: inset-inline-start 0.2s;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
@@ -301,4 +327,38 @@
 
 .toggleOn .toggleThumb {
   inset-inline-start: 24px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page {
+    padding: var(--space-4);
+  }
+
+  .sectionBody {
+    padding: var(--space-4);
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .uploadRow {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: var(--space-3);
+    gap: var(--space-3);
+  }
+
+  .sectionBody {
+    padding: var(--space-3);
+  }
+
+  .uploadArea {
+    padding: var(--space-4);
+  }
 }

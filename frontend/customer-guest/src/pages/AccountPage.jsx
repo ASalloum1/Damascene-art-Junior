@@ -2,7 +2,7 @@ import { Package, Heart, Star, MapPin } from 'lucide-react';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { Badge } from '../components/Badge.jsx';
 import { InputField } from '../components/InputField.jsx';
-import { Btn } from '../components/Btn.jsx';
+import { Button } from '../components/Button.jsx';
 import styles from './AccountPage.module.css';
 
 const stats = [
@@ -71,7 +71,7 @@ export function AccountPage({ onNavigate }) {
           <InputField label="الهاتف" placeholder="+971 XXX" type="tel" />
           <InputField label="كلمة المرور" type="password" placeholder="••••••" />
         </div>
-        <Btn variant="primary">حفظ التغييرات</Btn>
+        <Button variant="primary">حفظ التغييرات</Button>
       </div>
     </div>
   );

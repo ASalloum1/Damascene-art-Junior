@@ -1,20 +1,20 @@
 .page {
-  padding: 24px;
+  padding: var(--space-6);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-5);
 }
 
 .pageHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .headerIcon {
   width: 40px;
   height: 40px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background-color: var(--color-gold-bg);
   color: var(--color-gold);
   display: flex;
@@ -23,47 +23,74 @@
 }
 
 .pageTitle {
-  font-size: 22px;
-  font-weight: 700;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
   color: var(--color-navy);
   margin: 0;
 }
 
+.pageTitle::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 3px;
+  background: var(--color-gold);
+  border-radius: var(--radius-full);
+  margin-block-start: var(--space-2);
+}
+
+/* Stats Row — staggered entrance */
 .statsRow {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: var(--space-4);
 }
+
+.statsRow > * {
+  animation: fadeInUp 0.4s ease-out backwards;
+}
+
+.statsRow > *:nth-child(1) { animation-delay: 0s; }
+.statsRow > *:nth-child(2) { animation-delay: 0.06s; }
+.statsRow > *:nth-child(3) { animation-delay: 0.12s; }
 
 .distCard {
   background: var(--color-white);
-  border-radius: 14px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  padding: 20px 24px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-5) var(--space-6);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+}
+
+.distCard:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
 }
 
 .distTitle {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
   color: var(--color-navy);
-  margin: 0 0 16px;
+  margin: 0;
+  margin-block-end: var(--space-4);
 }
 
+/* Rating bars — animated fill */
 .distBars {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-2);
 }
 
 .filterBar {
   display: flex;
   align-items: flex-end;
-  gap: 12px;
+  gap: var(--space-3);
   flex-wrap: wrap;
   background: var(--color-white);
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
 }
 
 .searchWrapper {
@@ -73,37 +100,47 @@
 
 .emptyWrapper {
   background: var(--color-white);
-  border-radius: 14px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  padding: 40px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-10);
 }
 
 .reviewGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 16px;
+  gap: var(--space-4);
 }
 
+/* Review cards — hover elevation */
 .reviewCard {
   background: var(--color-white);
-  border-radius: 14px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  padding: 20px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-5);
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  transition: box-shadow 0.15s;
+  gap: var(--space-3);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+  animation: fadeInUp 0.4s ease-out backwards;
 }
 
+.reviewCard:nth-child(1) { animation-delay: 0s; }
+.reviewCard:nth-child(2) { animation-delay: 0.06s; }
+.reviewCard:nth-child(3) { animation-delay: 0.12s; }
+.reviewCard:nth-child(4) { animation-delay: 0.18s; }
+.reviewCard:nth-child(5) { animation-delay: 0.24s; }
+.reviewCard:nth-child(6) { animation-delay: 0.30s; }
+
 .reviewCard:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
 }
 
 .reviewCardHeader {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .reviewInfo {
@@ -113,13 +150,13 @@
 }
 
 .reviewCustomer {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
   color: var(--color-navy);
 }
 
 .reviewProduct {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
 }
 
@@ -130,7 +167,7 @@
 .reviewMeta {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .starRow {
@@ -149,12 +186,12 @@
 }
 
 .reviewDate {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
 }
 
 .reviewText {
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   color: var(--color-text-primary);
   line-height: 1.7;
   margin: 0;
@@ -165,34 +202,38 @@
   align-items: center;
   justify-content: space-between;
   border-block-start: 1px solid var(--color-cream-dark);
-  padding-block-start: 12px;
-  margin-block-start: 4px;
+  padding-block-start: var(--space-3);
+  margin-block-start: var(--space-1);
 }
 
 .reviewStore {
-  font-size: 11px;
+  font-size: var(--font-size-tiny);
   color: var(--color-text-secondary);
   background: var(--color-cream-dark);
-  padding: 3px 10px;
-  border-radius: 10px;
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-md);
 }
 
 .reviewActions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-2);
 }
 
 .actionBtn {
   width: 30px;
   height: 30px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s, color 0.15s;
+  transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+}
+
+.actionBtn:hover {
+  transform: scale(1.1);
 }
 
 .actionApprove {
@@ -202,7 +243,7 @@
 
 .actionApprove:hover {
   background: var(--color-green);
-  color: #fff;
+  color: var(--color-white);
 }
 
 .actionReject {
@@ -212,17 +253,17 @@
 
 .actionReject:hover {
   background: var(--color-orange);
-  color: #fff;
+  color: var(--color-white);
 }
 
 .actionDelete {
-  background: rgba(192, 57, 43, 0.1);
+  background: var(--color-red-bg);
   color: var(--color-red);
 }
 
 .actionDelete:hover {
   background: var(--color-red);
-  color: #fff;
+  color: var(--color-white);
 }
 
 .actionView {
@@ -232,5 +273,48 @@
 
 .actionView:hover {
   background: var(--color-blue);
-  color: #fff;
+  color: var(--color-white);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .statsRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: var(--space-4);
+  }
+
+  .reviewGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .filterBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: var(--space-3);
+    gap: var(--space-3);
+  }
+
+  .distCard {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .reviewCard {
+    padding: var(--space-3);
+  }
 }

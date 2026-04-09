@@ -10,7 +10,7 @@
 .heading {
   font-size: var(--font-size-md);
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--color-navy);
   margin-bottom: var(--space-4);
   margin-top: 0;
 }
@@ -27,7 +27,7 @@
   font-size: var(--font-size-sm);
   padding-bottom: var(--space-3);
   margin-bottom: var(--space-3);
-  border-bottom: 1px solid var(--color-ivory-dark);
+  border-bottom: 1px solid var(--color-cream-mid);
 }
 
 .itemRow:last-child {
@@ -35,7 +35,7 @@
 }
 
 .itemName {
-  color: var(--color-ink-soft);
+  color: var(--color-navy-light);
 }
 
 .itemQty {
@@ -43,7 +43,7 @@
 }
 
 .itemPrice {
-  color: var(--color-ink);
+  color: var(--color-navy);
   font-weight: 600;
   flex-shrink: 0;
   margin-inline-start: var(--space-4);
@@ -70,11 +70,11 @@
   justify-content: space-between;
   font-size: var(--font-size-sm);
   margin-bottom: var(--space-3);
-  color: var(--color-ink-soft);
+  color: var(--color-navy-light);
 }
 
 .discount {
-  color: var(--color-success);
+  color: var(--color-green);
 }
 
 .totalRow {
@@ -82,8 +82,8 @@
   justify-content: space-between;
   font-size: var(--font-size-xl);
   font-weight: 800;
-  color: var(--color-ink);
-  border-top: 2px solid var(--color-ivory-dark);
+  color: var(--color-navy);
+  border-top: 2px solid var(--color-cream-mid);
   padding-top: var(--space-4);
   margin-top: var(--space-3);
 }
