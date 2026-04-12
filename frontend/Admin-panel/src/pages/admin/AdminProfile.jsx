@@ -6,7 +6,6 @@ import {
   Bell,
   Monitor,
   LogOut,
-  Shield,
   Eye,
   EyeOff,
   Smartphone,
@@ -17,7 +16,7 @@ import Button from '../../components/ui/Button.jsx';
 import InputField from '../../components/ui/InputField.jsx';
 import DataTable from '../../components/ui/DataTable.jsx';
 import { useToast } from '../../components/ui/Toast.jsx';
-import { formatDate, relativeTime } from '../../utils/formatters.js';
+import { relativeTime } from '../../utils/formatters.js';
 import styles from './AdminProfile.module.css';
 
 const MOCK_DEVICES = [
@@ -65,8 +64,8 @@ function PasswordStrengthBar({ password }) {
   if (!password) return null;
 
   return (
-    <div className={styles.strengthWrapper}>
-      <div className={styles.strengthTrack}>
+    <div className={styles.strengthWrapper} aria-live="polite">
+      <div className={styles.strengthTrack} aria-hidden="true">
         {[1, 2, 3, 4].map((s) => (
           <div
             key={s}
@@ -84,12 +83,13 @@ function PasswordStrengthBar({ password }) {
   );
 }
 
-function ToggleSwitch({ checked, onChange }) {
+function ToggleSwitch({ checked, onChange, 'aria-label': ariaLabel }) {
   return (
     <button
       type="button"
       role="switch"
       aria-checked={checked}
+      aria-label={ariaLabel}
       onClick={() => onChange(!checked)}
       className={[styles.toggle, checked ? styles.toggleOn : ''].filter(Boolean).join(' ')}
     >
@@ -102,33 +102,33 @@ export default function AdminProfilePage() {
   const { showToast } = useToast();
 
   // Personal Info
-  const [personal, setPersonal] = useState({
+  const [personal, setPersonal] = useState(() => ({
     firstName: 'أحمد',
     lastName: 'المحمد',
     email: 'ahmed.almohammad@example.com',
     phone: '+963 11 123 4567',
-  });
+  }));
 
   // Password
-  const [passwords, setPasswords] = useState({
+  const [passwords, setPasswords] = useState(() => ({
     current: '',
     newPass: '',
     confirm: '',
-  });
+  }));
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
   // Notification Prefs
-  const [notifPrefs, setNotifPrefs] = useState({
+  const [notifPrefs, setNotifPrefs] = useState(() => ({
     email: true,
     site: true,
     push: false,
     dailySummary: true,
-  });
+  }));
 
   // Devices
-  const [devices, setDevices] = useState(MOCK_DEVICES);
+  const [devices, setDevices] = useState(() => MOCK_DEVICES);
 
   function savePersonal() {
     showToast({ message: 'تم حفظ المعلومات الشخصية بنجاح', type: 'success' });
@@ -213,7 +213,7 @@ export default function AdminProfilePage() {
   ];
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} page-enter`}>
       {/* Profile Header */}
       <div className={styles.profileHeader}>
         <div className={styles.avatarCircle}>
@@ -287,54 +287,54 @@ export default function AdminProfilePage() {
         </div>
         <div className={styles.cardBody}>
           <div className={styles.formGrid}>
-            <div className={styles.passwordField}>
-              <InputField
-                label="كلمة المرور الحالية"
-                type={showCurrent ? 'text' : 'password'}
-                value={passwords.current}
-                onChange={(e) => setPasswords((p) => ({ ...p, current: e.target.value }))}
-              />
-              <button
-                type="button"
-                className={styles.eyeBtn}
-                onClick={() => setShowCurrent((v) => !v)}
-                aria-label={showCurrent ? 'إخفاء' : 'إظهار'}
-              >
-                {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-            <div className={styles.passwordField}>
-              <InputField
-                label="كلمة المرور الجديدة"
-                type={showNew ? 'text' : 'password'}
-                value={passwords.newPass}
-                onChange={(e) => setPasswords((p) => ({ ...p, newPass: e.target.value }))}
-              />
-              <button
-                type="button"
-                className={styles.eyeBtn}
-                onClick={() => setShowNew((v) => !v)}
-                aria-label={showNew ? 'إخفاء' : 'إظهار'}
-              >
-                {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-            <div className={styles.passwordField}>
-              <InputField
-                label="تأكيد كلمة المرور"
-                type={showConfirm ? 'text' : 'password'}
-                value={passwords.confirm}
-                onChange={(e) => setPasswords((p) => ({ ...p, confirm: e.target.value }))}
-              />
-              <button
-                type="button"
-                className={styles.eyeBtn}
-                onClick={() => setShowConfirm((v) => !v)}
-                aria-label={showConfirm ? 'إخفاء' : 'إظهار'}
-              >
-                {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
+            <InputField
+              label="كلمة المرور الحالية"
+              type={showCurrent ? 'text' : 'password'}
+              value={passwords.current}
+              onChange={(e) => setPasswords((p) => ({ ...p, current: e.target.value }))}
+              suffix={
+                <button
+                  type="button"
+                  className={styles.eyeBtn}
+                  onClick={() => setShowCurrent((v) => !v)}
+                  aria-label={showCurrent ? 'إخفاء' : 'إظهار'}
+                >
+                  {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              }
+            />
+            <InputField
+              label="كلمة المرور الجديدة"
+              type={showNew ? 'text' : 'password'}
+              value={passwords.newPass}
+              onChange={(e) => setPasswords((p) => ({ ...p, newPass: e.target.value }))}
+              suffix={
+                <button
+                  type="button"
+                  className={styles.eyeBtn}
+                  onClick={() => setShowNew((v) => !v)}
+                  aria-label={showNew ? 'إخفاء' : 'إظهار'}
+                >
+                  {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              }
+            />
+            <InputField
+              label="تأكيد كلمة المرور"
+              type={showConfirm ? 'text' : 'password'}
+              value={passwords.confirm}
+              onChange={(e) => setPasswords((p) => ({ ...p, confirm: e.target.value }))}
+              suffix={
+                <button
+                  type="button"
+                  className={styles.eyeBtn}
+                  onClick={() => setShowConfirm((v) => !v)}
+                  aria-label={showConfirm ? 'إخفاء' : 'إظهار'}
+                >
+                  {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              }
+            />
           </div>
           <PasswordStrengthBar password={passwords.newPass} />
           <div className={styles.cardFooter}>
@@ -365,6 +365,7 @@ export default function AdminProfilePage() {
                 <span className={styles.prefLabel}>{pref.label}</span>
                 <ToggleSwitch
                   checked={notifPrefs[pref.key]}
+                  aria-label={pref.label}
                   onChange={(v) =>
                     setNotifPrefs((p) => ({ ...p, [pref.key]: v }))
                   }

@@ -125,9 +125,12 @@ export default function SiteSettingsPage() {
     <div className={styles.page}>
       <div className={styles.pageHeader}>
         <div className={styles.headerIcon}>
-          <Globe size={22} strokeWidth={1.8} />
+          <Globe size={35} strokeWidth={2} />
         </div>
+        <div>
         <h1 className={styles.pageTitle}>إعدادات الموقع</h1>
+            <p className={styles.pageSubtitle}> ضبط الإعدادات العامة للمنصة من معلومات وشعارات وسياسات التشغيل</p>
+            </div>
       </div>
 
       <div className={styles.card}>

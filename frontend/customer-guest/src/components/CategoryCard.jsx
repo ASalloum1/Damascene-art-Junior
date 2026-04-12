@@ -1,12 +1,18 @@
 import styles from './CategoryCard.module.css';
 
 export function CategoryCard({ name, icon: Icon, count, onClick }) {
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      onClick?.();
+    }
+  };
+
   return (
     <article
       className={styles.card}
       onClick={onClick}
       tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && onClick?.()}
+      onKeyDown={handleKeyDown}
       role="button"
       aria-label={name}
     >

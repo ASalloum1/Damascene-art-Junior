@@ -79,13 +79,14 @@
 
   /* ── Shadows ── */
   --shadow-card:     0 2px 12px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(200, 164, 90, 0.12);
   --shadow-dropdown: 0 4px 20px rgba(0, 0, 0, 0.12);
   --shadow-modal:    0 8px 32px rgba(0, 0, 0, 0.15);
 
   /* ── Layout ── */
-  --sidebar-width:           260px;
-  --sidebar-width-collapsed: 72px;
-  --topbar-height:           64px;
+  --sidebar-width:           252px;
+  --sidebar-width-collapsed: 65px;
+  --topbar-height:           60px;
 
   /* ── Transitions & Delays ── */
   --transition-fast: 150ms ease;
@@ -110,9 +111,11 @@
   /* ── Glow / Elevated Shadows ── */
   --glow-gold:          0 0 0 1px rgba(200, 164, 90, 0.25), 0 4px 16px rgba(200, 164, 90, 0.15);
   --glow-error:         0 0 0 2px rgba(192, 57, 43, 0.2), 0 0 8px rgba(192, 57, 43, 0.4);
-  --shadow-card-hover:  0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(200, 164, 90, 0.12);
   --shadow-elevated:    0 12px 40px rgba(0, 0, 0, 0.18), 0 4px 12px rgba(0, 0, 0, 0.10);
 
   /* ── Backdrop ── */
   --backdrop-blur: blur(12px);
+
+  /* ── Overlay ── */
+  --overlay-bg: rgba(26, 31, 58, 0.45);
 }

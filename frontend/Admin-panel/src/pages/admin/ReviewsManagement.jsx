@@ -10,7 +10,6 @@ import ConfirmModal from '../../components/ui/ConfirmModal.jsx';
 import EmptyState from '../../components/ui/EmptyState.jsx';
 import { useToast } from '../../components/ui/Toast.jsx';
 import { mockReviews } from '../../data/mockData.js';
-import { reviewStatusMap } from '../../constants/statusMaps.js';
 import { formatDate } from '../../utils/formatters.js';
 import styles from './ReviewsManagement.module.css';
 
@@ -62,7 +61,7 @@ function getStatusVariant(status) {
 
 export default function ReviewsManagementPage() {
   const { showToast } = useToast();
-  const [reviews, setReviews] = useState(mockReviews);
+  const [reviews, setReviews] = useState(() => mockReviews);
   const [search, setSearch] = useState('');
   const [storeFilter, setStoreFilter] = useState('');
   const [ratingFilter, setRatingFilter] = useState('');
@@ -125,12 +124,15 @@ export default function ReviewsManagementPage() {
   ];
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} page-enter`}>
       <div className={styles.pageHeader}>
         <div className={styles.headerIcon}>
-          <Star size={22} strokeWidth={1.8} />
+          <Star size={35} strokeWidth={2} />
         </div>
+        <div>
         <h1 className={styles.pageTitle}>إدارة التقييمات</h1>
+          <p className={styles.pageSubtitle}>متابعة حالات الطلبات ومعالجتها من الاستلام حتى التسليم</p>
+          </div>
       </div>
 
       {/* Stats Row */}
@@ -247,6 +249,7 @@ export default function ReviewsManagementPage() {
                       className={[styles.actionBtn, styles.actionApprove].join(' ')}
                       onClick={() => approveReview(review.id)}
                       title="نشر التقييم"
+                      aria-label="نشر التقييم"
                     >
                       <Check size={15} strokeWidth={2} />
                     </button>
@@ -257,6 +260,7 @@ export default function ReviewsManagementPage() {
                       className={[styles.actionBtn, styles.actionReject].join(' ')}
                       onClick={() => rejectReview(review.id)}
                       title="رفض التقييم"
+                      aria-label="رفض التقييم"
                     >
                       <X size={15} strokeWidth={2} />
                     </button>
@@ -266,6 +270,7 @@ export default function ReviewsManagementPage() {
                     className={[styles.actionBtn, styles.actionDelete].join(' ')}
                     onClick={() => setDeleteTarget(review.id)}
                     title="حذف التقييم"
+                    aria-label="حذف التقييم"
                   >
                     <Trash2 size={15} strokeWidth={1.8} />
                   </button>
@@ -273,6 +278,7 @@ export default function ReviewsManagementPage() {
                     type="button"
                     className={[styles.actionBtn, styles.actionView].join(' ')}
                     title="عرض المنتج"
+                    aria-label="عرض المنتج"
                   >
                     <ExternalLink size={15} strokeWidth={1.8} />
                   </button>

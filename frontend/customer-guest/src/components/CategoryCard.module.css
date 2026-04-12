@@ -13,8 +13,9 @@
 }
 
 .card:hover {
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-4px);
+  border-color: var(--color-gold);
 }
 
 .card:focus-visible {

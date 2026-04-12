@@ -4,6 +4,7 @@ import { Button } from '../components/Button.jsx';
 import { ProductCard } from '../components/ProductCard.jsx';
 import { CategoryCard } from '../components/CategoryCard.jsx';
 import { TestimonialCard } from '../components/TestimonialCard.jsx';
+import { Ornament } from '../components/Ornament.jsx';
 import { products, categories, testimonials } from '../data/index.js';
 import styles from './HomePage.module.css';
 
@@ -21,6 +22,7 @@ export function HomePage({ onNavigate }) {
     <div>
       {/* ── 1. Hero ── */}
       <section className={styles.hero}>
+        <Ornament />
         <div className={styles.heroContent}>
           <div className={styles.heroOrnament}>
             <Diamond size={10} />
@@ -93,6 +95,7 @@ export function HomePage({ onNavigate }) {
 
       {/* ── 4. Story ── */}
       <section className={styles.story}>
+        <Ornament />
         <div className={styles.storyContent}>
           <SectionHeader
             title="سيمفونية الإبداع الدمشقي"

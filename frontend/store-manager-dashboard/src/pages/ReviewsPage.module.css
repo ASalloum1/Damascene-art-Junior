@@ -57,12 +57,12 @@
   color: var(--color-wood-mid);
   font-size: var(--font-size-lg);
   letter-spacing: 2px;
-  text-shadow: 0 1px 4px rgba(200, 164, 90, 0.35);
+  text-shadow: 0 1px 4px var(--color-gold-alpha-35);
   transition: text-shadow var(--transition-fast);
 }
 
 .reviewCard:hover .stars {
-  text-shadow: 0 0 10px rgba(200, 164, 90, 0.6);
+  text-shadow: 0 0 10px var(--color-gold-alpha-70);
 }
 
 /* ─── Review Text ────────────────────────────────────────────── */
@@ -103,7 +103,7 @@
     transform var(--transition-fast);
 }
 .btnApprove > button:hover:not(:disabled) {
-  box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.25), 0 4px 16px rgba(39, 174, 96, 0.20);
+  box-shadow: 0 0 0 3px var(--color-success-alpha-25), 0 4px 16px var(--color-success-bg);
   transform: translateY(-1px);
 }
 
@@ -113,7 +113,7 @@
     transform var(--transition-fast);
 }
 .btnReject > button:hover:not(:disabled) {
-  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.25), 0 4px 16px rgba(192, 57, 43, 0.20);
+  box-shadow: 0 0 0 3px var(--color-error-alpha-25), 0 4px 16px var(--color-error-alpha-20);
   transform: translateY(-1px);
 }
 

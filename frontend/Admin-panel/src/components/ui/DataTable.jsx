@@ -36,7 +36,7 @@ export default function DataTable({
   const selectedSet = new Set(selected);
 
   const allPageSelected =
-    rows.length > 0 && rows.every((r) => selectedSet.has(r.id));
+    rows.length > 0 ? rows.every((r) => selectedSet.has(r.id)) : false;
   const someSelected = rows.some((r) => selectedSet.has(r.id));
 
   function handleSelectAll(e) {
@@ -89,7 +89,9 @@ export default function DataTable({
                     className={styles.checkbox}
                     checked={allPageSelected}
                     ref={(el) => {
-                      if (el) el.indeterminate = someSelected && !allPageSelected;
+                      if (el) {
+                        el.indeterminate = someSelected ? !allPageSelected : false;
+                      }
                     }}
                     onChange={handleSelectAll}
                     aria-label="تحديد الكل"
@@ -130,13 +132,13 @@ export default function DataTable({
                 <tr key={i} className={styles.tr}>
                   {selectable ? (
                     <td className={styles.td}>
-                      <div className={`${styles.skeletonCell} skeleton`} style={{ width: '16px', height: '16px' }} />
+                      <div className={`${styles.skeletonCell} skeleton-shimmer`} style={{ width: '16px', height: '16px' }} />
                     </td>
                   ) : null}
                   {headers.map((col) => (
                     <td key={col.key} className={styles.td}>
                       <div
-                        className={`${styles.skeletonCell} skeleton`}
+                        className={`${styles.skeletonCell} skeleton-shimmer`}
                         style={{ width: `${60 + ((i * 17 + headers.indexOf(col) * 31) % 40)}%` }}
                       />
                     </td>

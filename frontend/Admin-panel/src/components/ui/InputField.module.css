@@ -34,7 +34,27 @@
 .input:focus {
   outline: none;
   border-color: var(--color-gold);
-  box-shadow: 0 0 0 3px rgba(200, 164, 90, 0.15);
+  box-shadow: var(--glow-gold);
+}
+
+.inputWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.hasSuffix {
+  padding-inline-end: var(--space-10) !important;
+}
+
+.suffix {
+  position: absolute;
+  inset-inline-end: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  color: var(--color-text-secondary);
+  z-index: 2;
 }
 
 .input:disabled {
@@ -55,7 +75,7 @@
 
 .inputError:focus {
   border-color: var(--color-red);
-  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12);
+  box-shadow: var(--glow-error);
 }
 
 @keyframes shake {

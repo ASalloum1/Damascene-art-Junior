@@ -25,15 +25,18 @@ export function AccountPage({ onNavigate }) {
 
       {/* ── Stat grid ── */}
       <div className={styles.statGrid}>
-        {stats.map(({ icon: Icon, label, value }) => (
-          <div key={label} className={styles.statCard}>
-            <div className={styles.statIcon}>
-              <Icon size={28} />
+        {stats.map((stat) => {
+          const StatIcon = stat.icon;
+          return (
+            <div key={stat.label} className={styles.statCard}>
+              <div className={styles.statIcon}>
+                <StatIcon size={28} />
+              </div>
+              <p className={styles.statLabel}>{stat.label}</p>
+              <p className={stat.statValue}>{stat.value}</p>
             </div>
-            <p className={styles.statLabel}>{label}</p>
-            <p className={styles.statValue}>{value}</p>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* ── Orders card ── */}

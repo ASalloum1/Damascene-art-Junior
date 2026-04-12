@@ -15,7 +15,7 @@
 
 .btn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px var(--color-gold-bg);
+  box-shadow: var(--glow-gold);
 }
 
 .btn:disabled {
@@ -27,7 +27,7 @@
 /* Variants */
 .primary {
   background-color: var(--color-gold);
-  color: var(--color-cream-dark);
+  color: var(--color-navy);
   border: 2px solid transparent;
 }
 .primary:hover:not(:disabled) {
@@ -40,7 +40,7 @@
   border: 2px solid var(--color-gold);
 }
 .outline:hover:not(:disabled) {
-  background-color: var(--color-cream-dark);
+  background-color: var(--color-gold-alpha-08);
 }
 
 .ghost {
@@ -53,12 +53,13 @@
 }
 
 .danger {
-  background-color: var(--color-red-bg);
-  color: var(--color-red);
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
   border: 2px solid transparent;
 }
 .danger:hover:not(:disabled) {
-  background-color: var(--color-red-bg);
+  background-color: var(--color-error-bg);
+  opacity: 0.8;
 }
 
 /* Sizes */

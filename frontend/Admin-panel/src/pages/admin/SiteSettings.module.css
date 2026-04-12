@@ -12,8 +12,8 @@
 }
 
 .headerIcon {
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   border-radius: var(--radius-md);
   background-color: var(--color-blue-bg);
   color: var(--color-blue);
@@ -21,22 +21,34 @@
   align-items: center;
   justify-content: center;
 }
-
+.pageHeader:hover .pageTitle::after{
+  width: 155px;
+}
 .pageTitle {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-black);
   color: var(--color-navy);
   margin: 0;
+  margin-block-end: var(--space-1);
+  position: relative;
+}
+
+.pageSubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  max-width: 500px;
 }
 
 .pageTitle::after {
   content: '';
   display: block;
-  width: 40px;
-  height: 3px;
-  background: var(--color-gold);
+  width: 55px;
+  height: 4px;
+  background: var(--gradient-gold);
   border-radius: var(--radius-full);
-  margin-block-start: var(--space-2);
+  margin-block-start: var(--space-1);
+  margin-block-end: var(--space-1);
+  transition: width var(--transition-base);
 }
 
 /* Section cards — subtle different bg tints */
@@ -45,17 +57,19 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   overflow: hidden;
-  transition: box-shadow var(--transition-base);
+  border-block-start: 3px solid transparent;
+  transition: box-shadow var(--transition-base), transform var(--transition-base), border-color var(--transition-base);
 }
 
 .card:hover {
+  transform: translateY(-3px);
   box-shadow: var(--shadow-card-hover);
+  border-block-start-color: var(--color-gold);
 }
 
 .tabsRow {
   padding: 0 var(--space-6);
   border-block-end: 1px solid var(--color-cream-dark);
-  overflow-x: auto;
 }
 
 .sectionBody {

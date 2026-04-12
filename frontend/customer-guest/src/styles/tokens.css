@@ -13,6 +13,7 @@
   --color-navy:        #1A1F3A;
   --color-navy-light:  #252B4A;
   --color-navy-mid:    #2D3460;
+  --color-navy-deep:   #111528;
 
   --color-cream:       #FFF8F0;
   --color-cream-dark:  #F5EDE0;
@@ -50,6 +51,19 @@
   --color-error-bg:    #C0392B22;
   --color-info:        #2980B9;
   --color-info-bg:     #2980B922;
+
+  /* ── Alpha colors (Transparency via color-mix) ── */
+  --color-gold-alpha-04: color-mix(in srgb, var(--color-gold), transparent 96%);
+  --color-gold-alpha-08: color-mix(in srgb, var(--color-gold), transparent 92%);
+  --color-gold-alpha-10: color-mix(in srgb, var(--color-gold), transparent 90%);
+  --color-gold-alpha-12: color-mix(in srgb, var(--color-gold), transparent 88%);
+  --color-gold-alpha-15: color-mix(in srgb, var(--color-gold), transparent 85%);
+  --color-gold-alpha-25: color-mix(in srgb, var(--color-gold), transparent 75%);
+  --color-white-alpha-15: color-mix(in srgb, var(--color-white), transparent 85%);
+  --color-white-alpha-85: color-mix(in srgb, var(--color-white), transparent 15%);
+  --color-navy-alpha-60: color-mix(in srgb, var(--color-navy), transparent 40%);
+  --color-black-alpha-15: color-mix(in srgb, #000000, transparent 85%);
+  --color-black-alpha-40: color-mix(in srgb, #000000, transparent 60%);
 
   /* Typography */
   --font-arabic: 'Tajawal', 'Noto Sans Arabic', system-ui, sans-serif;
@@ -109,10 +123,12 @@
   --content-tight: 680px;
 
   /* Glass */
-  --glass-bg: rgba(255, 255, 255, 0.82);
-  --glass-border: rgba(200, 164, 90, 0.12);
+  --glass-bg:     var(--color-white-alpha-85);
+  --glass-border: var(--color-gold-alpha-15);
   --backdrop-blur: blur(12px);
 
-  /* Glow */
-  --glow-error: 0 0 0 2px rgba(192, 57, 43, 0.2), 0 0 8px rgba(192, 57, 43, 0.4);
+  /* Glow / Elevated Shadows */
+  --glow-gold:          0 0 0 1px var(--color-gold-alpha-25), 0 4px 16px rgba(200, 164, 90, 0.15);
+  --glow-error:         0 0 0 2px rgba(192, 57, 43, 0.2), 0 0 8px rgba(192, 57, 43, 0.4);
+  --shadow-card-hover:  0 8px 32px var(--color-black-alpha-15), 0 2px 8px var(--color-gold-alpha-12);
 }

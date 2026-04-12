@@ -5,27 +5,39 @@
 }
 
 .pageTitle {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-black);
   color: var(--color-navy);
   margin: 0;
+  margin-block-end: var(--space-1);
+  position: relative;
+}
+.pageSubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  max-width: 500px;
+}
+.pageTitle:hover::after{
+  width: 155px;
 }
 
 .pageTitle::after {
   content: '';
   display: block;
-  width: 40px;
-  height: 3px;
-  background: var(--color-gold);
+  width: 55px;
+  height: 4px;
+  background: var(--gradient-gold);
   border-radius: var(--radius-full);
-  margin-block-start: var(--space-2);
+  margin-block-start: var(--space-1);
+  transition: width var(--transition-base);
 }
 
 /* Stats Row — staggered entrance */
 .statsRow {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-4);
+  gap: var(--space-5);
+  margin-block-end: var(--space-4);
 }
 
 .statsRow > * {
@@ -37,22 +49,24 @@
 .statsRow > *:nth-child(3) { animation-delay: 0.12s; }
 .statsRow > *:nth-child(4) { animation-delay: 0.18s; }
 
-/* Chart card — gold gradient top border */
+/* Chart card — gold gradient top border & glass morphism */
 .card {
-  background: var(--color-white);
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
   border-radius: var(--radius-lg);
   padding: var(--space-5);
   box-shadow: var(--shadow-card);
-  border: 1px solid var(--color-cream-dark);
-  border-block-start: 2px solid transparent;
-  border-image: var(--gradient-gold) 1;
-  border-image-slice: 1 0 0 0;
-  transition: box-shadow var(--transition-base), transform var(--transition-base);
+  position: relative;
+  border-block-start: 3px solid transparent;
+  transition: box-shadow var(--transition-base), transform var(--transition-base), border-color var(--transition-base);
+  overflow: hidden; /* Ensure content stays inside */
 }
 
 .card:hover {
+  transform: translateY(-3px);
   box-shadow: var(--shadow-card-hover);
-  transform: translateY(-2px);
+  border-block-start-color: var(--color-gold);
 }
 
 /* Table Section */
@@ -60,6 +74,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  margin-block-start: var(--space-2);
 }
 
 .tableHeader {
@@ -67,55 +82,73 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
 
 .tableTitle {
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
   color: var(--color-navy);
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.tableTitle::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  background: var(--color-gold);
+  border-radius: var(--radius-full);
 }
 
 .exportBtns {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
 .exportBtn {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: 7px var(--space-3);
+  padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-md);
-  border: 1px solid var(--color-cream-dark);
+  border: 1px solid var(--color-gold-bg);
   background: var(--color-white);
-  color: var(--color-text-secondary);
+  color: var(--color-navy);
   font-size: var(--font-size-sm);
-  font-family: 'Tajawal', sans-serif;
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-arabic);
   cursor: pointer;
-  transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-card);
 }
 
 .exportBtn:hover {
   background: var(--color-cream);
-  color: var(--color-navy);
-  box-shadow: var(--shadow-card);
+  color: var(--color-gold-dark);
+  box-shadow: var(--glow-gold);
+  border-color: var(--color-gold);
 }
 
-/* Transaction table — gold top accent */
+/* Transaction table — glass effect and gold top accent */
 .tableCard {
   background: var(--color-white);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
-  border: 1px solid var(--color-cream-dark);
-  border-block-start: 2px solid var(--color-gold);
   overflow: hidden;
-  transition: box-shadow var(--transition-base);
+  border: 1px solid var(--glass-border);
+  border-block-start: 3px solid transparent;
+  transition: box-shadow var(--transition-base), transform var(--transition-base), border-color var(--transition-base);
+  position: relative;
+  z-index: 1; /* Ensure shadow doesn't clip if needed */
 }
 
 .tableCard:hover {
+  transform: translateY(-3px);
   box-shadow: var(--shadow-card-hover);
+  border-block-start-color: var(--color-gold);
 }
 
 /* Amount Colors */

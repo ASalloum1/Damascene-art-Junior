@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   UserPlus,
   Users,
@@ -10,6 +10,8 @@ import {
   KeyRound,
   UserX,
   Trash2,
+  CheckCircle,
+  XCircle,
 } from 'lucide-react';
 import StatCard from '../../components/ui/StatCard.jsx';
 import DataTable from '../../components/ui/DataTable.jsx';
@@ -38,20 +40,21 @@ const STATUS_VARIANT = {
 };
 
 const PAGE_SIZE = 10;
-const EMPTY_SELECTION = [];
-const NOOP = () => {};
 
 export default function UserManagementPage() {
   const { showToast } = useToast();
 
   // Filter state
-  const [search, setSearch]     = useState('');
-  const [roleFilter, setRole]   = useState('');
+  const [search, setSearch]       = useState('');
+  const [roleFilter, setRole]     = useState('');
   const [statusFilter, setStatus] = useState('');
 
   // Pagination
   const [page, setPage]           = useState(1);
   const [pageSize, setPageSize]   = useState(PAGE_SIZE);
+
+  // Selection state
+  const [selectedIds, setSelectedIds] = useState([]);
 
   // Modal state
   const [addOpen, setAddOpen]         = useState(false);
@@ -59,7 +62,7 @@ export default function UserManagementPage() {
   const [targetUser, setTargetUser]   = useState(null);
 
   // Add User form state
-  const [form, setForm] = useState({
+  const [form, setForm] = useState(() => ({
     firstName: '',
     lastName: '',
     email: '',
@@ -67,55 +70,70 @@ export default function UserManagementPage() {
     role: '',
     store: '',
     status: 'نشط',
-  });
+  }));
 
   // Computed stats
-  const totalUsers    = mockUsers.length;
-  const adminCount    = mockUsers.filter((u) => u.role === 'أدمن').length;
-  const managerCount  = mockUsers.filter((u) => u.role === 'مدير متجر').length;
-  const customerCount = mockUsers.filter((u) => u.role === 'عميل').length;
+  const stats = useMemo(() => ({
+    total: mockUsers.length,
+    admins: mockUsers.filter((u) => u.role === 'أدمن').length,
+    managers: mockUsers.filter((u) => u.role === 'مدير متجر').length,
+    customers: mockUsers.filter((u) => u.role === 'عميل').length,
+  }), []);
 
   // Filtered rows
-  const filtered = useMemo(() => {
+  const filteredRows = useMemo(() => {
     return mockUsers.filter((u) => {
       const fullName = `${u.firstName} ${u.lastName}`.toLowerCase();
+      const s = search.toLowerCase();
       const matchSearch =
         !search ||
-        fullName.includes(search.toLowerCase()) ||
-        u.email.toLowerCase().includes(search.toLowerCase());
+        fullName.includes(s) ||
+        u.email.toLowerCase().includes(s);
       const matchRole   = !roleFilter   || u.role   === roleFilter;
       const matchStatus = !statusFilter || u.status === statusFilter;
       return matchSearch && matchRole && matchStatus;
     });
   }, [search, roleFilter, statusFilter]);
 
-  const pagedRows = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const pagedRows = useMemo(() => 
+    filteredRows.slice((page - 1) * pageSize, page * pageSize),
+    [filteredRows, page, pageSize]
+  );
 
-  function resetFilters() {
+  const resetFilters = useCallback(() => {
     setSearch('');
     setRole('');
     setStatus('');
     setPage(1);
-  }
+    setSelectedIds([]);
+  }, []);
 
-  function handleAddUser() {
+  const handleAddUser = () => {
     setAddOpen(false);
     showToast({ message: 'تم إضافة المستخدم بنجاح', type: 'success' });
     setForm({ firstName: '', lastName: '', email: '', password: '', role: '', store: '', status: 'نشط' });
-  }
+  };
 
-  function openDeleteConfirm(user) {
+  const openDeleteConfirm = (user) => {
     setTargetUser(user);
     setConfirmOpen(true);
-  }
+  };
 
-  function handleDelete() {
+  const handleDelete = () => {
     setConfirmOpen(false);
     showToast({ message: `تم حذف المستخدم ${targetUser?.firstName} ${targetUser?.lastName}`, type: 'success' });
     setTargetUser(null);
-  }
+  };
 
-  const headers = [
+  const handleBulkAction = (action) => {
+    showToast({ 
+      message: `تم تنفيذ إجراء (${action}) على ${toArabicNum(selectedIds.length)} مستخدمين`, 
+      type: 'info' 
+    });
+    setSelectedIds([]);
+  };
+
+  const headers = useMemo(() => [
     {
       key: 'user',
       label: 'المستخدم',
@@ -137,7 +155,7 @@ export default function UserManagementPage() {
     {
       key: 'store',
       label: 'المتجر',
-      render: (val) => val || '—',
+      render: (val) => val ? val : '—',
     },
     {
       key: 'status',
@@ -163,21 +181,28 @@ export default function UserManagementPage() {
             { label: 'عرض', icon: Eye, onClick: () => showToast({ message: `عرض ${row.firstName}`, type: 'info' }) },
             { label: 'تعديل', icon: Pencil, onClick: () => showToast({ message: 'تعديل المستخدم', type: 'info' }) },
             { label: 'إعادة تعيين كلمة المرور', icon: KeyRound, onClick: () => showToast({ message: 'تم إرسال رابط إعادة التعيين', type: 'success' }) },
-            { label: row.status === 'نشط' ? 'تعطيل' : 'تفعيل', icon: UserX, onClick: () => showToast({ message: `تم ${row.status === 'نشط' ? 'تعطيل' : 'تفعيل'} المستخدم`, type: 'warning' }) },
+            { 
+              label: row.status === 'نشط' ? 'تعطيل' : 'تفعيل', 
+              icon: row.status === 'نشط' ? UserX : CheckCircle, 
+              onClick: () => showToast({ message: `تم ${row.status === 'نشط' ? 'تعطيل' : 'تفعيل'} المستخدم`, type: 'warning' }) 
+            },
             { label: 'حذف', icon: Trash2, danger: true, onClick: () => openDeleteConfirm(row) },
           ]}
         />
       ),
     },
-  ];
+  ], [showToast]);
 
-  const storeOptions = mockStores.map((s) => ({ value: s.name, label: s.name }));
+  const storeOptions = useMemo(() => mockStores.map((s) => ({ value: s.name, label: s.name })), []);
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} page-enter`}>
       {/* Header */}
       <div className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>إدارة المستخدمين</h1>
+        <div className={styles.headerTitle}>
+          <h1 className={styles.pageTitle}>إدارة المستخدمين</h1>
+          <p className={styles.pageSubtitle}>إدارة الصلاحيات، الأدوار، وحالات حسابات المستخدمين والمدراء.</p>
+        </div>
         <Button icon={UserPlus} onClick={() => setAddOpen(true)}>
           إضافة مستخدم جديد
         </Button>
@@ -185,10 +210,10 @@ export default function UserManagementPage() {
 
       {/* Stats */}
       <div className={styles.statsRow}>
-        <StatCard icon={Users}      label="إجمالي المستخدمين" value={toArabicNum(totalUsers)}    color="blue" />
-        <StatCard icon={Shield}     label="مشرفين (Admin)"    value={toArabicNum(adminCount)}     color="red" />
-        <StatCard icon={Store}      label="مدراء متاجر"       value={toArabicNum(managerCount)}   color="gold" />
-        <StatCard icon={ShoppingBag} label="عملاء"            value={toArabicNum(customerCount)}  color="green" />
+        <StatCard icon={Users}      label="إجمالي المستخدمين" value={toArabicNum(stats.total)}     color="blue" />
+        <StatCard icon={Shield}     label="مشرفين (Admin)"    value={toArabicNum(stats.admins)}    color="red" />
+        <StatCard icon={Store}      label="مدراء متاجر"       value={toArabicNum(stats.managers)}  color="gold" />
+        <StatCard icon={ShoppingBag} label="عملاء"            value={toArabicNum(stats.customers)} color="green" />
       </div>
 
       {/* Filter Bar */}
@@ -205,7 +230,7 @@ export default function UserManagementPage() {
             label: 'الدور',
             placeholder: 'الكل',
             value: roleFilter,
-            onChange: setRole,
+            onChange: (v) => { setRole(v); setPage(1); },
             options: [
               { value: 'أدمن', label: 'أدمن' },
               { value: 'مدير متجر', label: 'مدير متجر' },
@@ -217,7 +242,7 @@ export default function UserManagementPage() {
             label: 'الحالة',
             placeholder: 'الكل',
             value: statusFilter,
-            onChange: setStatus,
+            onChange: (v) => { setStatus(v); setPage(1); },
             options: [
               { value: 'نشط', label: 'نشط' },
               { value: 'معطّل', label: 'معطّل' },
@@ -228,18 +253,35 @@ export default function UserManagementPage() {
         activeCount={[search, roleFilter, statusFilter].filter(Boolean).length}
       />
 
+      {/* Bulk Actions Bar */}
+      {selectedIds.length > 0 ? (
+        <div className={`${styles.bulkActions} slideInDown`}>
+          <div className={styles.bulkInfo}>
+            <span className={styles.bulkCount}>{toArabicNum(selectedIds.length)}</span>
+            <span>مستخدمين مختارين</span>
+          </div>
+          <div className={styles.bulkButtons}>
+            <Button variant="ghost" size="sm" icon={CheckCircle} onClick={() => handleBulkAction('تفعيل')}>تفعيل</Button>
+            <Button variant="ghost" size="sm" icon={XCircle} onClick={() => handleBulkAction('تعطيل')}>تعطيل</Button>
+            <Button variant="ghost" size="sm" icon={Trash2} danger onClick={() => handleBulkAction('حذف')}>حذف</Button>
+            <div className={styles.bulkDivider} />
+            <Button variant="ghost" size="sm" onClick={() => setSelectedIds([])}>إلغاء التحديد</Button>
+          </div>
+        </div>
+      ) : null}
+
       {/* Table */}
       <div className={styles.tableCard}>
         <DataTable
           headers={headers}
           rows={pagedRows}
           selectable
-          selected={EMPTY_SELECTION}
-          onSelectChange={NOOP}
+          selected={selectedIds}
+          onSelectChange={setSelectedIds}
           pagination={{
             page,
             pageSize,
-            total: filtered.length,
+            total: filteredRows.length,
             onPageChange: setPage,
             onPageSizeChange: (s) => { setPageSize(s); setPage(1); },
           }}
@@ -305,15 +347,15 @@ export default function UserManagementPage() {
               { value: 'عميل', label: 'عميل' },
             ]}
           />
-            {form.role === 'مدير متجر' ? (
-              <SelectField
-                label="المتجر"
-                placeholder="اختر المتجر"
-                value={form.store}
-                onChange={(e) => setForm((f) => ({ ...f, store: e.target.value }))}
-                options={storeOptions}
-              />
-            ) : null}
+          {form.role === 'مدير متجر' ? (
+            <SelectField
+              label="المتجر"
+              placeholder="اختر المتجر"
+              value={form.store}
+              onChange={(e) => setForm((f) => ({ ...f, store: e.target.value }))}
+              options={storeOptions}
+            />
+          ) : null}
           <SelectField
             label="الحالة"
             value={form.status}
@@ -339,3 +381,4 @@ export default function UserManagementPage() {
     </div>
   );
 }
+

@@ -1,6 +1,6 @@
 import styles from './SectionTitle.module.css';
 import ActionBtn from './ActionBtn';
-import { Plus } from 'lucide-react';
+import { Icon } from './SvgIcons';
 
 /**
  * SectionTitle — page heading with optional primary action
@@ -14,7 +14,7 @@ export function SectionTitle({ title, action, onAction }) {
           text={action}
           variant="primary"
           onClick={onAction}
-          icon={<Plus size={14} />}
+          icon={<Icon name="plus" size={14} />}
         />
       ) : null}
     </div>

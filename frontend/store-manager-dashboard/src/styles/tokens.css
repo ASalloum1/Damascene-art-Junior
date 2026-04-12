@@ -65,6 +65,7 @@
   --color-info-bg:     var(--color-blue-bg);
 
   /* ─── Sidebar ────────────────────────────────────────────────── */
+  --color-navy-deepest: #111528;
   --sidebar-bg:        var(--color-navy);
   --sidebar-active-bg: var(--color-navy-light);
   --sidebar-text:      var(--color-stone-light);
@@ -82,6 +83,7 @@
   --font-size-xl:      18px;
   --font-size-2xl:     22px;
   --font-size-3xl:     28px;
+  --font-size-4xl:     36px;
 
   /* ─── Spacing ────────────────────────────────────────────────── */
   --space-1:   4px;
@@ -118,39 +120,54 @@
   --delay-5: 500ms;
 
   /* ── Gradients ── */
-  --gradient-sidebar:      linear-gradient(180deg, var(--color-navy) 0%, #111528 100%);
+  --gradient-sidebar:      linear-gradient(180deg, var(--color-navy) 0%, var(--color-navy-deepest) 100%);
   --gradient-gold:         linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-light) 40%, var(--color-gold) 60%, var(--color-gold-dark) 100%);
-  --gradient-gold-subtle:  linear-gradient(135deg, rgba(200,164,90,0.04) 0%, rgba(232,213,163,0.08) 50%, rgba(200,164,90,0.04) 100%);
+  --gradient-gold-subtle:  linear-gradient(135deg, var(--color-gold-alpha-04) 0%, var(--color-gold-alpha-08) 50%, var(--color-gold-alpha-04) 100%);
 
   /* ── Alpha colors (Transparency) ── */
   --color-gold-alpha-04: rgba(200, 164, 90, 0.04);
+  --color-gold-alpha-05: rgba(200, 164, 90, 0.05);
+  --color-gold-alpha-06: rgba(200, 164, 90, 0.06);
   --color-gold-alpha-08: rgba(200, 164, 90, 0.08);
   --color-gold-alpha-10: rgba(200, 164, 90, 0.10);
   --color-gold-alpha-12: rgba(200, 164, 90, 0.12);
   --color-gold-alpha-15: rgba(200, 164, 90, 0.15);
   --color-gold-alpha-18: rgba(200, 164, 90, 0.18);
+  --color-gold-alpha-20: rgba(200, 164, 90, 0.20);
   --color-gold-alpha-25: rgba(200, 164, 90, 0.25);
   --color-gold-alpha-30: rgba(200, 164, 90, 0.30);
+  --color-gold-alpha-32: rgba(200, 164, 90, 0.32);
   --color-gold-alpha-35: rgba(200, 164, 90, 0.35);
+  --color-gold-alpha-40: rgba(200, 164, 90, 0.40);
+  --color-gold-alpha-45: rgba(200, 164, 90, 0.45);
   --color-gold-alpha-70: rgba(200, 164, 90, 0.70);
   --color-white-alpha-03: rgba(255, 255, 255, 0.03);
   --color-white-alpha-07: rgba(255, 255, 255, 0.07);
   --color-white-alpha-15: rgba(255, 255, 255, 0.15);
   --color-white-alpha-25: rgba(255, 255, 255, 0.25);
+  --color-white-alpha-30: rgba(255, 255, 255, 0.30);
+  --color-white-alpha-35: rgba(255, 255, 255, 0.35);
   --color-white-alpha-65: rgba(255, 255, 255, 0.65);
   --color-white-alpha-70: rgba(255, 255, 255, 0.70);
   --color-white-alpha-85: rgba(255, 255, 255, 0.85);
+  --color-navy-alpha-12: rgba(26, 31, 58, 0.12);
   --color-navy-alpha-60: rgba(26, 31, 58, 0.60);
   --color-black-alpha-15: rgba(0, 0, 0, 0.15);
   --color-black-alpha-40: rgba(0, 0, 0, 0.40);
+
+  /* ── Semantic Alpha Colors ── */
+  --color-success-alpha-25: rgba(39, 174, 96, 0.25);
+  --color-error-alpha-20:  rgba(192, 57, 43, 0.20);
+  --color-error-alpha-25:  rgba(192, 57, 43, 0.25);
+  --color-error-alpha-40:  rgba(192, 57, 43, 0.40);
 
   /* ── Glass ── */
   --glass-bg:     var(--color-white-alpha-85);
   --glass-border: var(--color-gold-alpha-15);
 
-  /* ── Glow / Elevated Shadows ── */
-  --glow-gold:          0 0 0 1px var(--color-gold-alpha-25), 0 4px 16px rgba(200,164,90,0.15);
-  --glow-error:         0 0 0 2px rgba(192, 57, 43, 0.2), 0 0 8px rgba(192, 57, 43, 0.4);
+  /* ── Glow / Elevated Shadows (Synced with Admin Panel) ── */
+  --glow-gold:          0 0 0 1px var(--color-gold-alpha-25), 0 4px 16px var(--color-gold-alpha-15);
+  --glow-error:         0 0 0 2px var(--color-error-alpha-20), 0 0 8px var(--color-error-alpha-40);
   --shadow-card-hover:  0 8px 32px rgba(0,0,0,0.12), 0 2px 8px var(--color-gold-alpha-12);
   --shadow-elevated:    0 12px 40px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.10);
 
@@ -158,9 +175,9 @@
   --backdrop-blur: blur(12px);
 
   /* ── Text Colors (Synchronized with Admin Panel) ── */
-  --color-text-primary:   #2C2C2C;
-  --color-text-secondary: #7A7A7A;
-  --color-text-on-navy:   #FFFFFF;
-  --color-text-on-gold:   #1A1F3A;
+  --color-text-primary:   var(--color-stone-dark);
+  --color-text-secondary: var(--color-stone-mid);
+  --color-text-on-navy:   var(--color-white);
+  --color-text-on-gold:   var(--color-navy);
 }
 

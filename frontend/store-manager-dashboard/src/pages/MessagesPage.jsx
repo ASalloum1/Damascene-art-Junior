@@ -38,45 +38,47 @@ export function MessagesPage() {
   return (
     <div className={`${styles.page} page-enter`}>
       <SectionTitle title="الرسائل وطلبات التواصل" />
-      <PageCard>
-        {messages.map((m, i) => {
-          const rowClass = [
-            styles.messageRow,
-            messageStyles.messageRow,
-            !m.read ? styles.unread : '',
-            !m.read ? messageStyles.messageRowUnread : '',
-          ].filter(Boolean).join(' ');
+      <div className="stagger-1">
+        <PageCard>
+          {messages.map((m, i) => {
+            const rowClass = [
+              styles.messageRow,
+              messageStyles.messageRow,
+              !m.read ? styles.unread : '',
+              !m.read ? messageStyles.messageRowUnread : '',
+            ].filter(Boolean).join(' ');
 
-          return (
-            <div key={i} className={rowClass}>
-              <div
-                className={`${styles.messageAvatar} ${messageStyles.messageAvatar}`}
-                aria-hidden="true"
-              >
-                {m.from[0]}
-              </div>
-              <div className={styles.messageBody}>
-                <div className={styles.messageTopRow}>
-                  <span className={`${styles.messageSender} ${!m.read ? styles.bold : ''}`}>
-                    {m.from}
-                  </span>
-                  <span className={styles.messageTime}>{m.time}</span>
-                </div>
-                <div className={`${styles.messageSubject} ${!m.read ? styles.bold : ''}`}>
-                  {m.subject}
-                </div>
-                <div className={styles.messagePreview}>{m.preview}</div>
-              </div>
-              {!m.read ? (
+            return (
+              <div key={i} className={rowClass}>
                 <div
-                  className={messageStyles.messageDotUnread}
-                  aria-label="رسالة غير مقروءة"
-                />
-              ) : null}
-            </div>
-          );
-        })}
-      </PageCard>
+                  className={`${styles.messageAvatar} ${messageStyles.messageAvatar}`}
+                  aria-hidden="true"
+                >
+                  {m.from[0]}
+                </div>
+                <div className={styles.messageBody}>
+                  <div className={styles.messageTopRow}>
+                    <span className={`${styles.messageSender} ${!m.read ? styles.bold : ''}`}>
+                      {m.from}
+                    </span>
+                    <span className={styles.messageTime}>{m.time}</span>
+                  </div>
+                  <div className={`${styles.messageSubject} ${!m.read ? styles.bold : ''}`}>
+                    {m.subject}
+                  </div>
+                  <div className={styles.messagePreview}>{m.preview}</div>
+                </div>
+                {!m.read ? (
+                  <div
+                    className={messageStyles.messageDotUnread}
+                    aria-label="رسالة غير مقروءة"
+                  />
+                ) : null}
+              </div>
+            );
+          })}
+        </PageCard>
+      </div>
     </div>
   );
 }

@@ -37,16 +37,19 @@ function countByStatus(orders, status) {
 export default function OrdersManagementPage() {
   const { showToast } = useToast();
 
-  const [activeTab, setActiveTab]       = useState('الكل');
-  const [search, setSearch]             = useState('');
-  const [storeFilter, setStore]         = useState('');
-  const [paymentFilter, setPayment]     = useState('');
-  const [page, setPage]                 = useState(1);
-  const [pageSize, setPageSize]         = useState(PAGE_SIZE);
+  const [activeTab, setActiveTab]       = useState(() => 'الكل');
+  const [search, setSearch]             = useState(() => '');
+  const [storeFilter, setStore]         = useState(() => '');
+  const [paymentFilter, setPayment]     = useState(() => '');
+  const [page, setPage]                 = useState(() => 1);
+  const [pageSize, setPageSize]         = useState(() => PAGE_SIZE);
 
-  const storeOptions = mockStores.map((s) => ({ value: s.name, label: s.name }));
+  const storeOptions = useMemo(() => 
+    mockStores.map((s) => ({ value: s.name, label: s.name })),
+    []
+  );
 
-  const TABS = [
+  const TABS = useMemo(() => [
     { id: 'الكل',          label: 'الكل',          count: countByStatus(mockOrders, 'الكل') },
     { id: 'جديد',          label: 'جديد',          count: countByStatus(mockOrders, 'جديد') },
     { id: 'قيد التجهيز',   label: 'قيد التجهيز',   count: countByStatus(mockOrders, 'قيد التجهيز') },
@@ -54,32 +57,40 @@ export default function OrdersManagementPage() {
     { id: 'مكتمل',         label: 'مكتمل',         count: countByStatus(mockOrders, 'مكتمل') },
     { id: 'ملغي',          label: 'ملغي',          count: countByStatus(mockOrders, 'ملغي') },
     { id: 'مرتجع',         label: 'مرتجع',         count: countByStatus(mockOrders, 'مرتجع') },
-  ];
+  ], []);
 
   const filtered = useMemo(() => {
     return mockOrders.filter((o) => {
       const matchTab     = activeTab === 'الكل' || o.status === activeTab;
-      const matchSearch  = !search || o.orderNumber.includes(search) || o.customer.includes(search);
+      const matchSearch  = !search || 
+        o.orderNumber.toLowerCase().includes(search.toLowerCase()) || 
+        o.customer.toLowerCase().includes(search.toLowerCase());
       const matchStore   = !storeFilter || o.store === storeFilter;
       const matchPayment = !paymentFilter || o.paymentMethod === paymentFilter;
       return matchTab && matchSearch && matchStore && matchPayment;
     });
   }, [activeTab, search, storeFilter, paymentFilter]);
 
-  const pagedRows = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const pagedRows = useMemo(() => 
+    filtered.slice((page - 1) * pageSize, page * pageSize),
+    [filtered, page, pageSize]
+  );
 
-  function resetFilters() {
-    setSearch(''); setStore(''); setPayment(''); setPage(1);
-  }
+  const resetFilters = () => {
+    setSearch('');
+    setStore('');
+    setPayment('');
+    setPage(1);
+  };
 
-  const headers = [
+  const headers = useMemo(() => [
     { key: 'orderNumber', label: 'رقم الطلب' },
     { key: 'store',       label: 'المتجر' },
     {
       key: 'customer',
       label: 'العميل',
       render: (val, row) => (
-        <div className={styles.customerCell}>
+        <div className={styles.customerCell} aria-label={`العميل: ${val}`}>
           <span className={styles.customerName}>{val}</span>
           <span className={styles.customerEmail}>{row.email}</span>
         </div>
@@ -100,7 +111,13 @@ export default function OrdersManagementPage() {
     {
       key: 'status',
       label: 'الحالة',
-      render: (val) => <Badge text={val} variant={STATUS_VARIANT[val] || 'default'} />,
+      render: (val) => (
+        <Badge 
+          text={val} 
+          variant={STATUS_VARIANT[val] || 'default'} 
+          aria-label={`حالة الطلب: ${val}`}
+        />
+      ),
     },
     {
       key: 'date',
@@ -114,30 +131,54 @@ export default function OrdersManagementPage() {
       render: (_, row) => (
         <ActionMenu
           actions={[
-            { label: 'عرض التفاصيل', icon: Eye, onClick: () => showToast({ message: `عرض ${row.orderNumber}`, type: 'info' }) },
-            { label: 'تحديث الحالة', icon: RefreshCw, onClick: () => showToast({ message: 'تحديث حالة الطلب', type: 'info' }) },
-            { label: 'إلغاء', icon: XCircle, danger: true, onClick: () => showToast({ message: `تم إلغاء ${row.orderNumber}`, type: 'warning' }) },
-            { label: 'استرداد', icon: RotateCcw, onClick: () => showToast({ message: `تم طلب استرداد ${row.orderNumber}`, type: 'info' }) },
+            { 
+              label: 'عرض التفاصيل', 
+              icon: Eye, 
+              onClick: () => showToast({ message: `عرض ${row.orderNumber}`, type: 'info' }) 
+            },
+            { 
+              label: 'تحديث الحالة', 
+              icon: RefreshCw, 
+              onClick: () => showToast({ message: 'تحديث حالة الطلب', type: 'info' }) 
+            },
+            { 
+              label: 'إلغاء', 
+              icon: XCircle, 
+              danger: true, 
+              onClick: () => showToast({ message: `تم إلغاء ${row.orderNumber}`, type: 'warning' }) 
+            },
+            { 
+              label: 'استرداد', 
+              icon: RotateCcw, 
+              onClick: () => showToast({ message: `تم طلب استرداد ${row.orderNumber}`, type: 'info' }) 
+            },
           ]}
         />
       ),
     },
-  ];
+  ], [showToast]);
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} page-enter`} role="main" aria-labelledby="page-title">
       {/* Header */}
       <div className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>إدارة الطلبات (شامل)</h1>
+        <h1 id="page-title" className={styles.pageTitle}>إدارة الطلبات</h1>
+                <p className={styles.pageSubtitle}>متابعة حالات الطلبات ومعالجتها من الاستلام حتى التسليم</p>
+
       </div>
 
       {/* Status Tabs */}
-      <Tabs
-        tabs={TABS}
-        activeTab={activeTab}
-        onChange={(id) => { setActiveTab(id); setPage(1); }}
-        variant="pills"
-      />
+      <div className={styles.tabsContainer} role="navigation" aria-label="تصفية حسب الحالة">
+        <Tabs
+          tabs={TABS}
+          activeTab={activeTab}
+          onChange={(id) => { 
+            setActiveTab(id); 
+            setPage(1); 
+          }}
+          variant="pills"
+        />
+      </div>
 
       {/* Filter Bar */}
       <FilterBar
@@ -146,14 +187,20 @@ export default function OrdersManagementPage() {
             type: 'search',
             placeholder: 'بحث برقم الطلب أو اسم العميل...',
             value: search,
-            onChange: setSearch,
+            onChange: (val) => {
+              setSearch(val);
+              setPage(1);
+            },
           },
           {
             type: 'select',
             label: 'المتجر',
             placeholder: 'الكل',
             value: storeFilter,
-            onChange: setStore,
+            onChange: (val) => {
+              setStore(val);
+              setPage(1);
+            },
             options: storeOptions,
           },
           {
@@ -161,7 +208,10 @@ export default function OrdersManagementPage() {
             label: 'طريقة الدفع',
             placeholder: 'الكل',
             value: paymentFilter,
-            onChange: setPayment,
+            onChange: (val) => {
+              setPayment(val);
+              setPage(1);
+            },
             options: [
               { value: 'بطاقة ائتمان',   label: 'بطاقة ائتمان' },
               { value: 'دفع عند التسليم', label: 'دفع عند التسليم' },
@@ -185,9 +235,13 @@ export default function OrdersManagementPage() {
             page,
             pageSize,
             total: filtered.length,
-            onPageChange: setPage,
-            onPageSizeChange: (s) => { setPageSize(s); setPage(1); },
+            onPageChange: (p) => setPage(p),
+            onPageSizeChange: (s) => { 
+              setPageSize(s); 
+              setPage(1); 
+            },
           }}
+          ariaLabel="جدول الطلبات"
         />
       </div>
     </div>

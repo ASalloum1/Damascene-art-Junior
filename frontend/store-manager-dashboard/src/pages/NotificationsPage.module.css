@@ -31,11 +31,11 @@
 
 @keyframes goldPulse {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(200, 164, 90, 0.7);
+    box-shadow: 0 0 0 0 var(--color-gold-alpha-70);
     background: var(--color-wood-mid);
   }
   50% {
-    box-shadow: 0 0 0 6px rgba(200, 164, 90, 0);
+    box-shadow: 0 0 0 6px transparent;
     background: var(--color-wood-light);
   }
 }
@@ -71,7 +71,7 @@
 /* ─── Unread items: gold inline-start border + warm bg tint ── */
 .notifRowUnread {
   border-inline-start: 3px solid var(--color-wood-mid);
-  background: rgba(200, 164, 90, 0.04) !important;
+  background: var(--color-gold-alpha-04) !important;
   padding-inline-start: calc(var(--space-2) + 1px);
 }
 
@@ -87,7 +87,7 @@
 
 /* ─── Icon wrap accent for unread ────────────────────────────── */
 .notifIconWrapUnread {
-  background: rgba(200, 164, 90, 0.12);
+  background: var(--color-gold-alpha-12);
   color: var(--color-wood-mid);
 }
 

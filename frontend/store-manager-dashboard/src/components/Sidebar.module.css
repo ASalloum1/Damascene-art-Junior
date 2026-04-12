@@ -34,16 +34,19 @@
 
 /* ─── Logo ────────────────────────────────────────────────────── */
 .logo {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: 18px 14px;
-  border-block-end: 1px solid var(--color-gold-alpha-18);
-  min-height: 64px;
-  overflow: hidden;
-  position: relative;
-  z-index: 1;
-  flex-shrink: 0;
+display: flex;
+    gap: var(--space-4);
+    padding: 18px 38px;
+    border-block-end: 2px solid var(--color-gold-alpha-18);
+    min-height: 75px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
 }
 
 /* Gold accent line below logo */
@@ -58,8 +61,8 @@
 }
 
 .logoMark {
-  width: 38px;
-  height: 38px;
+  width: 45px;
+  height: 45px;
   border-radius: var(--radius-md);
   background: var(--color-gold-bg);
   border: 1px solid var(--color-gold-alpha-30);
@@ -85,7 +88,7 @@
 .logoName {
   color: var(--color-gold);
   font-weight: 800;
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-lg);
   white-space: nowrap;
   line-height: 1.2;
   text-shadow: 0 0 20px var(--color-gold-alpha-35), 0 1px 2px var(--color-black-alpha-40);
@@ -189,15 +192,14 @@
   overflow: hidden;
   /* Fixed left border accent for active state */
   border-left: 3px solid transparent;
-  transform: translateX(0);
 }
 
 .navItem:hover {
   background: var(--color-white-alpha-07);
   color: var(--color-gold);
   opacity: 1;
-  /* Premium hover: slide and scale slightly */
-  transform: translateX(4px) scale(1.02);
+  /* Restore the specific hover offset you liked - no scale, just subtle shift */
+  padding-left: var(--space-5);
   box-shadow: inset 0 0 10px var(--color-white-alpha-03);
 }
 
@@ -208,7 +210,6 @@
   font-weight: 700;
   border-left: 3px solid var(--color-gold);
   box-shadow: inset 0 0 12px var(--color-gold-alpha-06), var(--glow-gold);
-  transform: translateX(0) !important;
 }
 
 .navItem.active:hover {
@@ -217,6 +218,11 @@
 
 .navIcon {
   flex-shrink: 0;
+  transition: transform var(--transition-fast);
+}
+
+.navItem:hover .navIcon {
+  transform: scale(1.1); /* Subtle "pop" on the icon itself */
 }
 
 /* Label fades gracefully during collapse */

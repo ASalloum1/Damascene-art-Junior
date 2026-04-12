@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { MessageSquare, Send, AlertCircle } from 'lucide-react';
+import { useState, useMemo, useRef, useEffect } from 'react';
+import { MessageSquare, Send } from 'lucide-react';
 import Tabs from '../../components/ui/Tabs.jsx';
 import Badge from '../../components/ui/Badge.jsx';
 import Button from '../../components/ui/Button.jsx';
@@ -44,7 +44,15 @@ export default function MessagesPage() {
   const [activeTab, setActiveTab] = useState('all');
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [replyText, setReplyText] = useState('');
-  const [messages, setMessages] = useState(mockMessages);
+  const [messages, setMessages] = useState(() => mockMessages);
+  const detailBodyRef = useRef(null);
+
+  // Scroll to top when message changes
+  useEffect(() => {
+    if (detailBodyRef.current) {
+      detailBodyRef.current.scrollTop = 0;
+    }
+  }, [selectedMessage?.id]);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -68,8 +76,8 @@ export default function MessagesPage() {
   }));
 
   function handleSelect(msg) {
-    setSelectedMessage(msg);
-    setReplyText('');
+    setSelectedMessage(() => msg);
+    setReplyText(() => '');
     if (msg.unread) {
       setMessages((prev) =>
         prev.map((m) => (m.id === msg.id ? { ...m, unread: false } : m))
@@ -84,11 +92,11 @@ export default function MessagesPage() {
     }
     setMessages((prev) =>
       prev.map((m) =>
-        m.id === selectedMessage?.id ? { ...m, status: 'تم الرد' } : m
+        m.id === (selectedMessage?.id ?? null) ? { ...m, status: 'تم الرد' } : m
       )
     );
     showToast({ message: 'تم إرسال الرد بنجاح', type: 'success' });
-    setReplyText('');
+    setReplyText(() => '');
   }
 
   const currentMsg = selectedMessage
@@ -96,12 +104,15 @@ export default function MessagesPage() {
     : null;
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} page-enter`}>
       <div className={styles.pageHeader}>
         <div className={styles.headerIcon}>
-          <MessageSquare size={22} strokeWidth={1.8} />
+          <MessageSquare size={35} strokeWidth={2}/>
         </div>
-        <h1 className={styles.pageTitle}>الرسائل والطلبات</h1>
+        <div>
+          <h1 className={styles.pageTitle}>الرسائل والطلبات</h1>
+            <p className={styles.pageSubtitle}>إدارة رسائل التواصل والاستفسارات الواردة من العملاء والمتاجر</p>
+        </div>
       </div>
 
       <div className={styles.layout}>
@@ -110,16 +121,19 @@ export default function MessagesPage() {
           <div className={styles.sidebarSearch}>
             <SearchInput
               placeholder="بحث في الرسائل..."
-              onSearch={setSearch}
+              onSearch={(val) => setSearch(() => val)}
               value={search}
-              onChange={setSearch}
+              onChange={(val) => setSearch(() => val)}
             />
           </div>
           <div className={styles.sidebarTabs}>
             <Tabs
               tabs={tabsWithCounts}
               activeTab={activeTab}
-              onChange={(id) => { setActiveTab(id); setSelectedMessage(null); }}
+              onChange={(id) => { 
+                setActiveTab(() => id); 
+                setSelectedMessage(() => null); 
+              }}
               variant="underline"
             />
           </div>
@@ -157,7 +171,9 @@ export default function MessagesPage() {
                         <span className={msg.unread ? styles.msgSubjectUnread : styles.msgSubject}>
                           {msg.subject}
                         </span>
-                        {msg.unread ? <span className={styles.unreadDot} aria-label="غير مقروء" /> : null}
+                        {msg.unread ? (
+                          <span className={styles.unreadDot} aria-label="غير مقروء" />
+                        ) : null}
                       </div>
                       <p className={styles.msgPreview}>{msg.preview}</p>
                       <div className={styles.msgMeta}>
@@ -185,7 +201,7 @@ export default function MessagesPage() {
               />
             </div>
           ) : (
-            <div className={styles.detailContent}>
+            <div className={styles.detailContent} ref={detailBodyRef} aria-live="polite">
               <div className={styles.detailHeader}>
                 <div className={styles.detailHeaderTop}>
                   <h2 className={styles.detailSubject}>{currentMsg.subject}</h2>

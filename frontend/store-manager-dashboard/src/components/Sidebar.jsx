@@ -1,36 +1,6 @@
 import styles from './Sidebar.module.css';
-import {
-  LayoutDashboard,
-  Package,
-  Warehouse,
-  ShoppingCart,
-  BarChart3,
-  Star,
-  Bell,
-  Settings,
-  MessageSquare,
-  Box,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
-
-const menuItems = [
-  { id: 'dashboard',     icon: LayoutDashboard,  label: 'لوحة التحكم' },
-  { id: 'products',      icon: Package,          label: 'إدارة المنتجات' },
-  { id: 'inventory',     icon: Warehouse,        label: 'إدارة المخزون' },
-  { id: 'orders',        icon: ShoppingCart,     label: 'إدارة الطلبات' },
-  { id: 'reports',       icon: BarChart3,        label: 'التقارير والإحصائيات' },
-  { id: 'reviews',       icon: Star,             label: 'التقييمات والمراجعات' },
-  { id: 'notifications', icon: Bell,             label: 'الإشعارات' },
-  { id: 'settings',      icon: Settings,         label: 'الإعدادات' },
-  { id: 'messages',      icon: MessageSquare,    label: 'الرسائل' },
-];
-
-export { menuItems };
-
-// Hoisted static element — avoids re-creation on every render
-const collapseIconLeft  = <ChevronLeft  size={16} />;
-const collapseIconRight = <ChevronRight size={16} />;
+import { Icon } from './SvgIcons';
+import { menuItems } from '../data/menuData';
 
 export function Sidebar({ activePage, onNavigate, collapsed, onToggle, mobileOpen, onMobileClose }) {
   return (
@@ -51,7 +21,7 @@ export function Sidebar({ activePage, onNavigate, collapsed, onToggle, mobileOpe
         {/* Logo */}
         <div className={styles.logo}>
           <div className={styles.logoMark}>
-            <Box size={20} />
+            <Icon name="box" size={25} />
           </div>
           {!collapsed ? (
             <div className={styles.logoText}>
@@ -76,7 +46,7 @@ export function Sidebar({ activePage, onNavigate, collapsed, onToggle, mobileOpe
                 aria-current={isActive ? 'page' : undefined}
                 title={collapsed ? item.label : undefined}
               >
-                <item.icon size={18} className={styles.navIcon} />
+                <Icon name={item.icon} size={25} className={styles.navIcon} />
                 {!collapsed ? (
                   <span className={styles.navLabel}>{item.label}</span>
                 ) : null}
@@ -92,7 +62,11 @@ export function Sidebar({ activePage, onNavigate, collapsed, onToggle, mobileOpe
           aria-label={collapsed ? 'توسيع القائمة' : 'طي القائمة'}
           title={collapsed ? 'توسيع القائمة' : 'طي القائمة'}
         >
-          {collapsed ? collapseIconLeft : collapseIconRight}
+          {collapsed ? (
+            <Icon name="chevronLeft" size={16} />
+          ) : (
+            <Icon name="chevronRight" size={16} />
+          )}
         </button>
       </aside>
     </>

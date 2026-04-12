@@ -1,9 +1,9 @@
 .card {
   background: var(--color-white);
   border-radius: var(--radius-lg);
-  padding: var(--space-6);
+  padding: var(--space-8); /* increased internal padding for luxury feel */
   box-shadow: var(--shadow-sm);
-  margin-block-end: var(--space-5);
+  margin-block-end: 0; /* managed by container gap */
   /* Gold top accent */
   border-block-start: 2px solid var(--color-wood-mid);
   transition:
@@ -12,6 +12,6 @@
 }
 
 .card:hover {
-  box-shadow: var(--shadow-card-hover, 0 8px 32px rgba(200,164,90,0.18));
+  box-shadow: var(--shadow-card-hover, 0 8px 32px var(--color-gold-alpha-18));
   transform: translateY(-2px);
 }

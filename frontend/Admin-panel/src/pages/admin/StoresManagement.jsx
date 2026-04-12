@@ -1,21 +1,24 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   PlusCircle,
   Package,
   ShoppingCart,
-  DollarSign,
   Users,
   Pencil,
   BarChart2,
   PowerOff,
   Store,
+  DollarSign,
+  Eye,
 } from 'lucide-react';
 import Badge from '../../components/ui/Badge.jsx';
 import Button from '../../components/ui/Button.jsx';
 import Modal from '../../components/ui/Modal.jsx';
 import InputField from '../../components/ui/InputField.jsx';
+import TextArea from '../../components/ui/TextArea.jsx';
 import SelectField from '../../components/ui/SelectField.jsx';
 import ConfirmModal from '../../components/ui/ConfirmModal.jsx';
+import ActionMenu from '../../components/ui/ActionMenu.jsx';
 import { useToast } from '../../components/ui/Toast.jsx';
 import { mockStores, mockUsers } from '../../data/mockData.js';
 import { formatCurrency, toArabicNum } from '../../utils/formatters.js';
@@ -26,6 +29,16 @@ const STATUS_VARIANT = {
   'معطّل': 'danger',
 };
 
+const INITIAL_FORM_STATE = {
+  name: '',
+  description: '',
+  manager: '',
+  email: '',
+  phone: '',
+  address: '',
+  status: 'نشط',
+};
+
 export default function StoresManagementPage() {
   const { showToast } = useToast();
 
@@ -33,43 +46,40 @@ export default function StoresManagementPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [targetStore, setTargetStore] = useState(null);
 
-  const [form, setForm] = useState({
-    name: '',
-    description: '',
-    manager: '',
-    email: '',
-    phone: '',
-    address: '',
-    status: 'نشط',
-  });
+  const [form, setForm] = useState(() => ({ ...INITIAL_FORM_STATE }));
 
-  const managers = mockUsers
-    .filter((u) => u.role === 'مدير متجر')
-    .map((u) => ({ value: u.id, label: `${u.firstName} ${u.lastName}` }));
+  const managers = useMemo(() => (
+    mockUsers
+      .filter((u) => u.role === 'مدير متجر')
+      .map((u) => ({ value: u.id, label: `${u.firstName} ${u.lastName}` }))
+  ), []);
 
-  function handleAddStore() {
+  const handleAddStore = useCallback(() => {
     setAddOpen(false);
     showToast({ message: 'تم إضافة المتجر بنجاح', type: 'success' });
-    setForm({ name: '', description: '', manager: '', email: '', phone: '', address: '', status: 'نشط' });
-  }
+    setForm(() => ({ ...INITIAL_FORM_STATE }));
+  }, [showToast]);
 
-  function handleToggleStatus(store) {
-    setTargetStore(store);
+  const handleToggleStatus = useCallback((store) => {
+    setTargetStore(() => store);
     setConfirmOpen(true);
-  }
+  }, []);
 
-  function handleConfirmToggle() {
+  const handleConfirmToggle = useCallback(() => {
     setConfirmOpen(false);
     const newStatus = targetStore?.status === 'نشط' ? 'تعطيل' : 'تفعيل';
     showToast({ message: `تم ${newStatus} المتجر ${targetStore?.name}`, type: 'warning' });
-    setTargetStore(null);
-  }
+    setTargetStore(() => null);
+  }, [targetStore, showToast]);
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} page-enter`}>
       {/* Header */}
       <div className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>إدارة المتاجر</h1>
+        <div className={styles.headerTitleGroup}>
+          <h1 className={styles.pageTitle}>إدارة المتاجر</h1>
+          <p className={styles.pageSubtitle}>إدارة ومراقبة أداء المتاجر المسجلة في المنصة</p>
+        </div>
         <Button icon={PlusCircle} onClick={() => setAddOpen(true)}>
           إضافة متجر جديد
         </Button>
@@ -82,16 +92,43 @@ export default function StoresManagementPage() {
             {/* Card Header */}
             <div className={styles.storeCardHeader}>
               <div className={styles.storeIconWrapper}>
-                <Store size={22} strokeWidth={1.8} className={styles.storeIcon} />
+                <Store size={22} strokeWidth={1.5} className={styles.storeIcon} />
               </div>
               <div className={styles.storeInfo}>
                 <h3 className={styles.storeName}>{store.name}</h3>
                 <span className={styles.storeManager}>المدير: {store.manager}</span>
               </div>
-              <Badge
-                text={store.status}
-                variant={STATUS_VARIANT[store.status] || 'default'}
-              />
+              <div className={styles.headerActions}>
+                <Badge
+                  text={store.status}
+                  variant={STATUS_VARIANT[store.status] || 'default'}
+                />
+                <ActionMenu
+                  actions={[
+                    {
+                      label: 'تعديل البيانات',
+                      icon: Pencil,
+                      onClick: () => showToast({ message: `تعديل ${store.name}`, type: 'info' }),
+                    },
+                    {
+                      label: 'عرض التقرير',
+                      icon: BarChart2,
+                      onClick: () => showToast({ message: `عرض تقرير ${store.name}`, type: 'info' }),
+                    },
+                    {
+                      label: 'زيارة المتجر',
+                      icon: Eye,
+                      onClick: () => showToast({ message: `زيارة متجر ${store.name}`, type: 'info' }),
+                    },
+                    {
+                      label: store.status === 'نشط' ? 'تعطيل المتجر' : 'تفعيل المتجر',
+                      icon: PowerOff,
+                      danger: store.status === 'نشط',
+                      onClick: () => handleToggleStatus(store),
+                    },
+                  ]}
+                />
+              </div>
             </div>
 
             <div className={styles.divider} />
@@ -99,56 +136,28 @@ export default function StoresManagementPage() {
             {/* Stats Grid */}
             <div className={styles.storeStats}>
               <div className={styles.statItem}>
-                <Package size={15} strokeWidth={1.8} className={styles.statIcon} />
+                <Package size={14} strokeWidth={1.8} className={styles.statIcon} />
                 <span className={styles.statLabel}>المنتجات</span>
                 <span className={styles.statValue}>{toArabicNum(store.productsCount)}</span>
               </div>
               <div className={styles.statItem}>
-                <ShoppingCart size={15} strokeWidth={1.8} className={styles.statIcon} />
+                <ShoppingCart size={14} strokeWidth={1.8} className={styles.statIcon} />
                 <span className={styles.statLabel}>الطلبات</span>
                 <span className={styles.statValue}>{toArabicNum(store.ordersCount)}</span>
               </div>
               <div className={styles.statItem}>
-                <Users size={15} strokeWidth={1.8} className={styles.statIcon} />
+                <Users size={14} strokeWidth={1.8} className={styles.statIcon} />
                 <span className={styles.statLabel}>الموظفين</span>
                 <span className={styles.statValue}>{toArabicNum(store.employeesCount)}</span>
               </div>
             </div>
 
             <div className={styles.revenueRow}>
-              <DollarSign size={15} strokeWidth={1.8} className={styles.statIcon} />
-              <span className={styles.statLabel}>إيرادات الشهر:</span>
+              <div className={styles.revenueLabelGroup}>
+                <DollarSign size={14} strokeWidth={1.8} className={styles.statIcon} />
+                <span className={styles.statLabel}>إيرادات الشهر:</span>
+              </div>
               <span className={styles.revenueValue}>{formatCurrency(store.monthlyRevenue)}</span>
-            </div>
-
-            <div className={styles.divider} />
-
-            {/* Actions */}
-            <div className={styles.storeActions}>
-              <Button
-                variant="outline"
-                size="sm"
-                icon={Pencil}
-                onClick={() => showToast({ message: `تعديل ${store.name}`, type: 'info' })}
-              >
-                تعديل
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                icon={BarChart2}
-                onClick={() => showToast({ message: `عرض تقرير ${store.name}`, type: 'info' })}
-              >
-                عرض التقرير
-              </Button>
-              <Button
-                variant={store.status === 'نشط' ? 'danger' : 'success'}
-                size="sm"
-                icon={PowerOff}
-                onClick={() => handleToggleStatus(store)}
-              >
-                {store.status === 'نشط' ? 'تعطيل' : 'تفعيل'}
-              </Button>
             </div>
           </div>
         ))}
@@ -161,33 +170,34 @@ export default function StoresManagementPage() {
         title="إضافة متجر جديد"
         size="md"
         footer={
-          <>
+          <div className={styles.modalFooter}>
             <Button variant="ghost" onClick={() => setAddOpen(false)}>إلغاء</Button>
             <Button onClick={handleAddStore}>إنشاء المتجر</Button>
-          </>
+          </div>
         }
       >
         <div className={styles.formGrid}>
           <div className={styles.formFull}>
             <InputField
               label="اسم المتجر"
-              placeholder="أدخل اسم المتجر"
+              placeholder="أدخل اسم المتجر الكامل"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               required
             />
           </div>
           <div className={styles.formFull}>
-            <InputField
+            <TextArea
               label="وصف المتجر"
-              placeholder="وصف مختصر للمتجر"
+              placeholder="أدخل وصفاً تفصيلياً للمتجر ونشاطه..."
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              rows={3}
             />
           </div>
           <SelectField
             label="مدير المتجر"
-            placeholder="اختر المدير"
+            placeholder="اختر المدير المسؤول"
             value={form.manager}
             onChange={(e) => setForm((f) => ({ ...f, manager: e.target.value }))}
             options={managers}
@@ -205,16 +215,8 @@ export default function StoresManagementPage() {
             value={form.phone}
             onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
           />
-          <div className={styles.formFull}>
-            <InputField
-              label="العنوان"
-              placeholder="المدينة، الشارع، رقم البناء"
-              value={form.address}
-              onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
-            />
-          </div>
           <SelectField
-            label="الحالة"
+            label="الحالة الأولية"
             value={form.status}
             onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
             options={[
@@ -222,6 +224,14 @@ export default function StoresManagementPage() {
               { value: 'معطّل', label: 'معطّل' },
             ]}
           />
+          <div className={styles.formFull}>
+            <InputField
+              label="العنوان الجغرافي"
+              placeholder="المدينة، الشارع، رقم البناء أو علامة مميزة"
+              value={form.address}
+              onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
+            />
+          </div>
         </div>
       </Modal>
 
@@ -231,7 +241,7 @@ export default function StoresManagementPage() {
         onClose={() => setConfirmOpen(false)}
         onConfirm={handleConfirmToggle}
         title={targetStore?.status === 'نشط' ? 'تعطيل المتجر' : 'تفعيل المتجر'}
-        message={`هل أنت متأكد من ${targetStore?.status === 'نشط' ? 'تعطيل' : 'تفعيل'} متجر "${targetStore?.name}"؟`}
+        message={`هل أنت متأكد من ${targetStore?.status === 'نشط' ? 'تعطيل' : 'تفعيل'} متجر "${targetStore?.name}"؟ سيؤثر هذا على إمكانية وصول العملاء للمنتجات.`}
         confirmLabel={targetStore?.status === 'نشط' ? 'تعطيل' : 'تفعيل'}
         danger={targetStore?.status === 'نشط'}
       />

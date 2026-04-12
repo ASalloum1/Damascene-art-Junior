@@ -1,5 +1,12 @@
-import { useState } from 'react';
-import { DollarSign, ShoppingCart, Users, Store, TrendingUp, Award, Clock, ArrowLeft } from 'lucide-react';
+import {
+  DollarSign,
+  ShoppingCart,
+  Users,
+  Store,
+  Award,
+  Clock,
+  ArrowLeft
+} from 'lucide-react';
 import StatCard from '../../components/ui/StatCard.jsx';
 import DataTable from '../../components/ui/DataTable.jsx';
 import Badge from '../../components/ui/Badge.jsx';
@@ -64,42 +71,50 @@ const recentOrderHeaders = [
 
 export default function DashboardPage() {
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} page-enter`}>
       {/* Top Stats Row */}
-      <div className={styles.statsRow}>
-        <StatCard
-          icon={DollarSign}
-          label="إجمالي العوائد الملكية"
-          value="١٢٥,٤٣٠ $"
-          color="green"
-          subtitle="خلال الشهر الحالي"
-        />
-        <StatCard
-          icon={ShoppingCart}
-          label="مجموع الطلبيات"
-          value="٤٨٦"
-          color="blue"
-          subtitle="خلال الشهر الحالي"
-        />
-        <StatCard
-          icon={Users}
-          label="إجمالي رواد المنصة"
-          value="١,٢٤٥"
-          color="gold"
-          subtitle="عضوية نشطة"
-        />
-        <StatCard
-          icon={Store}
-          label="الأروقة النشطة"
-          value="٣"
-          color="orange"
-          subtitle="من أصل ٤ دور عرض"
-        />
-      </div>
+      <section className={styles.statsRow} aria-label="إحصائيات عامة">
+        <div className="stagger-1">
+          <StatCard
+            icon={DollarSign}
+            label="إجمالي العوائد الملكية"
+            value="١٢٥,٤٣٠ $"
+            color="green"
+            subtitle="خلال الشهر الحالي"
+          />
+        </div>
+        <div className="stagger-2">
+          <StatCard
+            icon={ShoppingCart}
+            label="مجموع الطلبيات"
+            value="٤٨٦"
+            color="blue"
+            subtitle="خلال الشهر الحالي"
+          />
+        </div>
+        <div className="stagger-3">
+          <StatCard
+            icon={Users}
+            label="إجمالي رواد المنصة"
+            value="١,٢٤٥"
+            color="gold"
+            subtitle="عضوية نشطة"
+          />
+        </div>
+        <div className="stagger-4">
+          <StatCard
+            icon={Store}
+            label="الأروقة النشطة"
+            value="٣"
+            color="orange"
+            subtitle="من أصل ٤ دور عرض"
+          />
+        </div>
+      </section>
 
       {/* Row 2: Revenue Chart + Top Products */}
       <div className={styles.row2}>
-        <div className={styles.chartCard}>
+        <section className={styles.chartCard} aria-label="بيان العوائد">
           <BarChartWrapper
             data={monthlyRevenue}
             xKey="name"
@@ -109,13 +124,13 @@ export default function DashboardPage() {
             height={280}
             formatValue={(v) => `${Math.round(v / 1000)}k`}
           />
-        </div>
+        </section>
 
-        <div className={styles.topProductsCard}>
-          <div className={styles.cardHeader}>
-            <Award size={18} strokeWidth={1.8} className={styles.cardHeaderIcon} />
+        <section className={styles.topProductsCard} aria-label="المقتنيات الأكثر تفضيلاً">
+          <header className={styles.cardHeader}>
+            <Award size={18} strokeWidth={1.8} className={styles.cardHeaderIcon} aria-hidden="true" />
             <h3 className={styles.cardTitle}>المقتنيات الأكثر تفضيلاً</h3>
-          </div>
+          </header>
           <div className={styles.productsList}>
             {topProducts.map((product, index) => (
               <div key={index} className={styles.productItem}>
@@ -132,25 +147,25 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
-        </div>
+        </section>
       </div>
 
       {/* Row 3: Orders by Status + Recent Activities */}
       <div className={styles.row3}>
-        <div className={styles.pieCard}>
+        <section className={styles.pieCard} aria-label="توزع الطلبيات">
           <PieChartWrapper
             data={ordersByStatus}
             title="توزع الطلبيات حسب المسار"
             height={280}
             donut
           />
-        </div>
+        </section>
 
-        <div className={styles.activitiesCard}>
-          <div className={styles.cardHeader}>
-            <Clock size={18} strokeWidth={1.8} className={styles.cardHeaderIcon} />
+        <section className={styles.activitiesCard} aria-label="سجل النشاطات">
+          <header className={styles.cardHeader}>
+            <Clock size={18} strokeWidth={1.8} className={styles.cardHeaderIcon} aria-hidden="true" />
             <h3 className={styles.cardTitle}>سجل النشاطات الأخير</h3>
-          </div>
+          </header>
           <div className={styles.activitiesList}>
             {recentActivities.map((activity) => (
               <div key={activity.id} className={styles.activityItem}>
@@ -166,30 +181,30 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
-          <div className={styles.viewAllLink}>
-            <ArrowLeft size={14} strokeWidth={1.8} />
+          <div className={styles.viewAllLink} role="button" tabIndex={0}>
+            <ArrowLeft size={14} strokeWidth={1.8} aria-hidden="true" />
             <span>مطالعة السجل الكامل</span>
           </div>
-        </div>
+        </section>
       </div>
 
       {/* Row 4: Recent Orders Table */}
-      <div className={styles.tableCard}>
-        <div className={styles.tableCardHeader}>
+      <section className={styles.tableCard} aria-label="أحدث الطلبيات">
+        <header className={styles.tableCardHeader}>
           <div className={styles.cardHeader}>
-            <ShoppingCart size={18} strokeWidth={1.8} className={styles.cardHeaderIcon} />
+            <ShoppingCart size={18} strokeWidth={1.8} className={styles.cardHeaderIcon} aria-hidden="true" />
             <h3 className={styles.cardTitle}>أحدث الطلبيات</h3>
           </div>
-          <div className={styles.viewAllLink}>
-            <ArrowLeft size={14} strokeWidth={1.8} />
+          <div className={styles.viewAllLink} role="button" tabIndex={0}>
+            <ArrowLeft size={14} strokeWidth={1.8} aria-hidden="true" />
             <span>عرض كافة الطلبيات</span>
           </div>
-        </div>
+        </header>
         <DataTable
           headers={recentOrderHeaders}
           rows={mockOrders.slice(0, 5)}
         />
-      </div>
+      </section>
     </div>
   );
 }

@@ -90,7 +90,7 @@
 }
 
 .tr:hover {
-  background-color: rgba(200, 164, 90, 0.04);
+  background-color: var(--color-gold-bg);
   border-inline-start-color: var(--color-gold);
 }
 
@@ -103,7 +103,7 @@
 }
 
 .altRow:hover {
-  background-color: rgba(200, 164, 90, 0.04);
+  background-color: var(--color-gold-bg);
 }
 
 .selectedRow {

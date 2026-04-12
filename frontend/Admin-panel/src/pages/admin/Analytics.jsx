@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   DollarSign,
   TrendingUp,
   ShoppingBag,
   Star,
   Download,
-  FileText,
 } from 'lucide-react';
 import StatCard from '../../components/ui/StatCard.jsx';
 import DataTable from '../../components/ui/DataTable.jsx';
@@ -117,29 +116,42 @@ const REPORT_TABS = [
 export default function AnalyticsPage() {
   const { showToast } = useToast();
 
-  const [reportTab, setReportTab] = useState('products');
-  const [storeFilter, setStore]   = useState('');
+  const [reportTab, setReportTab] = useState(() => 'products');
+  const [storeFilter, setStore]   = useState(() => '');
 
-  const storeOptions = mockStores.map((s) => ({ value: s.name, label: s.name }));
+  const storeOptions = useMemo(() => 
+    mockStores.map((s) => ({ value: s.name, label: s.name })),
+    []
+  );
 
   function handleExport() {
     showToast({ message: 'جاري تصدير التقرير...', type: 'info' });
   }
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} page-enter`} role="main" aria-label="تحليلات النظام">
       {/* Top Filter Bar */}
       <div className={styles.topBar}>
+        <div>
         <h1 className={styles.pageTitle}>التقارير والتحليلات</h1>
+            <p className={styles.pageSubtitle}>استعراض مؤشرات الأداء والإحصائيات لاتخاذ قرارات مبنية على البيانات</p>
+        </div>
         <div className={styles.topBarControls}>
           <SelectField
             label="المتجر"
             placeholder="جميع المتاجر"
             value={storeFilter}
-            onChange={(e) => setStore(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              setStore(() => val);
+            }}
             options={storeOptions}
           />
-          <Button icon={Download} onClick={handleExport}>
+          <Button 
+            icon={Download} 
+            onClick={handleExport}
+            aria-label="تصدير تقرير التحليلات"
+          >
             تصدير التقرير
           </Button>
         </div>
@@ -233,11 +245,11 @@ export default function AnalyticsPage() {
         <Tabs
           tabs={REPORT_TABS}
           activeTab={reportTab}
-          onChange={setReportTab}
+          onChange={(id) => setReportTab(() => id)}
           variant="underline"
         />
 
-        <div className={styles.tableCard}>
+        <div className={styles.tableCard} role="region" aria-label="بيانات التقارير التفصيلية">
           {reportTab === 'products' ? (
             <DataTable
               headers={productReportHeaders}

@@ -5,8 +5,7 @@ import Badge from '../../components/ui/Badge.jsx';
 import SelectField from '../../components/ui/SelectField.jsx';
 import SearchInput from '../../components/ui/SearchInput.jsx';
 import { mockActivities } from '../../data/mockData.js';
-import { activityActionMap, userRoleMap } from '../../constants/statusMaps.js';
-import { formatDate, formatTime, relativeTime } from '../../utils/formatters.js';
+import { formatDate, formatTime } from '../../utils/formatters.js';
 import styles from './ActivityLog.module.css';
 
 const ACTION_OPTIONS = [
@@ -87,24 +86,24 @@ const HEADERS = [
 ];
 
 export default function ActivityLogPage() {
-  const [search, setSearch] = useState('');
-  const [actionFilter, setActionFilter] = useState('');
-  const [roleFilter, setRoleFilter] = useState('');
-  const [sectionFilter, setSectionFilter] = useState('');
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [search, setSearch] = useState(() => '');
+  const [actionFilter, setActionFilter] = useState(() => '');
+  const [roleFilter, setRoleFilter] = useState(() => '');
+  const [sectionFilter, setSectionFilter] = useState(() => '');
+  const [page, setPage] = useState(() => 1);
+  const [pageSize, setPageSize] = useState(() => 10);
 
   const filtered = useMemo(() => {
     return mockActivities.filter((a) => {
       const q = search.toLowerCase();
       const matchSearch =
-        !q ||
+        q === '' ? true :
         a.user.toLowerCase().includes(q) ||
         a.details.toLowerCase().includes(q) ||
-        (a.item && a.item.toLowerCase().includes(q));
-      const matchAction = !actionFilter || a.action === actionFilter;
-      const matchRole = !roleFilter || a.role === roleFilter;
-      const matchSection = !sectionFilter || a.section === sectionFilter;
+        (a.item ? a.item.toLowerCase().includes(q) : false);
+      const matchAction = actionFilter === '' ? true : a.action === actionFilter;
+      const matchRole = roleFilter === '' ? true : a.role === roleFilter;
+      const matchSection = sectionFilter === '' ? true : a.section === sectionFilter;
       return matchSearch && matchAction && matchRole && matchSection;
     });
   }, [search, actionFilter, roleFilter, sectionFilter]);
@@ -112,42 +111,61 @@ export default function ActivityLogPage() {
   const paged = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} page-enter`}>
       <div className={styles.pageHeader}>
-        <div className={styles.headerIcon}>
-          <ClipboardList size={22} strokeWidth={1.8} />
+        <div className={styles.headerIcon} aria-hidden="true">
+          <ClipboardList size={45} strokeWidth={2} />
         </div>
-        <h1 className={styles.pageTitle}>سجل النشاطات</h1>
+        <div>
+          <h1 className={styles.pageTitle}>سجل النشاطات</h1>
+            <p className={styles.pageSubtitle}>تتبع جميع العمليات والإجراءات التي يقوم بها المستخدمون والمدراء</p>
+        </div>
       </div>
 
-      <div className={styles.filterBar}>
+      <div className={styles.filterBar} role="search" aria-label="فلاتر سجل النشاطات">
         <div className={styles.searchWrapper}>
           <SearchInput
             placeholder="بحث في السجل..."
-            onSearch={setSearch}
+            onSearch={(v) => setSearch(() => v)}
             value={search}
-            onChange={setSearch}
+            onChange={(v) => setSearch(() => v)}
+            aria-label="البحث في سجل النشاطات"
           />
         </div>
         <SelectField
-          label=""
+          label="نوع الإجراء"
+          hideLabel
           options={ACTION_OPTIONS}
           value={actionFilter}
-          onChange={(e) => { setActionFilter(e.target.value); setPage(1); }}
+          onChange={(e) => { 
+            const val = e.target.value;
+            setActionFilter(() => val); 
+            setPage(() => 1); 
+          }}
           placeholder="نوع الإجراء"
         />
         <SelectField
-          label=""
+          label="المستخدم"
+          hideLabel
           options={ROLE_OPTIONS}
           value={roleFilter}
-          onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
+          onChange={(e) => { 
+            const val = e.target.value;
+            setRoleFilter(() => val); 
+            setPage(() => 1); 
+          }}
           placeholder="المستخدم"
         />
         <SelectField
-          label=""
+          label="القسم"
+          hideLabel
           options={SECTION_OPTIONS}
           value={sectionFilter}
-          onChange={(e) => { setSectionFilter(e.target.value); setPage(1); }}
+          onChange={(e) => { 
+            const val = e.target.value;
+            setSectionFilter(() => val); 
+            setPage(() => 1); 
+          }}
           placeholder="القسم"
         />
       </div>
@@ -160,8 +178,11 @@ export default function ActivityLogPage() {
             page,
             pageSize,
             total: filtered.length,
-            onPageChange: setPage,
-            onPageSizeChange: (s) => { setPageSize(s); setPage(1); },
+            onPageChange: (p) => setPage(() => p),
+            onPageSizeChange: (s) => { 
+              setPageSize(() => s); 
+              setPage(() => 1); 
+            },
           }}
         />
       </div>

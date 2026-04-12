@@ -25,9 +25,9 @@
   inset-block-start: calc(100% + var(--space-1));
   inset-inline-end: 0;
   min-width: 160px;
-  background-color: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background-color: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-dropdown);
   border: 1px solid var(--glass-border);
@@ -73,7 +73,7 @@
 }
 
 .actionDanger:hover:not(.actionDisabled) {
-  background-color: rgba(192, 57, 43, 0.06);
+  background-color: var(--color-red-bg);
 }
 
 .actionDisabled {

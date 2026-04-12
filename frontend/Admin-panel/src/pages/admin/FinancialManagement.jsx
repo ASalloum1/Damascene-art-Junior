@@ -6,8 +6,6 @@ import {
   BarChart2,
   Eye,
   FileText,
-  TrendingUp,
-  TrendingDown,
 } from 'lucide-react';
 import StatCard from '../../components/ui/StatCard.jsx';
 import DataTable from '../../components/ui/DataTable.jsx';
@@ -54,36 +52,48 @@ export default function FinancialManagementPage() {
   const [typeFilter, setType]   = useState('');
   const [search, setSearch]     = useState('');
   const [page, setPage]         = useState(1);
-  const [pageSize, setPageSize] = useState(PAGE_SIZE);
+  const [pageSize, setPageSize] = useState(() => PAGE_SIZE);
 
-  const totalRevenue = mockTransactions
-    .filter((t) => t.type === 'دفعة' && t.status === 'مكتملة')
-    .reduce((acc, t) => acc + t.amount, 0);
+  const { totalRevenue, totalRefunds, avgOrderValue, refundCount } = useMemo(() => {
+    const revenue = mockTransactions
+      .filter((t) => t.type === 'دفعة' && t.status === 'مكتملة')
+      .reduce((acc, t) => acc + t.amount, 0);
 
-  const totalRefunds = mockTransactions
-    .filter((t) => t.type === 'استرداد')
-    .reduce((acc, t) => acc + t.amount, 0);
+    const refunds = mockTransactions
+      .filter((t) => t.type === 'استرداد')
+      .reduce((acc, t) => acc + t.amount, 0);
 
-  const avgOrderValue = Math.round(
-    mockTransactions.filter((t) => t.type === 'دفعة').reduce((acc, t) => acc + t.amount, 0) /
-      (mockTransactions.filter((t) => t.type === 'دفعة').length || 1)
-  );
+    const payments = mockTransactions.filter((t) => t.type === 'دفعة');
+    const avg = Math.round(
+      payments.reduce((acc, t) => acc + t.amount, 0) / (payments.length || 1)
+    );
+
+    const rCount = mockTransactions.filter((t) => t.type === 'استرداد').length;
+
+    return { totalRevenue: revenue, totalRefunds: refunds, avgOrderValue: avg, refundCount: rCount };
+  }, []);
 
   const filtered = useMemo(() => {
     return mockTransactions.filter((t) => {
       const matchType   = !typeFilter || t.type === typeFilter;
-      const matchSearch = !search || t.transactionNumber.includes(search) || t.customer.includes(search);
+      const matchSearch = !search || 
+        t.transactionNumber.toLowerCase().includes(search.toLowerCase()) || 
+        t.customer.toLowerCase().includes(search.toLowerCase());
       return matchType && matchSearch;
     });
   }, [typeFilter, search]);
 
-  const pagedRows = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const pagedRows = useMemo(() => {
+    return filtered.slice((page - 1) * pageSize, page * pageSize);
+  }, [filtered, page, pageSize]);
 
   function resetFilters() {
-    setType(''); setSearch(''); setPage(1);
+    setType('');
+    setSearch('');
+    setPage(1);
   }
 
-  const headers = [
+  const headers = useMemo(() => [
     { key: 'transactionNumber', label: 'رقم المعاملة' },
     {
       key: 'type',
@@ -116,19 +126,29 @@ export default function FinancialManagementPage() {
       render: (_, row) => (
         <ActionMenu
           actions={[
-            { label: 'عرض التفاصيل', icon: Eye, onClick: () => showToast({ message: `عرض ${row.transactionNumber}`, type: 'info' }) },
-            { label: 'تصدير PDF', icon: FileText, onClick: () => showToast({ message: 'جاري تصدير المعاملة...', type: 'info' }) },
+            { 
+              label: 'عرض التفاصيل', 
+              icon: Eye, 
+              onClick: () => showToast({ message: `عرض ${row.transactionNumber}`, type: 'info' }) 
+            },
+            { 
+              label: 'تصدير PDF', 
+              icon: FileText, 
+              onClick: () => showToast({ message: 'جاري تصدير المعاملة...', type: 'info' }) 
+            },
           ]}
         />
       ),
     },
-  ];
+  ], [showToast]);
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} page-enter`}>
       {/* Header */}
+      <div>
       <h1 className={styles.pageTitle}>الإدارة المالية</h1>
-
+          <p className={styles.pageSubtitle}>مراقبة الإيرادات والمدفوعات والتسويات المالية بين المتاجر والمنصة</p>
+      </div>
       {/* Stats Row */}
       <div className={styles.statsRow}>
         <StatCard
@@ -138,7 +158,7 @@ export default function FinancialManagementPage() {
           color="green"
           subtitle="هذا الشهر"
           trend="+١٢%"
-          trendUp
+          trendUp={true}
         />
         <StatCard
           icon={CreditCard}
@@ -152,7 +172,7 @@ export default function FinancialManagementPage() {
           label="المستردات"
           value={formatCurrency(totalRefunds)}
           color="red"
-          subtitle={`${toArabicNum(mockTransactions.filter((t) => t.type === 'استرداد').length)} عملية`}
+          subtitle={`${toArabicNum(refundCount)} عملية`}
         />
         <StatCard
           icon={BarChart2}
@@ -160,7 +180,7 @@ export default function FinancialManagementPage() {
           value={formatCurrency(avgOrderValue)}
           color="gold"
           trend="+٥%"
-          trendUp
+          trendUp={true}
         />
       </div>
 
@@ -194,12 +214,13 @@ export default function FinancialManagementPage() {
       {/* Transactions Table */}
       <div className={styles.tableSection}>
         <div className={styles.tableHeader}>
-          <h3 className={styles.tableTitle}>المعاملات المالية</h3>
+          <h3 className={styles.tableTitle} id="transactions-table-title">المعاملات المالية</h3>
           <div className={styles.exportBtns}>
             <button
               type="button"
               className={styles.exportBtn}
               onClick={() => showToast({ message: 'جاري تصدير PDF...', type: 'info' })}
+              aria-label="تصدير المعاملات إلى ملف PDF"
             >
               <FileText size={14} strokeWidth={1.8} />
               تصدير PDF
@@ -208,6 +229,7 @@ export default function FinancialManagementPage() {
               type="button"
               className={styles.exportBtn}
               onClick={() => showToast({ message: 'جاري تصدير Excel...', type: 'info' })}
+              aria-label="تصدير المعاملات إلى ملف Excel"
             >
               <FileText size={14} strokeWidth={1.8} />
               تصدير Excel
@@ -221,14 +243,14 @@ export default function FinancialManagementPage() {
               type: 'search',
               placeholder: 'بحث برقم المعاملة أو اسم العميل...',
               value: search,
-              onChange: setSearch,
+              onChange: (val) => { setSearch(() => val); setPage(() => 1); },
             },
             {
               type: 'select',
               label: 'النوع',
               placeholder: 'الكل',
               value: typeFilter,
-              onChange: setType,
+              onChange: (val) => { setType(() => val); setPage(() => 1); },
               options: [
                 { value: 'دفعة',    label: 'دفعات' },
                 { value: 'استرداد', label: 'استردادات' },
@@ -239,7 +261,7 @@ export default function FinancialManagementPage() {
           activeCount={[search, typeFilter].filter(Boolean).length}
         />
 
-        <div className={styles.tableCard}>
+        <div className={styles.tableCard} role="region" aria-labelledby="transactions-table-title">
           <DataTable
             headers={headers}
             rows={pagedRows}
@@ -247,8 +269,11 @@ export default function FinancialManagementPage() {
               page,
               pageSize,
               total: filtered.length,
-              onPageChange: setPage,
-              onPageSizeChange: (s) => { setPageSize(s); setPage(1); },
+              onPageChange: (p) => setPage(() => p),
+              onPageSizeChange: (s) => { 
+                setPageSize(() => s); 
+                setPage(() => 1); 
+              },
             }}
           />
         </div>

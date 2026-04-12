@@ -1,15 +1,19 @@
 /* ── Hero ────────────────────────────────────────────── */
 .hero {
-  background: linear-gradient(135deg, var(--color-navy) 0%, var(--color-gold) 100%);
+  background: linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-deep) 100%);
   padding: var(--space-20) var(--space-6);
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  overflow: hidden;
 }
 
 .heroContent {
   max-width: 700px;
   text-align: center;
+  position: relative;
+  z-index: 1;
 }
 
 .heroOrnament {
@@ -116,17 +120,21 @@
 
 /* ── Story ───────────────────────────────────────────── */
 .story {
-  background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-navy) 100%);
+  background: linear-gradient(135deg, var(--color-navy) 0%, #111528 100%);
   padding: var(--space-16) var(--space-6);
   display: flex;
   justify-content: center;
   content-visibility: auto;
   contain-intrinsic-size: auto 400px;
+  position: relative;
+  overflow: hidden;
 }
 
 .storyContent {
   max-width: 800px;
   text-align: center;
+  position: relative;
+  z-index: 1;
 }
 
 .storyText {

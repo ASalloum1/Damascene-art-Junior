@@ -43,6 +43,16 @@ const NOTIFICATION_EVENTS = [
   { id: 'suspicious_login', label: 'محاولة دخول مشبوهة' },
 ];
 
+/**
+ * Initial state for notification settings.
+ * Memoized outside the component or used in lazy initialization.
+ */
+const INITIAL_SETTINGS = () =>
+  NOTIFICATION_EVENTS.reduce((acc, ev) => {
+    acc[ev.id] = { email: true, site: true, push: false };
+    return acc;
+  }, {});
+
 function getNotifIcon(type) {
   const map = {
     order: ShoppingCart,
@@ -106,6 +116,7 @@ function ToggleSwitch({ checked, onChange }) {
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={[styles.toggle, checked ? styles.toggleOn : ''].filter(Boolean).join(' ')}
+      aria-label="تغيير حالة الإشعار"
     >
       <span className={styles.toggleThumb} />
     </button>
@@ -116,15 +127,10 @@ export default function NotificationsPage() {
   const { showToast } = useToast();
   const [mainTab, setMainTab] = useState('center');
   const [filterTab, setFilterTab] = useState('all');
-  const [notifications, setNotifications] = useState(mockNotifications);
-  const [settings, setSettings] = useState(() =>
-    NOTIFICATION_EVENTS.reduce((acc, ev) => {
-      acc[ev.id] = { email: true, site: true, push: false };
-      return acc;
-    }, {})
-  );
+  const [notifications, setNotifications] = useState(() => mockNotifications);
+  const [settings, setSettings] = useState(INITIAL_SETTINGS);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
 
   const filtered = useMemo(() => {
     return notifications.filter((n) => {
@@ -134,24 +140,25 @@ export default function NotificationsPage() {
     });
   }, [notifications, filterTab]);
 
-  const filterTabsWithCounts = FILTER_TABS.map((t) => ({
-    ...t,
-    count:
-      t.id === 'all'
-        ? undefined
-        : t.id === 'unread'
-        ? notifications.filter((n) => !n.read).length || undefined
-        : undefined,
-  }));
+  const filterTabsWithCounts = useMemo(() => 
+    FILTER_TABS.map((t) => ({
+      ...t,
+      count:
+        t.id === 'all'
+          ? undefined
+          : t.id === 'unread'
+          ? notifications.filter((n) => !n.read).length || undefined
+          : undefined,
+    })), [notifications]);
 
   function markAllRead() {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    setNotifications((prev) => prev.map((n) => n.read ? n : { ...n, read: true }));
     showToast({ message: 'تم تحديد جميع الإشعارات كمقروءة', type: 'success' });
   }
 
   function markRead(id) {
     setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+      prev.map((n) => (n.id === id && !n.read ? { ...n, read: true } : n))
     );
   }
 
@@ -167,21 +174,23 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.pageHeader}>
+    <div className={`${styles.page} page-enter`}>
+      <header className={styles.pageHeader}>
         <div className={styles.headerIcon}>
-          <Bell size={22} strokeWidth={1.8} />
+          <Bell size={35} strokeWidth={2} />
         </div>
         <h1 className={styles.pageTitle}>إدارة الإشعارات</h1>
         {unreadCount > 0 ? (
-          <span className={styles.unreadBadge}>{unreadCount}</span>
+          <span className={styles.unreadBadge} aria-label={`${unreadCount} إشعارات غير مقروءة`}>
+            {unreadCount}
+          </span>
         ) : null}
-      </div>
+      </header>
 
-      <div className={styles.card}>
-        <div className={styles.mainTabsRow}>
+      <section className={styles.card}>
+        <nav className={styles.mainTabsRow}>
           <Tabs tabs={MAIN_TABS} activeTab={mainTab} onChange={setMainTab} variant="underline" />
-        </div>
+        </nav>
 
         {mainTab === 'center' ? (
           <div className={styles.centerContent}>
@@ -203,7 +212,7 @@ export default function NotificationsPage() {
               </Button>
             </div>
 
-            <div className={styles.notifList}>
+            <div className={styles.notifList} role="list" aria-label="قائمة الإشعارات">
               {filtered.length === 0 ? (
                 <div className={styles.notifEmpty}>
                   <EmptyState
@@ -213,11 +222,12 @@ export default function NotificationsPage() {
                   />
                 </div>
               ) : (
-                filtered.map((notif) => {
+                filtered.map((notif, index) => {
                   const Icon = getNotifIcon(notif.type);
                   return (
                     <div
                       key={notif.id}
+                      role="listitem"
                       className={[
                         styles.notifItem,
                         !notif.read ? styles.notifItemUnread : '',
@@ -225,6 +235,7 @@ export default function NotificationsPage() {
                         .filter(Boolean)
                         .join(' ')}
                       onClick={() => markRead(notif.id)}
+                      style={{ '--item-index': index }}
                     >
                       <div
                         className={styles.notifIconCircle}
@@ -247,7 +258,9 @@ export default function NotificationsPage() {
                         <p className={styles.notifDesc}>{notif.description}</p>
                         <span className={styles.notifTime}>{relativeTime(notif.timestamp)}</span>
                       </div>
-                      {!notif.read ? <span className={styles.unreadDot} aria-label="غير مقروء" /> : null}
+                      {!notif.read ? (
+                        <span className={styles.unreadDot} aria-label="غير مقروء" />
+                      ) : null}
                     </div>
                   );
                 })
@@ -299,7 +312,7 @@ export default function NotificationsPage() {
             </div>
           </div>
         ) : null}
-      </div>
+      </section>
     </div>
   );
 }

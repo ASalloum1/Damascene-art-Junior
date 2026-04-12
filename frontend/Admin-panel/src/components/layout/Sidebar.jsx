@@ -1,7 +1,6 @@
-import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { NAV_ITEMS } from '../../constants/navigation.js';
 import styles from './Sidebar.module.css';
-
+import { ChevronRight, ChevronLeft, Box } from 'lucide-react';
 /**
  * Sidebar — Collapsible RTL navigation sidebar
  *
@@ -20,12 +19,16 @@ export default function Sidebar({
 }) {
   return (
     <nav className={`${styles.sidebar} ${collapsed ? styles.collapsed : ''}`}>
+      {/* Logo */}
       <div className={styles.logo}>
+        <div className={styles.logoMark}>
+          <Box size={27} strokeWidth={2} />
+        </div>
         {!collapsed ? (
-          <>
-            <span className={styles.logoTitle}>الفن الدمشقي</span>
+          <div className={styles.logoText}>
+            <span className={styles.logoName}>الفن الدمشقي</span>
             <span className={styles.logoSub}>لوحة المشرف العام</span>
-          </>
+          </div>
         ) : null}
       </div>
 
@@ -33,7 +36,7 @@ export default function Sidebar({
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const isActive = activePage === item.id;
-          const badgeCount = item.badge && badgeCounts?.[item.badge];
+          const badgeCount = item.badge ? badgeCounts?.[item.badge] : undefined;
           return (
             <button
               key={item.id}
@@ -41,9 +44,9 @@ export default function Sidebar({
               onClick={() => onNavigate(item.id)}
               title={collapsed ? item.label : undefined}
             >
-              <Icon size={20} strokeWidth={1.8} />
+              <Icon size={22} strokeWidth={1.8} />
               {!collapsed ? <span className={styles.navLabel}>{item.label}</span> : null}
-              {!collapsed && badgeCount > 0 ? (
+              {!collapsed && badgeCount && badgeCount > 0 ? (
                 <span className={styles.badge}>{badgeCount}</span>
               ) : null}
             </button>
@@ -53,8 +56,8 @@ export default function Sidebar({
 
       <button className={styles.toggle} onClick={onToggle}>
         {collapsed
-          ? <ChevronLeft size={18} strokeWidth={1.8} />
-          : <ChevronRight size={18} strokeWidth={1.8} />
+          ? <ChevronLeft size={22} strokeWidth={1.8} />
+          : <ChevronRight size={22} strokeWidth={1.8} />
         }
       </button>
     </nav>

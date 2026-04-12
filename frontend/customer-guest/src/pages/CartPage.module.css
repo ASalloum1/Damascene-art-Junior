@@ -71,7 +71,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--color-red);
+  color: var(--color-error);
   display: flex;
   align-items: center;
   padding: var(--space-2);

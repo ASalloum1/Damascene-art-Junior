@@ -39,20 +39,26 @@
 .pieCard,
 .activitiesCard,
 .tableCard {
-  background: var(--color-white);
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   padding: var(--space-5);
   box-shadow: var(--shadow-card);
-  border: 1px solid var(--color-cream-dark);
-  transition: box-shadow var(--transition-base), transform var(--transition-base);
+  position: relative;
+  border-block-start: 3px solid transparent;
+  transition: box-shadow var(--transition-base), transform var(--transition-base), border-color var(--transition-base);
 }
 
 .chartCard:hover,
 .topProductsCard:hover,
 .pieCard:hover,
-.activitiesCard:hover {
+.activitiesCard:hover,
+.tableCard:hover {
+  transform: translateY(-3px);
   box-shadow: var(--shadow-card-hover);
-  transform: translateY(-2px);
+  border-block-start-color: var(--color-gold);
 }
 
 .cardHeader {
@@ -124,6 +130,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  content-visibility: auto;
+  contain-intrinsic-size: 0 400px;
 }
 
 .activityItem {
@@ -176,6 +184,13 @@
   cursor: pointer;
   width: fit-content;
   transition: color var(--transition-fast), padding-inline-start var(--transition-base);
+  outline: none;
+}
+
+.viewAllLink:focus-visible {
+  box-shadow: var(--glow-gold);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1);
 }
 
 .viewAllLink:hover {
@@ -187,7 +202,8 @@
 .tableCard {
   display: flex;
   flex-direction: column;
-  border-block-start: 2px solid var(--color-gold);
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
 }
 
 .tableCardHeader {

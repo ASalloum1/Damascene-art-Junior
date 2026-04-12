@@ -3,6 +3,7 @@ import settingsStyles from './SettingsPage.module.css';
 import SectionTitle from '../components/SectionTitle';
 import PageCard from '../components/PageCard';
 import ActionBtn from '../components/ActionBtn';
+import { Icon } from '../components/SvgIcons';
 
 const storeFields = [
   { label: 'اسم المتجر',        value: 'الفن الدمشقي — Damascene Art' },
@@ -21,7 +22,7 @@ export function SettingsPage() {
     <div className={`${styles.page} page-enter`}>
       <SectionTitle title="الإعدادات" />
       <div className={styles.grid2}>
-        <div className={settingsStyles.settingsCard}>
+        <div className={`${settingsStyles.settingsCard} stagger-1`}>
           <PageCard>
             <h3 className={styles.cardTitle}>إعدادات المتجر</h3>
             {storeFields.map((s, i) => (
@@ -35,11 +36,11 @@ export function SettingsPage() {
               </div>
             ))}
             <span className={settingsStyles.saveBtn}>
-              <ActionBtn text="حفظ التغييرات" variant="primary" onClick={() => {}} />
+              <ActionBtn text="حفظ التغييرات" variant="primary" onClick={() => {}} icon={<Icon name="check" size={14} />} />
             </span>
           </PageCard>
         </div>
-        <div className={settingsStyles.settingsCard}>
+        <div className={`${settingsStyles.settingsCard} stagger-2`}>
           <PageCard>
             <h3 className={styles.cardTitle}>إعدادات اللغة والعملة</h3>
             <div className={styles.formField}>
@@ -78,7 +79,7 @@ export function SettingsPage() {
               </div>
             ))}
             <span className={settingsStyles.saveBtn}>
-              <ActionBtn text="تحديث الملف الشخصي" variant="primary" onClick={() => {}} />
+              <ActionBtn text="تحديث الملف الشخصي" variant="primary" onClick={() => {}} icon={<Icon name="user" size={14} />} />
             </span>
           </PageCard>
         </div>

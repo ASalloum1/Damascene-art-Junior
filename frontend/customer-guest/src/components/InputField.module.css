@@ -30,7 +30,7 @@
 
 .field:focus {
   border-color: var(--color-gold);
-  box-shadow: 0 0 0 3px var(--color-gold-bg);
+  box-shadow: var(--glow-gold);
   background-color: var(--color-white);
 }
 

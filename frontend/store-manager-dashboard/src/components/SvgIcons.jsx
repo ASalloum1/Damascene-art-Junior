@@ -1,6 +1,6 @@
 /**
  * Damascene Art — Icon System
- * Now unified to use 'lucide-react' as requested.
+ * Now unified to use 'lucide-react' as requested, maintaining the custom stroke weight.
  * Usage: <Icon name="dashboard" size={20} />
  */
 
@@ -33,7 +33,10 @@ import {
   Store,
   AlertTriangle,
   Image as ImageIcon,
-  Plus
+  Plus,
+  XCircle,
+  FileText,
+  Pencil
 } from 'lucide-react';
 
 const iconsMap = {
@@ -67,6 +70,9 @@ const iconsMap = {
   trendUp: TrendingUp,
   globe: Globe,
   store: Store,
+  xCircle: XCircle,
+  fileText: FileText,
+  pencil: Pencil,
 };
 
 export function Icon({ name, size = 18, className = '', style = {}, 'aria-hidden': ariaHidden = true }) {
@@ -75,7 +81,7 @@ export function Icon({ name, size = 18, className = '', style = {}, 'aria-hidden
 
   return (
     <span
-      className={className}
+      className={`icon-wrapper ${className}`}
       style={{
         display: 'inline-flex',
         alignItems: 'center',
@@ -83,11 +89,11 @@ export function Icon({ name, size = 18, className = '', style = {}, 'aria-hidden
         width: size,
         height: size,
         flexShrink: 0,
-        ...style,
+        ...style
       }}
       aria-hidden={ariaHidden}
     >
-      <IconComponent size={size} strokeWidth={2} />
+      <IconComponent size={size} strokeWidth={1.8} />
     </span>
   );
 }

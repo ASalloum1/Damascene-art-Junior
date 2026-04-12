@@ -12,6 +12,8 @@
   overflow: hidden;
   flex-shrink: 0;
   position: relative;
+  isolation: isolate;
+  will-change: width;
 }
 
 /* Subtle gold dust overlay for depth */
@@ -30,57 +32,91 @@
 
 /* ── Logo / Brand Area ── */
 .logo {
-  padding: var(--space-6);
-  border-block-end: 1px solid rgba(200, 164, 90, 0.18);
-  text-align: center;
+  display: flex;
+  gap: var(--space-4);
+  padding: 18px 38px;
+  border-block-end: 2px solid rgba(200, 164, 90, 0.18);
+  min-height: 75px;
+  overflow: hidden;
   position: relative;
   z-index: 1;
   flex-shrink: 0;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
 }
 
-/* Gold accent line along the bottom of logo */
+/* Gold accent line below logo */
 .logo::after {
   content: '';
   position: absolute;
-  inset-inline: var(--space-6);
+  inset-inline: var(--space-3);
   bottom: -1px;
   height: 1px;
   background: var(--gradient-gold);
   opacity: 0.5;
 }
 
-.logoTitle {
+.logoMark {
+  width: 45px;
+  height: 45px;
+  border-radius: var(--radius-md);
+  background: var(--color-gold-bg);
+  border: 1px solid rgba(200, 164, 90, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
   color: var(--color-gold);
-  font-size: var(--font-size-lg);
+  transition: background var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.sidebar:hover .logoMark {
+  box-shadow: var(--glow-gold);
+}
+
+.logoText {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: fadeInScale 0.35s ease-out both;
+}
+
+.logoName {
+  color: var(--color-gold);
   font-weight: var(--font-weight-black);
-  display: block;
+  font-size: var(--font-size-lg);
+  white-space: nowrap;
+  line-height: 1.2;
   letter-spacing: 0.02em;
   text-shadow: 0 0 20px rgba(200, 164, 90, 0.35), 0 1px 2px rgba(0, 0, 0, 0.4);
-  animation: fadeInScale 0.35s ease-out both;
 }
 
 .logoSub {
   color: var(--color-text-on-navy);
   font-size: var(--font-size-xs);
+  white-space: nowrap;
+  margin-block-start: 2px;
   opacity: 0.6;
-  display: block;
-  margin-block-start: var(--space-1);
-  animation: fadeInScale 0.35s ease-out 0.08s both;
 }
 
 /* ── Nav Scroll Area ── */
 .nav {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--space-3);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  position: relative;
-  z-index: 1;
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
-  transition: scrollbar-color var(--transition-base);
+     flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: var(--space-2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    position: relative;
+    z-index: 1;
+    scrollbar-width: none;
+    transition: scrollbar-color var(--transition-base);
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: nowrap;
 }
 
 .nav:hover {
@@ -129,21 +165,23 @@
   white-space: nowrap;
   width: 100%;
   text-align: start;
-  /* RTL: hover slides toward the start (right side in RTL layout) */
   transform: translateX(0);
   border-inline-end: 3px solid transparent;
+  flex-shrink: 0;
 }
 
 .navItem:hover {
   background: rgba(255, 255, 255, 0.07);
   opacity: 1;
-  /* RTL: positive X slides element toward inline-start (right) */
   transform: translateX(3px);
+  color: var(--color-gold);
+  padding-left: var(--space-5);
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.07);
 }
 
 /* Active nav item — gold accent, subtle glow */
 .active {
-  background: rgba(200, 164, 90, 0.08);
+  background: var(--color-gold-bg);
   color: var(--color-gold);
   opacity: 1;
   border-inline-end: 3px solid var(--color-gold);
@@ -192,7 +230,7 @@
 .toggle {
   padding: var(--space-4);
   border: none;
-  border-block-start: 1px solid rgba(200, 164, 90, 0.18);
+  border-block-start: 1px solid var(--glass-border);
   background: rgba(0, 0, 0, 0.15);
   color: rgba(255, 255, 255, 0.65);
   cursor: pointer;
@@ -209,7 +247,7 @@
 }
 
 .toggle:hover {
-  background: rgba(200, 164, 90, 0.10);
+  background: var(--color-gold-bg);
   color: var(--color-gold);
 }
 
@@ -226,4 +264,21 @@
 
 .collapsed .logo {
   padding: var(--space-4);
+  justify-content: center;
+}
+
+.collapsed .logoText {
+  display: none;
+}
+
+/* ── Animation ── */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

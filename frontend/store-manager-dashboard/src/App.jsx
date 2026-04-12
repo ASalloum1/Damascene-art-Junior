@@ -35,7 +35,7 @@ export default function App() {
     <div className={styles.layout}>
       <Sidebar
         activePage={activePage}
-        onNavigate={setActivePage}
+        onNavigate={(page) => setActivePage(page)}
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed(c => !c)}
         mobileOpen={mobileOpen}
@@ -44,7 +44,7 @@ export default function App() {
       <div className={styles.body}>
         <Header
           activePage={activePage}
-          onNavigate={setActivePage}
+          onNavigate={(page) => setActivePage(page)}
           onMobileMenuOpen={() => setMobileOpen(true)}
         />
         <main id="main-content" className={styles.content} aria-label="محتوى الصفحة">
