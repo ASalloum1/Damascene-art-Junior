@@ -1,0 +1,13 @@
+{
+  "name": "damascene-art-frontend",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n customer,admin,store -c blue,green,magenta \"npm run dev --prefix customer-guest\" \"npm run dev --prefix Admin-panel\" \"npm run dev --prefix store-manager-dashboard\"",
+    "dev:customer": "npm run dev --prefix customer-guest",
+    "dev:admin": "npm run dev --prefix Admin-panel",
+    "dev:store": "npm run dev --prefix store-manager-dashboard"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
