@@ -1,8 +1,0 @@
-# AI tools
-.claude/
-.agents/
-.opencode/
-.ruff_cache/
-AGENTS.md
-skills-lock.json
-session-ses_*.md
