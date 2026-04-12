@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { SlidersHorizontal, X, Star } from 'lucide-react';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { ProductCard } from '../components/ProductCard.jsx';
-import { Btn } from '../components/Btn.jsx';
+import { Button } from '../components/Button.jsx';
 import { products, categories } from '../data/index.js';
 import styles from './ShopPage.module.css';
 
@@ -45,15 +45,15 @@ export function ShopPage({ onNavigate }) {
               {Array.from({ length: r }, (_, i) => (
                 <Star key={i} size={12} fill="var(--color-gold)" stroke="var(--color-gold)" strokeWidth={1.5} />
               ))}
-              {r < 5 && ' فأكثر'}
+              {r < 5 ? ' فأكثر' : null}
             </span>
           </label>
         ))}
       </div>
 
-      <Btn variant="primary" full size="sm">
+      <Button variant="primary" full size="sm">
         تطبيق الفلاتر
-      </Btn>
+      </Button>
     </>
   );
 
@@ -72,7 +72,7 @@ export function ShopPage({ onNavigate }) {
       </button>
 
       {/* Mobile backdrop + bottom sheet */}
-      {filterOpen && (
+      {filterOpen ? (
         <>
           <div
             className={styles.backdrop}
@@ -91,7 +91,7 @@ export function ShopPage({ onNavigate }) {
             {filterSidebarContent}
           </div>
         </>
-      )}
+      ) : null}
 
       <div className={styles.layout}>
         {/* Desktop sidebar */}

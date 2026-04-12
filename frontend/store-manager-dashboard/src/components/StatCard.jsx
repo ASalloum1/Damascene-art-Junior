@@ -1,15 +1,16 @@
 import styles from './StatCard.module.css';
+import { Icon } from './SvgIcons';
 
 /**
  * StatCard — summary metric card
  * accentVariant: 'success' | 'warning' | 'error' | 'info' | 'primary'
  */
-export function StatCard({ icon: IconComponent, label, value, accentVariant = 'primary', sub }) {
+export function StatCard({ icon: iconName, label, value, accentVariant = 'primary', sub }) {
   return (
     <div className={`${styles.card} ${styles[accentVariant]}`} role="region" aria-label={label}>
       <div className={styles.header}>
         <div className={styles.iconWrap}>
-          {IconComponent && <IconComponent size={20} aria-hidden="true" />}
+          {iconName ? <Icon name={iconName} size={20} aria-hidden="true" /> : null}
         </div>
         <span className={styles.sub}>{sub}</span>
       </div>

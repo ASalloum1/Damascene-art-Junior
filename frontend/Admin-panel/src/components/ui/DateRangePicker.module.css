@@ -8,6 +8,7 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
+  transition: color var(--transition-fast);
 }
 
 .inputs {
@@ -24,12 +25,17 @@
 
 .inputs:focus-within {
   border-color: var(--color-gold);
-  box-shadow: 0 0 0 3px var(--color-gold-bg);
+  box-shadow: 0 0 0 3px rgba(200, 164, 90, 0.15);
 }
 
 .calIcon {
   color: var(--color-gold);
   flex-shrink: 0;
+  transition: color var(--transition-fast);
+}
+
+.inputs:focus-within .calIcon {
+  color: var(--color-gold-dark);
 }
 
 .dateGroup {
@@ -52,10 +58,12 @@
   font-family: var(--font-arabic);
   cursor: pointer;
   direction: ltr; /* dates use LTR format */
+  transition: color var(--transition-fast);
 }
 
 .dateInput:focus {
   outline: none;
+  color: var(--color-gold-dark);
 }
 
 .separator {

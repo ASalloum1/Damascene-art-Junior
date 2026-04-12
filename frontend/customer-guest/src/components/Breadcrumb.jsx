@@ -21,9 +21,9 @@ export function Breadcrumb({ items = [], onNavigate }) {
               <span className={styles.current}>{item.label}</span>
             )}
 
-            {!isLast && (
+            {!isLast ? (
               <ChevronLeft size={12} className={styles.separator} />
-            )}
+            ) : null}
           </span>
         );
       })}

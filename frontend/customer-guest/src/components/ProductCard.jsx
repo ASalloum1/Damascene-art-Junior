@@ -1,7 +1,7 @@
 import { ImageIcon } from 'lucide-react';
 import { Badge } from './Badge.jsx';
 import { StarRating } from './StarRating.jsx';
-import { Btn } from './Btn.jsx';
+import { Button } from './Button.jsx';
 import styles from './ProductCard.module.css';
 
 function getBadgeVariant(badgeText) {
@@ -19,17 +19,17 @@ export function ProductCard({ product, onNavigate, onAddToCart }) {
       className={styles.card}
       onClick={() => onNavigate?.(id)}
       tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && onNavigate?.(id)}
+      onKeyDown={(e) => e.key === 'Enter' ? onNavigate?.(id) : null}
       role="button"
       aria-label={name}
     >
       <div className={styles.imageArea}>
         <ImageIcon size={48} className={styles.imagePlaceholder} />
-        {badge && (
+        {badge ? (
           <div className={styles.badgeOverlay}>
             <Badge text={badge} variant={getBadgeVariant(badge)} />
           </div>
-        )}
+        ) : null}
       </div>
 
       <div className={styles.body}>
@@ -43,12 +43,12 @@ export function ProductCard({ product, onNavigate, onAddToCart }) {
         <div className={styles.priceRow}>
           <div className={styles.priceGroup}>
             <span className={styles.price}>{price} $</span>
-            {oldPrice && (
+            {oldPrice ? (
               <span className={styles.oldPrice}>{oldPrice} $</span>
-            )}
+            ) : null}
           </div>
 
-          <Btn
+          <Button
             variant="primary"
             size="sm"
             onClick={(e) => {
@@ -57,7 +57,7 @@ export function ProductCard({ product, onNavigate, onAddToCart }) {
             }}
           >
             أضف للسلة
-          </Btn>
+          </Button>
         </div>
       </div>
     </article>

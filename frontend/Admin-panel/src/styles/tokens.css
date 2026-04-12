@@ -16,6 +16,8 @@
   /* ── Page Backgrounds ── */
   --color-cream:       #FFF8F0;
   --color-cream-dark:  #F5EDE0;
+  --color-cream-mid:   #EDE3D4;
+  --color-cream-deep:  #DDD0BE;
   --color-white:       #FFFFFF;
 
   /* ── Semantic Colors ── */
@@ -77,16 +79,43 @@
 
   /* ── Shadows ── */
   --shadow-card:     0 2px 12px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(200, 164, 90, 0.12);
   --shadow-dropdown: 0 4px 20px rgba(0, 0, 0, 0.12);
   --shadow-modal:    0 8px 32px rgba(0, 0, 0, 0.15);
 
   /* ── Layout ── */
-  --sidebar-width:           260px;
-  --sidebar-width-collapsed: 72px;
-  --topbar-height:           64px;
+  --sidebar-width:           252px;
+  --sidebar-width-collapsed: 65px;
+  --topbar-height:           60px;
 
-  /* ── Transitions ── */
+  /* ── Transitions & Delays ── */
   --transition-fast: 150ms ease;
   --transition-base: 250ms ease;
   --transition-slow: 380ms ease;
+
+  --delay-1: 100ms;
+  --delay-2: 200ms;
+  --delay-3: 300ms;
+  --delay-4: 400ms;
+  --delay-5: 500ms;
+
+  /* ── Gradients ── */
+  --gradient-sidebar:      linear-gradient(180deg, #1A1F3A 0%, #111528 100%);
+  --gradient-gold:         linear-gradient(135deg, #C8A45A 0%, #E8D5A3 40%, #C8A45A 60%, #A07830 100%);
+  --gradient-gold-subtle:  linear-gradient(135deg, rgba(200, 164, 90, 0.04) 0%, rgba(232, 213, 163, 0.08) 50%, rgba(200, 164, 90, 0.04) 100%);
+
+  /* ── Glass ── */
+  --glass-bg:     rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(200, 164, 90, 0.15);
+
+  /* ── Glow / Elevated Shadows ── */
+  --glow-gold:          0 0 0 1px rgba(200, 164, 90, 0.25), 0 4px 16px rgba(200, 164, 90, 0.15);
+  --glow-error:         0 0 0 2px rgba(192, 57, 43, 0.2), 0 0 8px rgba(192, 57, 43, 0.4);
+  --shadow-elevated:    0 12px 40px rgba(0, 0, 0, 0.18), 0 4px 12px rgba(0, 0, 0, 0.10);
+
+  /* ── Backdrop ── */
+  --backdrop-blur: blur(12px);
+
+  /* ── Overlay ── */
+  --overlay-bg: rgba(26, 31, 58, 0.45);
 }

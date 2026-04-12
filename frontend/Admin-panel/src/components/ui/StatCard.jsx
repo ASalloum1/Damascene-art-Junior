@@ -44,7 +44,7 @@ export default function StatCard({
           <Icon size={24} strokeWidth={1.8} />
         </div>
 
-        {trend !== undefined && (
+        {trend !== undefined ? (
           <span
             className={[
               styles.trend,
@@ -59,13 +59,13 @@ export default function StatCard({
           >
             {trend}
           </span>
-        )}
+        ) : null}
       </div>
 
       <div className={styles.body}>
         <span className={styles.value}>{value}</span>
         <span className={styles.label}>{label}</span>
-        {subtitle && <span className={styles.subtitle}>{subtitle}</span>}
+        {subtitle ? <span className={styles.subtitle}>{subtitle}</span> : null}
       </div>
     </div>
   );

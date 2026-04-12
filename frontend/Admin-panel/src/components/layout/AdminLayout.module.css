@@ -1,0 +1,26 @@
+.layout {
+  display: flex;
+  flex-direction: row;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  transition: margin-inline-start var(--transition-base);
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-6);
+  background: var(--color-cream);
+}
+
+/* Page enter transition support */
+.content > .pageEnter {
+  animation: fadeInUp 0.4s ease-out both;
+}

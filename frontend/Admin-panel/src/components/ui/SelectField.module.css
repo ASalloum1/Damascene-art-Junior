@@ -9,6 +9,7 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
+  transition: color var(--transition-fast);
 }
 
 .required {
@@ -42,7 +43,7 @@
 .select:focus {
   outline: none;
   border-color: var(--color-gold);
-  box-shadow: 0 0 0 3px var(--color-gold-bg);
+  box-shadow: 0 0 0 3px rgba(200, 164, 90, 0.15);
 }
 
 .select:disabled {
@@ -57,7 +58,7 @@
 
 .selectError:focus {
   border-color: var(--color-red);
-  box-shadow: 0 0 0 3px var(--color-red-bg);
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12);
 }
 
 .chevron {
@@ -67,6 +68,11 @@
   transform: translateY(-50%);
   color: var(--color-text-secondary);
   pointer-events: none;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.select:focus ~ .chevron {
+  color: var(--color-gold);
 }
 
 .errorMsg {

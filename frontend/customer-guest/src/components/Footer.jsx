@@ -1,4 +1,5 @@
 import { Gem, Mail, Phone, MapPin } from 'lucide-react';
+import { Ornament } from './Ornament.jsx';
 import styles from './Footer.module.css';
 
 export function Footer({ onNavigate }) {
@@ -22,6 +23,7 @@ export function Footer({ onNavigate }) {
 
   return (
     <footer role="contentinfo" className={styles.footer}>
+      <Ornament />
       <div className={styles.grid}>
         {/* Col 1 — Brand */}
         <div className={styles.brand}>
@@ -67,12 +69,15 @@ export function Footer({ onNavigate }) {
         {/* Col 4 — Contact */}
         <div>
           <h4 className={styles.colHeading}>تواصل معنا</h4>
-          {contactItems.map(({ icon: Icon, text }) => (
-            <div key={text} className={styles.contactItem}>
-              <Icon size={16} className={styles.contactIcon} />
-              <span>{text}</span>
-            </div>
-          ))}
+          {contactItems.map((item) => {
+            const ContactIcon = item.icon;
+            return (
+              <div key={item.text} className={styles.contactItem}>
+                <ContactIcon size={16} className={styles.contactIcon} />
+                <span>{item.text}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
 

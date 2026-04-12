@@ -1,5 +1,5 @@
 import { CheckCircle2 } from 'lucide-react';
-import { Btn } from '../components/Btn.jsx';
+import { Button } from '../components/Button.jsx';
 import styles from './ConfirmationPage.module.css';
 
 const orderDetails = [
@@ -31,12 +31,12 @@ export function ConfirmationPage({ onNavigate }) {
       </div>
 
       <div className={styles.ctaRow}>
-        <Btn variant="primary" onClick={() => onNavigate?.('tracking')}>
+        <Button variant="primary" onClick={() => onNavigate?.('tracking')}>
           تتبع الطلب
-        </Btn>
-        <Btn variant="outline" onClick={() => onNavigate?.('shop')}>
+        </Button>
+        <Button variant="outline" onClick={() => onNavigate?.('shop')}>
           متابعة التسوق
-        </Btn>
+        </Button>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { Gem } from 'lucide-react';
 import { InputField } from '../components/InputField.jsx';
-import { Btn } from '../components/Btn.jsx';
+import { Button } from '../components/Button.jsx';
 import styles from './LoginPage.module.css';
 
 export function LoginPage({ onNavigate }) {
@@ -31,9 +31,9 @@ export function LoginPage({ onNavigate }) {
           </button>
         </div>
 
-        <Btn variant="primary" full onClick={() => onNavigate?.('account')}>
+        <Button variant="primary" full onClick={() => onNavigate?.('account')}>
           تسجيل الدخول
-        </Btn>
+        </Button>
 
         <p className={styles.divider}>— أو —</p>
 

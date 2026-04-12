@@ -22,7 +22,7 @@
 .heading {
   font-size: var(--font-size-xl);
   font-weight: 800;
-  color: var(--color-ink);
+  color: var(--color-navy);
   margin-block-end: var(--space-6);
 }
 
@@ -48,7 +48,7 @@
 .loginBtn {
   background: transparent;
   border: none;
-  color: var(--color-wood-mid);
+  color: var(--color-gold);
   font-weight: 700;
   cursor: pointer;
   font-family: var(--font-arabic);

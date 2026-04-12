@@ -1,0 +1,135 @@
+/**
+ * ReviewsPage — Premium aesthetic layer
+ * Gold / Navy / Cream palette — RTL-first logical properties
+ */
+
+/* ─── Keyframes ──────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ratingFill {
+  from { width: 0; }
+  to   { width: var(--bar-target, 100%); }
+}
+
+@keyframes textFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ─── Staggered Review Cards ─────────────────────────────────── */
+.reviewCard {
+  opacity: 0;
+  animation: fadeInUp 420ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  border-inline-start: 3px solid transparent;
+  transition:
+    box-shadow var(--transition-base),
+    border-color var(--transition-base),
+    background var(--transition-base);
+}
+
+.reviewCard:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-inline-start-color: var(--color-wood-mid);
+  background: var(--color-ivory);
+}
+
+/* Stagger delays — nth-child 1..8 */
+.reviewCard:nth-child(1) { animation-delay:  60ms; }
+.reviewCard:nth-child(2) { animation-delay: 120ms; }
+.reviewCard:nth-child(3) { animation-delay: 180ms; }
+.reviewCard:nth-child(4) { animation-delay: 240ms; }
+.reviewCard:nth-child(5) { animation-delay: 300ms; }
+.reviewCard:nth-child(6) { animation-delay: 360ms; }
+.reviewCard:nth-child(7) { animation-delay: 420ms; }
+.reviewCard:nth-child(8) { animation-delay: 480ms; }
+
+/* ─── Star Rating ────────────────────────────────────────────── */
+.stars {
+  color: var(--color-wood-mid);
+  font-size: var(--font-size-lg);
+  letter-spacing: 2px;
+  text-shadow: 0 1px 4px var(--color-gold-alpha-35);
+  transition: text-shadow var(--transition-fast);
+}
+
+.reviewCard:hover .stars {
+  text-shadow: 0 0 10px var(--color-gold-alpha-70);
+}
+
+/* ─── Review Text ────────────────────────────────────────────── */
+.reviewText {
+  animation: textFade 500ms ease forwards;
+  animation-delay: 200ms;
+  opacity: 0;
+}
+
+/* ─── Rating Bar (animated fill) ────────────────────────────── */
+.ratingBar {
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-ivory-dark);
+  overflow: hidden;
+  margin-block: var(--space-1);
+}
+
+.ratingBarFill {
+  height: 100%;
+  background: var(--gradient-gold);
+  border-radius: var(--radius-full);
+  width: 0;
+  animation: ratingFill 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 300ms;
+}
+
+/* ─── Approve / Reject / Reply Button Glow Wrappers ───────────── */
+.btnApprove,
+.btnReject,
+.btnReply {
+  display: inline-flex;
+}
+
+.btnApprove > button {
+  transition:
+    box-shadow var(--transition-base),
+    transform var(--transition-fast);
+}
+.btnApprove > button:hover:not(:disabled) {
+  box-shadow: 0 0 0 3px var(--color-success-alpha-25), 0 4px 16px var(--color-success-bg);
+  transform: translateY(-1px);
+}
+
+.btnReject > button {
+  transition:
+    box-shadow var(--transition-base),
+    transform var(--transition-fast);
+}
+.btnReject > button:hover:not(:disabled) {
+  box-shadow: 0 0 0 3px var(--color-error-alpha-25), 0 4px 16px var(--color-error-alpha-20);
+  transform: translateY(-1px);
+}
+
+.btnReply > button {
+  transition:
+    box-shadow var(--transition-base),
+    transform var(--transition-fast);
+}
+.btnReply > button:hover:not(:disabled) {
+  box-shadow: var(--glow-gold);
+  transform: translateY(-1px);
+}
+
+/* ─── Review Actions wrapper ─────────────────────────────────── */
+.reviewActions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}

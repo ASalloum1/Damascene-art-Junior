@@ -1,0 +1,207 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.pageTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-black);
+  color: var(--color-navy);
+  margin: 0;
+  margin-block-end: var(--space-1);
+  position: relative;
+}
+.pageSubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  max-width: 500px;
+}
+.pageTitle:hover::after{
+  width: 155px;
+}
+
+.pageTitle::after {
+  content: '';
+  display: block;
+  width: 55px;
+  height: 4px;
+  background: var(--gradient-gold);
+  border-radius: var(--radius-full);
+  margin-block-start: var(--space-1);
+  transition: width var(--transition-base);
+}
+
+/* Stats Row — staggered entrance */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-5);
+  margin-block-end: var(--space-4);
+}
+
+.statsRow > * {
+  animation: fadeInUp 0.4s ease-out backwards;
+}
+
+.statsRow > *:nth-child(1) { animation-delay: 0s; }
+.statsRow > *:nth-child(2) { animation-delay: 0.06s; }
+.statsRow > *:nth-child(3) { animation-delay: 0.12s; }
+.statsRow > *:nth-child(4) { animation-delay: 0.18s; }
+
+/* Chart card — gold gradient top border & glass morphism */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-card);
+  position: relative;
+  border-block-start: 3px solid transparent;
+  transition: box-shadow var(--transition-base), transform var(--transition-base), border-color var(--transition-base);
+  overflow: hidden; /* Ensure content stays inside */
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
+  border-block-start-color: var(--color-gold);
+}
+
+/* Table Section */
+.tableSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-block-start: var(--space-2);
+}
+
+.tableHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.tableTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.tableTitle::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  background: var(--color-gold);
+  border-radius: var(--radius-full);
+}
+
+.exportBtns {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.exportBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-gold-bg);
+  background: var(--color-white);
+  color: var(--color-navy);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-arabic);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-card);
+}
+
+.exportBtn:hover {
+  background: var(--color-cream);
+  color: var(--color-gold-dark);
+  box-shadow: var(--glow-gold);
+  border-color: var(--color-gold);
+}
+
+/* Transaction table — glass effect and gold top accent */
+.tableCard {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  border-block-start: 3px solid transparent;
+  transition: box-shadow var(--transition-base), transform var(--transition-base), border-color var(--transition-base);
+  position: relative;
+  z-index: 1; /* Ensure shadow doesn't clip if needed */
+}
+
+.tableCard:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
+  border-block-start-color: var(--color-gold);
+}
+
+/* Amount Colors */
+.paymentAmount {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-green);
+}
+
+.refundAmount {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-red);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .statsRow {
+    grid-template-columns: 1fr;
+  }
+
+  .tableHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 640px) {
+  .statsRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    gap: var(--space-3);
+  }
+
+  .card {
+    padding: var(--space-3);
+  }
+
+  .statsRow {
+    gap: var(--space-3);
+  }
+}

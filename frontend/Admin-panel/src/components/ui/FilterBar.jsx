@@ -60,7 +60,7 @@ export default function FilterBar({ filters = [], onReset, activeCount = 0 }) {
         return null;
       })}
 
-      {onReset && (
+      {onReset ? (
         <div className={styles.resetWrapper}>
           <Button
             variant="ghost"
@@ -68,12 +68,12 @@ export default function FilterBar({ filters = [], onReset, activeCount = 0 }) {
             onClick={onReset}
           >
             مسح الفلاتر
-            {activeCount > 0 && (
+            {activeCount > 0 ? (
               <span className={styles.badge}>{toArabicNum(activeCount)}</span>
-            )}
+            ) : null}
           </Button>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

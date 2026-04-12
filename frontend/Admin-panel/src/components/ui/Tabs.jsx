@@ -36,11 +36,11 @@ export default function Tabs({
             type="button"
           >
             <span className={styles.tabLabel}>{tab.label}</span>
-            {tab.count !== undefined && tab.count !== null && (
+            {tab.count !== undefined && tab.count !== null ? (
               <span className={[styles.count, isActive ? styles.countActive : ''].filter(Boolean).join(' ')}>
                 {toArabicNum(tab.count)}
               </span>
-            )}
+            ) : null}
           </button>
         );
       })}

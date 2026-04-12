@@ -13,8 +13,8 @@
 }
 
 .new {
-  background-color: var(--color-success-bg);
-  color: var(--color-success);
+  background-color: var(--color-green-bg);
+  color: var(--color-green);
 }
 
 .sale {
@@ -23,13 +23,13 @@
 }
 
 .success {
-  background-color: var(--color-success-bg);
-  color: var(--color-success);
+  background-color: var(--color-green-bg);
+  color: var(--color-green);
 }
 
 .warning {
-  background-color: var(--color-warning-bg);
-  color: var(--color-warning);
+  background-color: var(--color-orange-bg);
+  color: var(--color-orange);
 }
 
 .error {

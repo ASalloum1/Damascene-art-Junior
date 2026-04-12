@@ -1,10 +1,9 @@
 import styles from './Header.module.css';
-import { Menu, Bell } from 'lucide-react';
-import { menuItems } from './Sidebar';
+import { Icon } from './SvgIcons';
+import { menuItems } from '../data/menuData';
 
 export function Header({ activePage, onNavigate, onMobileMenuOpen }) {
   const currentItem = menuItems.find((m) => m.id === activePage);
-  const PageIcon = currentItem?.icon;
 
   return (
     <header className={styles.header} role="banner">
@@ -14,12 +13,14 @@ export function Header({ activePage, onNavigate, onMobileMenuOpen }) {
         onClick={onMobileMenuOpen}
         aria-label="فتح القائمة"
       >
-        <Menu size={20} />
+        <Icon name="menu" size={20} />
       </button>
 
       {/* Page title */}
       <h1 className={styles.pageTitle} role="status" aria-live="polite">
-        {PageIcon && <PageIcon size={18} style={{ color: 'var(--color-wood-mid)' }} />}
+        {currentItem?.icon ? (
+          <Icon name={currentItem.icon} size={18} className={styles.pageTitleIcon} />
+        ) : null}
         <span>{currentItem?.label}</span>
       </h1>
 
@@ -31,7 +32,7 @@ export function Header({ activePage, onNavigate, onMobileMenuOpen }) {
           onClick={() => onNavigate('notifications')}
           aria-label="الإشعارات — ٣ إشعارات جديدة"
         >
-          <Bell size={18} />
+          <Icon name="bell" size={18} />
           <span className={styles.badge} aria-hidden="true">٣</span>
         </button>
 

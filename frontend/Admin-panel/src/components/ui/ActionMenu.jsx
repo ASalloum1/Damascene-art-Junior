@@ -48,7 +48,7 @@ export default function ActionMenu({ actions = [] }) {
         <MoreVertical size={18} strokeWidth={1.8} />
       </button>
 
-      {isOpen && (
+      {isOpen ? (
         <div className={styles.dropdown} role="menu">
           {actions.map((action, index) => {
             const Icon = action.icon;
@@ -58,6 +58,7 @@ export default function ActionMenu({ actions = [] }) {
                 type="button"
                 role="menuitem"
                 disabled={action.disabled}
+                style={{ '--i': index }}
                 className={[
                   styles.action,
                   action.danger ? styles.actionDanger : '',
@@ -72,15 +73,15 @@ export default function ActionMenu({ actions = [] }) {
                   }
                 }}
               >
-                {Icon && (
+                {Icon ? (
                   <Icon size={14} strokeWidth={1.8} className={styles.actionIcon} />
-                )}
+                ) : null}
                 <span>{action.label}</span>
               </button>
             );
           })}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

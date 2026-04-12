@@ -12,10 +12,23 @@
   gap: var(--space-3);
   position: relative;
   padding-block-end: var(--space-5);
+  animation: fadeInUp 0.3s ease-out backwards;
+  animation-delay: calc(var(--index, 0) * 0.06s);
 }
 
 .step:last-child {
   padding-block-end: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Vertical connector line */
@@ -26,6 +39,7 @@
   width: 2px;
   height: calc(100% - 12px);
   background-color: var(--color-cream-dark);
+  transition: background-color var(--transition-base);
 }
 
 .done .connector {
@@ -42,7 +56,7 @@
   background-color: var(--color-white);
   flex-shrink: 0;
   z-index: 1;
-  transition: border-color var(--transition-base), background-color var(--transition-base);
+  transition: border-color var(--transition-base), background-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 .done .dot {
@@ -53,6 +67,16 @@
 .active .dot {
   background-color: var(--color-gold);
   border-color: var(--color-gold);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 1px rgba(200, 164, 90, 0.20), 0 2px 8px rgba(200, 164, 90, 0.10);
+  }
+  50% {
+    box-shadow: 0 0 0 3px rgba(200, 164, 90, 0.40), 0 4px 16px rgba(200, 164, 90, 0.25);
+  }
 }
 
 .pending .dot {

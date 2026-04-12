@@ -19,18 +19,18 @@ export default function EmptyState({
 }) {
   return (
     <div className={styles.container}>
-      {Icon && (
+      {Icon ? (
         <div className={styles.iconWrapper}>
           <Icon size={64} strokeWidth={1.2} className={styles.icon} />
         </div>
-      )}
+      ) : null}
       <h3 className={styles.title}>{title}</h3>
-      {description && <p className={styles.description}>{description}</p>}
-      {actionLabel && onAction && (
+      {description ? <p className={styles.description}>{description}</p> : null}
+      {actionLabel && onAction ? (
         <Button variant="outline" onClick={onAction}>
           {actionLabel}
         </Button>
-      )}
+      ) : null}
     </div>
   );
 }

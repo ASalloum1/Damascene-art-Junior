@@ -1,32 +1,32 @@
 import { Mail, Phone, Smartphone, MapPin, Clock, Map } from 'lucide-react';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { InputField } from '../components/InputField.jsx';
-import { Btn } from '../components/Btn.jsx';
+import { Button } from '../components/Button.jsx';
 import styles from './ContactPage.module.css';
 
 export function ContactPage() {
   return (
     <div className={styles.container}>
-      <SectionHeader title="تواصل معنا" subtitle="نسعد بسماع رأيك واستفساراتك" />
+      <SectionHeader title="آفاق التواصل" subtitle="يُسعدنا استقبال استفساراتكم ومشاركتكم شغف الفن" />
       <div className={styles.grid}>
         {/* Form Column */}
         <div className={styles.formCard}>
-          <InputField label="الاسم" placeholder="اسمك الكامل" />
-          <InputField label="البريد الإلكتروني" type="email" placeholder="email@example.com" />
+          <InputField label="الاسم الكريم" placeholder="الاسم الكامل كما تودون ظهوره" />
+          <InputField label="عنوان المراسلة الرقمي" type="email" placeholder="email@example.com" />
           <InputField
-            label="الموضوع"
+            label="ماهية التواصل"
             select
-            options={['استفسار عام', 'مشكلة في طلب', 'طلب مخصص', 'اقتراح', 'أخرى']}
+            options={['استفسار عن مقتنى', 'متابعة طلبية', 'طلب قطعة مخصصة', 'مقترح إبداعي', 'أمر آخر']}
           />
           <InputField
-            label="الرسالة"
+            label="تفاصيل الرسالة"
             textarea
-            placeholder="اكتب رسالتك هنا..."
+            placeholder="يرجى تدوين رسالتكم الموقرة هنا..."
             rows={5}
           />
-          <Btn variant="primary" full>
-            إرسال الرسالة
-          </Btn>
+          <Button variant="primary" full>
+            إرسال المراسلة
+          </Button>
         </div>
 
         {/* Info Column */}

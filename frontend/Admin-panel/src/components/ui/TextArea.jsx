@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import styles from './TextArea.module.css';
 import { toArabicNum } from '../../utils/formatters.js';
 
@@ -27,17 +28,18 @@ export default function TextArea({
   id,
   name,
 }) {
-  const textareaId = id || `textarea-${label?.replace(/\s/g, '-') || Math.random()}`;
+  const reactId = useId();
+  const textareaId = id || reactId;
   const currentLength = value?.length || 0;
 
   return (
     <div className={styles.fieldGroup}>
-      {label && (
+      {label ? (
         <label htmlFor={textareaId} className={styles.label}>
           {label}
-          {required && <span className={styles.required} aria-hidden="true"> *</span>}
+          {required ? <span className={styles.required} aria-hidden="true"> *</span> : null}
         </label>
-      )}
+      ) : null}
       <textarea
         id={textareaId}
         name={name}
@@ -54,12 +56,12 @@ export default function TextArea({
           .join(' ')}
       />
       <div className={styles.footer}>
-        {error && (
+        {error ? (
           <span className={styles.errorMsg} role="alert">
             {error}
           </span>
-        )}
-        {maxLength && (
+        ) : null}
+        {maxLength ? (
           <span
             className={[
               styles.counter,
@@ -70,7 +72,7 @@ export default function TextArea({
           >
             {toArabicNum(currentLength)}/{toArabicNum(maxLength)}
           </span>
-        )}
+        ) : null}
       </div>
     </div>
   );

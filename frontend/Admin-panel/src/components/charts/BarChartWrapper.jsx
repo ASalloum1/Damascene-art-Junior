@@ -34,20 +34,20 @@ export default function BarChartWrapper({
 }) {
   return (
     <div className={styles.wrapper}>
-      {title && <h3 className={styles.title}>{title}</h3>}
+      {title ? <h3 className={styles.title}>{title}</h3> : null}
       <ResponsiveContainer width="100%" height={height}>
         <BarChart
           data={data}
           margin={{ top: 8, right: 8, bottom: 8, left: 8 }}
           barCategoryGap="30%"
         >
-          {showGrid && (
+          {showGrid ? (
             <CartesianGrid
               strokeDasharray="3 3"
               stroke={COLORS.creamDark}
               vertical={false}
             />
-          )}
+          ) : null}
           <XAxis
             dataKey={xKey}
             tick={{ fill: COLORS.textSecondary, fontSize: 12, fontFamily: 'Tajawal' }}

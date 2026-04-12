@@ -25,7 +25,7 @@
 
 .track {
   width: 100%;
-  background-color: var(--color-cream-dark);
+  background-color: rgba(245, 237, 224, 0.6);
   border-radius: var(--radius-full);
   overflow: hidden;
 }
@@ -33,5 +33,6 @@
 .fill {
   height: 100%;
   border-radius: var(--radius-full);
-  transition: width var(--transition-base);
+  transition: width 0.6s ease-out;
+  background: var(--gradient-gold);
 }

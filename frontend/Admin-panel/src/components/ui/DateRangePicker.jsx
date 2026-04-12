@@ -25,7 +25,7 @@ export default function DateRangePicker({
 
   return (
     <div className={styles.container}>
-      {label && <span className={styles.label}>{label}</span>}
+      {label ? <span className={styles.label}>{label}</span> : null}
       <div className={styles.inputs}>
         <CalendarRange
           size={16}

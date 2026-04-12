@@ -2,7 +2,7 @@ import { Package, Heart, Star, MapPin } from 'lucide-react';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { Badge } from '../components/Badge.jsx';
 import { InputField } from '../components/InputField.jsx';
-import { Btn } from '../components/Btn.jsx';
+import { Button } from '../components/Button.jsx';
 import styles from './AccountPage.module.css';
 
 const stats = [
@@ -25,15 +25,18 @@ export function AccountPage({ onNavigate }) {
 
       {/* ── Stat grid ── */}
       <div className={styles.statGrid}>
-        {stats.map(({ icon: Icon, label, value }) => (
-          <div key={label} className={styles.statCard}>
-            <div className={styles.statIcon}>
-              <Icon size={28} />
+        {stats.map((stat) => {
+          const StatIcon = stat.icon;
+          return (
+            <div key={stat.label} className={styles.statCard}>
+              <div className={styles.statIcon}>
+                <StatIcon size={28} />
+              </div>
+              <p className={styles.statLabel}>{stat.label}</p>
+              <p className={stat.statValue}>{stat.value}</p>
             </div>
-            <p className={styles.statLabel}>{label}</p>
-            <p className={styles.statValue}>{value}</p>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* ── Orders card ── */}
@@ -71,7 +74,7 @@ export function AccountPage({ onNavigate }) {
           <InputField label="الهاتف" placeholder="+971 XXX" type="tel" />
           <InputField label="كلمة المرور" type="password" placeholder="••••••" />
         </div>
-        <Btn variant="primary">حفظ التغييرات</Btn>
+        <Button variant="primary">حفظ التغييرات</Button>
       </div>
     </div>
   );

@@ -20,12 +20,12 @@ export default function MiniBar({
 
   return (
     <div className={styles.container}>
-      {(label || value) && (
+      {(label || value) ? (
         <div className={styles.labels}>
-          {label && <span className={styles.label}>{label}</span>}
-          {value && <span className={styles.value}>{value}</span>}
+          {label ? <span className={styles.label}>{label}</span> : null}
+          {value ? <span className={styles.value}>{value}</span> : null}
         </div>
-      )}
+      ) : null}
       <div
         className={styles.track}
         style={{ height: `${height}px` }}
@@ -38,7 +38,7 @@ export default function MiniBar({
           className={styles.fill}
           style={{
             width: `${clampedPct}%`,
-            backgroundColor: color || 'var(--color-gold)',
+            ...(color ? { background: color } : {}),
           }}
         />
       </div>

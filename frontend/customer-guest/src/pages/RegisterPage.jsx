@@ -1,6 +1,6 @@
 import { Gem } from 'lucide-react';
 import { InputField } from '../components/InputField.jsx';
-import { Btn } from '../components/Btn.jsx';
+import { Button } from '../components/Button.jsx';
 import styles from './RegisterPage.module.css';
 
 export function RegisterPage({ onNavigate }) {
@@ -31,9 +31,9 @@ export function RegisterPage({ onNavigate }) {
           placeholder="••••••••"
         />
 
-        <Btn variant="primary" full>
+        <Button variant="primary" full>
           إنشاء حساب
-        </Btn>
+        </Button>
 
         <p className={styles.loginLink}>
           لديك حساب؟{' '}

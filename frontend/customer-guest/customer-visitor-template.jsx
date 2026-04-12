@@ -62,7 +62,7 @@ const Btn = ({ children, primary, small, outline, onClick, full }) => (
 
 const ProductCard = ({ p, onView }) => (
   <div onClick={() => onView?.(p)} style={{ background: C.white, borderRadius: 14, overflow: "hidden", boxShadow: "0 2px 16px rgba(0,0,0,0.06)", cursor: "pointer", transition: "transform 0.2s, box-shadow 0.2s", position: "relative" }}>
-    {p.badge && <div style={{ position: "absolute", top: 12, right: 12, zIndex: 1 }}><Badge text={p.badge} color={p.badge.includes("خصم") ? C.red : p.badge === "جديد" ? C.green : C.gold} /></div>}
+    {p.badge ? <div style={{ position: "absolute", top: 12, right: 12, zIndex: 1 }}><Badge text={p.badge} color={p.badge.includes("خصم") ? C.red : p.badge === "جديد" ? C.green : C.gold} /></div> : null}
     <div style={{ height: 180, background: `linear-gradient(135deg, ${C.creamDark}, ${C.cream})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 64 }}>{p.img}</div>
     <div style={{ padding: 16 }}>
       <div style={{ fontSize: 11, color: C.gold, fontWeight: 600, marginBottom: 4 }}>{p.cat}</div>
@@ -74,7 +74,7 @@ const ProductCard = ({ p, onView }) => (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div>
           <span style={{ fontSize: 18, fontWeight: 800, color: C.navy }}>{p.price} $</span>
-          {p.oldPrice && <span style={{ fontSize: 13, color: C.textLight, textDecoration: "line-through", marginRight: 8 }}>{p.oldPrice} $</span>}
+          {p.oldPrice ? <span style={{ fontSize: 13, color: C.textLight, textDecoration: "line-through", marginRight: 8 }}>{p.oldPrice} $</span> : null}
         </div>
         <Btn small primary>أضف للسلة</Btn>
       </div>
@@ -86,7 +86,7 @@ const SectionHeader = ({ title, sub, light }) => (
   <div style={{ textAlign: "center", marginBottom: 36 }}>
     <div style={{ fontSize: 12, color: C.gold, fontWeight: 700, letterSpacing: 2, marginBottom: 6 }}>✦ ✦ ✦</div>
     <h2 style={{ fontSize: 28, fontWeight: 800, color: light ? C.white : C.navy, margin: "0 0 8px" }}>{title}</h2>
-    {sub && <p style={{ fontSize: 14, color: light ? C.goldLight : C.textLight, margin: 0 }}>{sub}</p>}
+    {sub ? <p style={{ fontSize: 14, color: light ? C.goldLight : C.textLight, margin: 0 }}>{sub}</p> : null}
   </div>
 );
 
@@ -123,7 +123,7 @@ const Navbar = ({ page, setPage, cartCount }) => (
         <span onClick={() => setPage("search")} style={{ cursor: "pointer", fontSize: 18, color: C.goldLight }}>🔍</span>
         <span onClick={() => setPage("wishlist")} style={{ cursor: "pointer", fontSize: 18, color: C.goldLight }}>♡</span>
         <span onClick={() => setPage("cart")} style={{ cursor: "pointer", fontSize: 18, color: C.goldLight, position: "relative" }}>
-          🛒{cartCount > 0 && <span style={{ position: "absolute", top: -8, right: -8, background: C.red, color: C.white, fontSize: 10, width: 16, height: 16, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>{cartCount}</span>}
+          🛒{cartCount > 0 ? <span style={{ position: "absolute", top: -8, right: -8, background: C.red, color: C.white, fontSize: 10, width: 16, height: 16, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>{cartCount}</span> : null}
         </span>
         <Btn small primary onClick={() => setPage("login")}>تسجيل الدخول</Btn>
       </div>
@@ -630,7 +630,7 @@ const TrackingPage = () => (
             <div style={{ width: 28, height: 28, borderRadius: "50%", background: s.done ? C.green : s.active ? C.gold : C.creamDark, display: "flex", alignItems: "center", justifyContent: "center", color: C.white, fontSize: 14, fontWeight: 700, border: s.active ? `3px solid ${C.goldLight}` : "none" }}>
               {s.done ? "✓" : i + 1}
             </div>
-            {i < arr.length - 1 && <div style={{ width: 3, height: 40, background: s.done ? C.green : C.creamDark, margin: "4px 0" }} />}
+            {i < arr.length - 1 ? <div style={{ width: 3, height: 40, background: s.done ? C.green : C.creamDark, margin: "4px 0" }} /> : null}
           </div>
           <div style={{ paddingBottom: 20 }}>
             <div style={{ fontWeight: 700, color: s.done ? C.green : s.active ? C.gold : C.textLight, fontSize: 14 }}>{s.label}</div>

@@ -5,7 +5,7 @@
   text-align: center;
   cursor: pointer;
   box-shadow: var(--shadow-xs);
-  border: 1px solid var(--color-ivory-dark);
+  border: 1px solid var(--color-cream-mid);
   transition: all var(--transition-base);
   display: flex;
   flex-direction: column;
@@ -13,17 +13,18 @@
 }
 
 .card:hover {
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-4px);
+  border-color: var(--color-gold);
 }
 
 .card:focus-visible {
-  outline: 2px solid var(--color-wood-mid);
+  outline: 2px solid var(--color-gold);
   outline-offset: 2px;
 }
 
 .icon {
-  color: var(--color-wood-mid);
+  color: var(--color-gold);
   display: block;
   margin-inline: auto;
   margin-bottom: var(--space-3);
@@ -33,7 +34,7 @@
 .name {
   font-weight: 700;
   font-size: var(--font-size-md);
-  color: var(--color-ink);
+  color: var(--color-navy);
   margin: 0;
 }
 
