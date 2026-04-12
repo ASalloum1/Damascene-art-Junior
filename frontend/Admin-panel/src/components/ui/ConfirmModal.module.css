@@ -1,0 +1,34 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  text-align: center;
+  padding-block: var(--space-2);
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+}
+
+.iconDanger {
+  background-color: var(--color-red-bg);
+  color: var(--color-red);
+}
+
+.iconWarning {
+  background-color: var(--color-orange-bg);
+  color: var(--color-orange);
+}
+
+.message {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  max-width: 320px;
+}

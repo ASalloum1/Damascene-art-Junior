@@ -1,0 +1,550 @@
+/**
+ * Damascene Art — Shared Page Styles
+ * Used across all page components
+ */
+
+/* ─── Page Wrapper ───────────────────────────────────────────── */
+.page {
+  /* inherits page-enter animation from global.css */
+}
+
+/* ─── Stat Cards Row ─────────────────────────────────────────── */
+.statRow {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+
+/* ─── 2-Column Grid ──────────────────────────────────────────── */
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+/* ─── 4-Column Grid ──────────────────────────────────────────── */
+.grid4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-4);
+}
+
+/* ─── Card Heading ───────────────────────────────────────────── */
+.cardTitle {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-ink);
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-arabic);
+}
+
+/* ─── Bar Chart (Dashboard) ──────────────────────────────────── */
+.barChart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 120px;
+}
+
+.barCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.barLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-stone);
+  text-align: center;
+}
+
+.bar {
+  width: 100%;
+  background: linear-gradient(180deg, var(--color-wood-light), var(--color-wood-dark));
+  border-radius: 5px 5px 0 0;
+  transition: height var(--transition-slow);
+  min-height: 4px;
+}
+
+.bar:hover {
+  background: linear-gradient(180deg, var(--color-wood-faint), var(--color-wood-mid));
+}
+
+/* ─── Top Products List ──────────────────────────────────────── */
+.productList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.productRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.rank {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background: var(--color-ink);
+  color: var(--color-ivory-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.productInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.productName {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-ink-soft);
+}
+
+.soldCount {
+  font-size: var(--font-size-xs);
+  color: var(--color-stone);
+  white-space: nowrap;
+}
+
+/* ─── Filter Bar ─────────────────────────────────────────────── */
+.filterBar {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filterInput,
+.filterSelect {
+  padding: 9px 12px;
+  border: 1px solid var(--color-ivory-dark);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-arabic);
+  direction: rtl;
+  background: var(--color-white);
+  color: var(--color-ink-soft);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  outline: none;
+}
+
+.filterInput {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filterInput:focus,
+.filterSelect:focus {
+  border-color: var(--color-wood-mid);
+  box-shadow: 0 0 0 3px rgba(92, 61, 46, 0.12);
+}
+
+/* ─── Tab Filters (Orders page) ──────────────────────────────── */
+.tabBar {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.tab {
+  padding: 7px 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-ivory-dark);
+  background: var(--color-white);
+  color: var(--color-ink-soft);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  font-family: var(--font-arabic);
+  font-weight: 500;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.tab:hover {
+  background: var(--color-ivory-dark);
+}
+
+.tab.activeTab {
+  background: var(--color-ink);
+  color: var(--color-ivory-mid);
+  border-color: var(--color-ink);
+  font-weight: 700;
+}
+
+/* ─── Reviews List ───────────────────────────────────────────── */
+.reviewCard {
+  padding: var(--space-4);
+  background: var(--color-ivory-mid);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+  border: 1px solid var(--color-ivory-dark);
+  transition: box-shadow var(--transition-fast);
+}
+.reviewCard:hover {
+  box-shadow: var(--shadow-xs);
+}
+.reviewCard:last-child {
+  margin-bottom: 0;
+}
+
+.reviewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.reviewAuthor {
+  font-weight: 700;
+  color: var(--color-ink);
+  font-size: var(--font-size-md);
+}
+
+.reviewProduct {
+  color: var(--color-stone);
+  font-size: var(--font-size-sm);
+  margin-right: var(--space-2);
+}
+
+.reviewMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.stars {
+  color: var(--color-warning);
+  font-size: var(--font-size-md);
+  letter-spacing: 1px;
+}
+
+.reviewText {
+  font-size: var(--font-size-sm);
+  color: var(--color-ink-soft);
+  margin: var(--space-2) 0;
+  line-height: 1.65;
+}
+
+.reviewFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.reviewDate {
+  font-size: var(--font-size-xs);
+  color: var(--color-stone);
+}
+
+.reviewActions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* ─── Notifications ──────────────────────────────────────────── */
+.notifRow {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--color-ivory-dark);
+  transition: background var(--transition-fast);
+}
+.notifRow:last-child {
+  border-bottom: none;
+}
+.notifRow.unread {
+  background: rgba(193, 127, 58, 0.05);
+  border-radius: var(--radius-sm);
+  padding: 14px var(--space-2);
+}
+
+.notifIconWrap {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--color-ivory-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-stone-dark);
+}
+
+.notifContent {
+  flex: 1;
+}
+
+.notifText {
+  font-size: var(--font-size-sm);
+  color: var(--color-ink-soft);
+  line-height: 1.5;
+}
+.notifText.bold {
+  font-weight: 700;
+}
+
+.notifTime {
+  font-size: var(--font-size-xs);
+  color: var(--color-stone);
+  margin-top: 3px;
+}
+
+.notifDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-warning);
+  flex-shrink: 0;
+}
+
+/* ─── Settings ───────────────────────────────────────────────── */
+.formField {
+  margin-bottom: var(--space-4);
+}
+
+.formLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-stone);
+  display: block;
+  margin-bottom: var(--space-1);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.formInput,
+.formSelect {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--color-ivory-dark);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-arabic);
+  direction: rtl;
+  background: var(--color-ivory);
+  color: var(--color-ink-soft);
+  box-sizing: border-box;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  outline: none;
+}
+.formInput:focus,
+.formSelect:focus {
+  border-color: var(--color-wood-mid);
+  box-shadow: 0 0 0 3px rgba(92, 61, 46, 0.12);
+  background: var(--color-white);
+}
+
+/* ─── Messages ───────────────────────────────────────────────── */
+.messageRow {
+  display: flex;
+  gap: var(--space-4);
+  padding: 14px 0;
+  border-bottom: 1px solid var(--color-ivory-dark);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  border-radius: var(--radius-sm);
+}
+.messageRow:last-child {
+  border-bottom: none;
+}
+.messageRow:hover {
+  background: var(--color-ivory-mid);
+  padding: 14px var(--space-2);
+}
+.messageRow.unread {
+  background: rgba(193, 127, 58, 0.04);
+  padding: 14px var(--space-2);
+}
+
+.messageAvatar {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-full);
+  background: var(--color-ink);
+  color: var(--color-ivory-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: var(--font-size-lg);
+  flex-shrink: 0;
+}
+
+.messageBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.messageTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.messageSender {
+  font-size: var(--font-size-md);
+  color: var(--color-ink);
+}
+.messageSender.bold {
+  font-weight: 700;
+}
+
+.messageTime {
+  font-size: var(--font-size-xs);
+  color: var(--color-stone);
+  flex-shrink: 0;
+}
+
+.messageSubject {
+  font-size: var(--font-size-sm);
+  color: var(--color-ink-soft);
+  margin-top: 2px;
+}
+.messageSubject.bold {
+  font-weight: 600;
+}
+
+.messagePreview {
+  font-size: var(--font-size-xs);
+  color: var(--color-stone);
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.messageDot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-warning);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+/* ─── Performance Metrics Grid ───────────────────────────────── */
+.metricCard {
+  text-align: center;
+  padding: var(--space-4);
+  background: var(--color-ivory-mid);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-ivory-dark);
+}
+
+.metricLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-stone);
+  margin-bottom: var(--space-2);
+}
+
+.metricValue {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  color: var(--color-ink);
+  font-family: var(--font-arabic);
+}
+
+.metricChange {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  margin-top: var(--space-1);
+}
+.metricChange.up   { color: var(--color-success); }
+.metricChange.down { color: var(--color-error); }
+
+/* ─── Category Breakdown ─────────────────────────────────────── */
+.catRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.catRow:last-child {
+  margin-bottom: 0;
+}
+.catName {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  width: 150px;
+  flex-shrink: 0;
+  color: var(--color-ink-soft);
+}
+.catPct {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-wood-mid);
+  width: 36px;
+  text-align: left;
+}
+
+/* ─── Monthly Bar Chart ──────────────────────────────────────── */
+.monthChart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 140px;
+}
+.monthCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+}
+.monthBar {
+  width: 100%;
+  border-radius: 3px 3px 0 0;
+  min-height: 4px;
+  transition: opacity var(--transition-fast);
+}
+.monthBar:hover {
+  opacity: 0.8;
+}
+.monthBar.current {
+  background: linear-gradient(180deg, var(--color-wood-light), var(--color-wood-dark));
+}
+.monthBar.other {
+  background: var(--color-stone-light);
+}
+.monthLabel {
+  font-size: 9px;
+  color: var(--color-stone);
+}
+
+/* ─── Inventory Alert Icon ───────────────────────────────────── */
+.iconCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-stone-mid);
+}

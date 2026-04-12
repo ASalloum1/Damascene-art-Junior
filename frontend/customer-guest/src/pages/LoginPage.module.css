@@ -1,0 +1,103 @@
+.page {
+  max-width: 440px;
+  margin-inline: auto;
+  padding: var(--space-16) var(--space-6);
+}
+
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-10);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.gemIcon {
+  display: block;
+  margin-inline: auto;
+  margin-block-end: var(--space-3);
+  color: var(--color-gold);
+}
+
+.heading {
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  color: var(--color-ink);
+  margin-block-end: var(--space-6);
+}
+
+.rememberRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-size-xs);
+  margin-block-end: var(--space-5);
+}
+
+.rememberLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  color: var(--color-ink-soft);
+}
+
+.rememberLabel input {
+  accent-color: var(--color-wood-mid);
+  cursor: pointer;
+}
+
+.forgotLink {
+  color: var(--color-wood-mid);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: var(--font-size-xs);
+  font-family: var(--font-arabic);
+}
+
+.divider {
+  margin-block: var(--space-5);
+  font-size: var(--font-size-xs);
+  color: var(--color-stone);
+  text-align: center;
+}
+
+.socialRow {
+  display: flex;
+  gap: var(--space-3);
+  margin-block-end: var(--space-2);
+}
+
+.socialBtn {
+  flex: 1;
+  padding: var(--space-3);
+  border: 1px solid var(--color-ivory-dark);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-arabic);
+  text-align: center;
+  color: var(--color-ink-soft);
+  transition: background var(--transition-fast);
+}
+
+.socialBtn:hover {
+  background: var(--color-ivory);
+}
+
+.registerLink {
+  margin-block-start: var(--space-5);
+  font-size: var(--font-size-sm);
+  color: var(--color-stone);
+}
+
+.registerBtn {
+  background: transparent;
+  border: none;
+  color: var(--color-wood-mid);
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-arabic);
+}

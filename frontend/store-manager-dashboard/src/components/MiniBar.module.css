@@ -1,0 +1,31 @@
+.track {
+  background: var(--color-ivory-dark);
+  border-radius: var(--radius-full);
+  height: 7px;
+  width: 100px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  animation: barFill 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes barFill {
+  from { width: 0 !important; }
+}
+
+/* ─── Variants ── */
+.primary {
+  background: linear-gradient(90deg, var(--color-wood-light), var(--color-wood-mid));
+}
+.success {
+  background: var(--color-success);
+}
+.info {
+  background: var(--color-info);
+}
+.warning {
+  background: var(--color-warning);
+}

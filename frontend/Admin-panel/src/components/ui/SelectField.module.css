@@ -1,0 +1,76 @@
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 100%;
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.required {
+  color: var(--color-red);
+  font-weight: var(--font-weight-bold);
+}
+
+.selectWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.select {
+  width: 100%;
+  padding-block: var(--space-2);
+  padding-inline-start: var(--space-3);
+  padding-inline-end: var(--space-8);
+  border: 1px solid var(--color-cream-dark);
+  border-radius: var(--radius-md);
+  background-color: var(--color-white);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-arabic);
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  direction: rtl;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px var(--color-gold-bg);
+}
+
+.select:disabled {
+  background-color: var(--color-cream-dark);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.selectError {
+  border-color: var(--color-red);
+}
+
+.selectError:focus {
+  border-color: var(--color-red);
+  box-shadow: 0 0 0 3px var(--color-red-bg);
+}
+
+.chevron {
+  position: absolute;
+  inset-inline-start: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-secondary);
+  pointer-events: none;
+}
+
+.errorMsg {
+  font-size: var(--font-size-xs);
+  color: var(--color-red);
+  font-weight: var(--font-weight-medium);
+}

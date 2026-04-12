@@ -1,0 +1,83 @@
+.container {
+  max-width: 900px;
+  margin-inline: auto;
+  padding: var(--space-12) var(--space-6);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.formCard {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.infoCol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.infoCard {
+  background: var(--color-ink);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  color: var(--color-gold-light);
+}
+
+.infoHeading {
+  color: var(--color-gold);
+  font-weight: 700;
+  margin-block-end: var(--space-5);
+  margin-block-start: 0;
+  font-size: var(--font-size-lg);
+}
+
+.contactRow {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  margin-block-end: var(--space-4);
+  font-size: var(--font-size-sm);
+}
+
+.contactRow:last-child {
+  margin-block-end: 0;
+}
+
+.contactIcon {
+  flex-shrink: 0;
+  color: var(--color-gold);
+}
+
+.mapCard {
+  background: var(--color-ivory-dark);
+  border-radius: var(--radius-lg);
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  color: var(--color-stone);
+  font-size: var(--font-size-sm);
+}
+
+.mapIcon {
+  color: var(--color-stone);
+  flex-shrink: 0;
+}

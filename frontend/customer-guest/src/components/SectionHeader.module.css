@@ -1,0 +1,48 @@
+.container {
+  margin-bottom: var(--space-10);
+}
+
+.center {
+  text-align: center;
+}
+
+.start {
+  text-align: start;
+}
+
+.ornament {
+  display: flex;
+  gap: 6px;
+  color: var(--color-gold);
+  margin-bottom: var(--space-3);
+  fill: var(--color-gold);
+}
+
+.center .ornament {
+  justify-content: center;
+}
+
+.start .ornament {
+  justify-content: flex-start;
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  color: var(--color-ink);
+  margin-bottom: var(--space-2);
+}
+
+.light .title {
+  color: var(--color-white);
+}
+
+.subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-stone);
+  margin: 0;
+}
+
+.light .subtitle {
+  color: var(--color-gold-light);
+}

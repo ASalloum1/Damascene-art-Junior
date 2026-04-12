@@ -1,0 +1,246 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--color-ink);
+  height: var(--navbar-height);
+}
+
+.inner {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+/* ── Logo ── */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.logoGem {
+  color: var(--color-gold);
+}
+
+.logoText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+
+.logoAr {
+  color: var(--color-gold);
+  font-weight: 800;
+  font-size: var(--font-size-md);
+  font-family: var(--font-arabic);
+}
+
+.logoEn {
+  color: var(--color-gold-light);
+  font-size: 9px;
+  opacity: 0.7;
+  letter-spacing: 0.05em;
+}
+
+/* ── Desktop Nav ── */
+.desktopNav {
+  display: flex;
+  gap: var(--space-1);
+}
+
+@media (max-width: 1023px) {
+  .desktopNav {
+    display: none;
+  }
+}
+
+.navBtn {
+  background: transparent;
+  border: none;
+  color: var(--color-gold-light);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  font-family: var(--font-arabic);
+  cursor: pointer;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.navBtn:hover {
+  color: var(--color-gold);
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.navBtnActive {
+  color: var(--color-gold);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* ── Icon Tray ── */
+.iconTray {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.iconBtn {
+  background: transparent;
+  border: none;
+  color: var(--color-gold-light);
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: color var(--transition-fast);
+}
+
+.iconBtn:hover {
+  color: var(--color-gold);
+}
+
+.cartBadge {
+  position: absolute;
+  top: -8px;
+  inset-inline-end: -8px;
+  background-color: var(--color-error);
+  color: var(--color-white);
+  font-size: 10px;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.loginBtn {
+  display: flex;
+  align-items: center;
+}
+
+/* Override Btn outline colors for dark bg */
+.loginBtn :global(.btn) {
+  color: var(--color-gold-light);
+  border-color: var(--color-gold-light);
+}
+
+.loginBtn :global(.btn):hover {
+  color: var(--color-gold);
+  border-color: var(--color-gold);
+  background-color: rgba(200, 164, 90, 0.1);
+}
+
+/* ── Hamburger ── */
+.hamburger {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .hamburger {
+    display: flex;
+  }
+
+  .loginBtn {
+    display: none;
+  }
+}
+
+/* ── Backdrop ── */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 22, 20, 0.6);
+  z-index: 200;
+}
+
+/* ── Drawer ── */
+.drawer {
+  position: fixed;
+  top: 0;
+  inset-inline-start: 0;
+  width: 280px;
+  height: 100%;
+  background-color: var(--color-ink);
+  z-index: 201;
+  transform: translateX(-100%);
+  transition: transform var(--transition-base);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+}
+
+/* RTL: drawer slides in from right */
+[dir='rtl'] .drawer {
+  transform: translateX(100%);
+}
+
+.drawerOpen {
+  transform: translateX(0) !important;
+}
+
+.drawerClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--color-gold-light);
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: var(--space-8);
+  align-self: flex-end;
+  transition: color var(--transition-fast);
+}
+
+.drawerClose:hover {
+  color: var(--color-gold);
+}
+
+.drawerNav {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.drawerNavBtn {
+  background: transparent;
+  border: none;
+  color: var(--color-gold-light);
+  font-family: var(--font-arabic);
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  text-align: start;
+  padding: var(--space-3) 0;
+  cursor: pointer;
+  width: 100%;
+  transition: color var(--transition-fast);
+}
+
+.drawerNavBtn:hover {
+  color: var(--color-gold);
+}
+
+.drawerNavBtnActive {
+  color: var(--color-gold);
+  font-weight: 700;
+}
+
+.drawerLogin {
+  margin-top: var(--space-6);
+}

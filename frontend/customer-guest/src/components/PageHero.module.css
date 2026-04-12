@@ -1,0 +1,25 @@
+.container {
+  background: linear-gradient(135deg, var(--color-ink), var(--color-wood-mid));
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+  position: relative;
+}
+
+.iconWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-4);
+}
+
+.title {
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
+  color: var(--color-white);
+  margin-bottom: var(--space-2);
+}
+
+.subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-gold-light);
+  margin: 0;
+}

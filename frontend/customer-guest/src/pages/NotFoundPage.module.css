@@ -1,0 +1,41 @@
+.container {
+  max-width: 600px;
+  margin-inline: auto;
+  text-align: center;
+  padding: var(--space-20) var(--space-6);
+}
+
+.icon {
+  display: block;
+  margin-inline: auto;
+  margin-block-end: var(--space-4);
+  color: var(--color-gold);
+  opacity: 0.6;
+}
+
+.code {
+  font-size: 72px;
+  color: var(--color-gold);
+  font-weight: 800;
+  margin-block-end: var(--space-3);
+  line-height: 1;
+}
+
+.heading {
+  font-size: var(--font-size-xl);
+  color: var(--color-ink);
+  margin-block-end: var(--space-3);
+}
+
+.message {
+  font-size: var(--font-size-base);
+  color: var(--color-stone);
+  margin-block-end: var(--space-8);
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}

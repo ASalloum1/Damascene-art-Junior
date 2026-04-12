@@ -1,0 +1,98 @@
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: 20px 18px;
+  box-shadow: var(--shadow-sm);
+  flex: 1 1 170px;
+  min-width: 160px;
+  border-top: 3px solid transparent;
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-3);
+}
+
+.iconWrap {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-ivory-mid);
+}
+
+.sub {
+  font-size: var(--font-size-xs);
+  color: var(--color-stone);
+  background: var(--color-ivory-dark);
+  border-radius: var(--radius-full);
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+
+.value {
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
+  color: var(--color-ink);
+  line-height: 1;
+  margin-bottom: var(--space-1);
+  font-family: var(--font-arabic);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  color: var(--color-stone);
+}
+
+/* ─── Accent Variants (top border + icon bg) ─────────────────── */
+.primary {
+  border-top-color: var(--color-wood-mid);
+}
+.primary .iconWrap {
+  background: rgba(92, 61, 46, 0.1);
+  color: var(--color-wood-mid);
+}
+
+.success {
+  border-top-color: var(--color-success);
+}
+.success .iconWrap {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.warning {
+  border-top-color: var(--color-warning);
+}
+.warning .iconWrap {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.error {
+  border-top-color: var(--color-error);
+}
+.error .iconWrap {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.info {
+  border-top-color: var(--color-info);
+}
+.info .iconWrap {
+  background: var(--color-info-bg);
+  color: var(--color-info);
+}

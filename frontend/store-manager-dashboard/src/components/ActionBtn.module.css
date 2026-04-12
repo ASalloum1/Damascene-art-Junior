@@ -1,0 +1,83 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 7px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  font-family: var(--font-arabic);
+  cursor: pointer;
+  transition:
+    background var(--transition-base),
+    transform var(--transition-fast),
+    box-shadow var(--transition-base);
+  white-space: nowrap;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ─── Variants ────────────────────────────────────────────────── */
+
+.primary {
+  background: var(--color-wood-mid);
+  color: var(--color-ivory);
+}
+.primary:hover:not(:disabled) {
+  background: var(--color-wood-dark);
+}
+
+.success {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+.success:hover:not(:disabled) {
+  background: var(--color-success);
+  color: var(--color-ivory);
+}
+
+.error {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+.error:hover:not(:disabled) {
+  background: var(--color-error);
+  color: var(--color-ivory);
+}
+
+.info {
+  background: var(--color-info-bg);
+  color: var(--color-info);
+}
+.info:hover:not(:disabled) {
+  background: var(--color-info);
+  color: var(--color-ivory);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--color-stone-mid);
+  border: 1px solid var(--color-stone-light);
+}
+.ghost:hover:not(:disabled) {
+  background: var(--color-ivory-dark);
+  color: var(--color-ink-soft);
+}
