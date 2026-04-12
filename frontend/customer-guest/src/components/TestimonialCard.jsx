@@ -12,7 +12,7 @@ export function TestimonialCard({ name, text, rating, location }) {
 
       <footer className={styles.footer}>
         <p className={styles.name}>{name}</p>
-        {location && <p className={styles.location}>{location}</p>}
+        {location ? <p className={styles.location}>{location}</p> : null}
       </footer>
     </article>
   );

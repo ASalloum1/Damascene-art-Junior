@@ -4,43 +4,66 @@
  */
 
 :root {
-  /* Wood Brown — Primary */
-  --color-wood-dark: #3D2B1F;
-  --color-wood-mid: #5C3D2E;
-  --color-wood-light: #7A5240;
-  --color-wood-faint: #A0745A;
+  /* ─── Primary Brand Palette (Unified with Admin Panel) ────────── */
+  --color-gold:        #C8A45A;
+  --color-gold-light:  #E8D5A3;
+  --color-gold-dark:   #A07830;
+  --color-gold-bg:     #C8A45A26;
 
-  /* Pearl / Ivory — Secondary */
-  --color-ivory: #FAF6EF;
-  --color-ivory-mid: #F5EFE6;
-  --color-ivory-dark: #EDE3D4;
-  --color-ivory-deep: #DDD0BE;
+  --color-navy:        #1A1F3A;
+  --color-navy-light:  #252B4A;
+  --color-navy-mid:    #2D3460;
+  --color-navy-deep:   #111528;
 
-  /* Stone Gray — Neutral */
+  --color-cream:       #FFF8F0;
+  --color-cream-dark:  #F5EDE0;
+  --color-cream-mid:   #EDE3D4;
+  --color-cream-deep:  #DDD0BE;
+
+  --color-white:       #FFFFFF;
+
+  /* ─── Legacy/Semantic Aliases ────────────────────────────────── */
+  --color-wood-dark:   var(--color-gold-dark);
+  --color-wood-mid:    var(--color-gold);
+  --color-wood-light:  var(--color-gold-light);
+  --color-wood-faint:  var(--color-gold-bg);
+
+  --color-ivory:       var(--color-cream);
+  --color-ivory-mid:   var(--color-cream-dark);
+  --color-ivory-dark:  var(--color-cream-mid);
+  --color-ivory-deep:  var(--color-cream-deep);
+
+  --color-ink:         var(--color-navy);
+  --color-ink-soft:    var(--color-navy-light);
+
+  /* Damascene Stone Gray — Neutral */
   --color-stone-light: #D8D4CF;
-  --color-stone: #A09890;
-  --color-stone-mid: #6E6660;
-  --color-stone-dark: #3D3830;
-
-  /* Luxury Black — Contrast */
-  --color-ink: #1A1614;
-  --color-ink-soft: #2C2420;
+  --color-stone:       #A09890;
+  --color-stone-mid:   #6E6660;
+  --color-stone-dark:  #3D3830;
 
   /* Semantic */
-  --color-success: #4A7C59;
-  --color-success-bg: #EBF4EE;
-  --color-warning: #C17F3A;
-  --color-warning-bg: #FBF3E8;
-  --color-error: #8B3A3A;
-  --color-error-bg: #F7EAEA;
-  --color-info: #3A5F8B;
-  --color-info-bg: #EAF0F7;
-  --color-white: #FFFFFF;
+  --color-success:     #27AE60;
+  --color-success-bg:  #27AE6022;
+  --color-warning:     #E67E22;
+  --color-warning-bg:  #E67E2222;
+  --color-error:       #C0392B;
+  --color-error-bg:    #C0392B22;
+  --color-info:        #2980B9;
+  --color-info-bg:     #2980B922;
 
-  /* Damascene Gold — decorative only (star ratings, ornaments) */
-  --color-gold: #C8A45A;
-  --color-gold-light: #E8D5A3;
-  --color-gold-dark: #9A7B3C;
+  /* ── Alpha colors (Transparency via color-mix) ── */
+  --color-gold-alpha-04: color-mix(in srgb, var(--color-gold), transparent 96%);
+  --color-gold-alpha-08: color-mix(in srgb, var(--color-gold), transparent 92%);
+  --color-gold-alpha-10: color-mix(in srgb, var(--color-gold), transparent 90%);
+  --color-gold-alpha-12: color-mix(in srgb, var(--color-gold), transparent 88%);
+  --color-gold-alpha-15: color-mix(in srgb, var(--color-gold), transparent 85%);
+  --color-gold-alpha-25: color-mix(in srgb, var(--color-gold), transparent 75%);
+  --color-white-alpha-15: color-mix(in srgb, var(--color-white), transparent 85%);
+  --color-white-alpha-85: color-mix(in srgb, var(--color-white), transparent 15%);
+  --color-navy-alpha-60: color-mix(in srgb, var(--color-navy), transparent 40%);
+  --color-black-alpha-15: color-mix(in srgb, #000000, transparent 85%);
+  --color-black-alpha-40: color-mix(in srgb, #000000, transparent 60%);
 
   /* Typography */
   --font-arabic: 'Tajawal', 'Noto Sans Arabic', system-ui, sans-serif;
@@ -76,20 +99,36 @@
   --radius-full: 9999px;
 
   /* Shadows */
-  --shadow-xs: 0 1px 4px rgba(26, 22, 20, 0.06);
-  --shadow-sm: 0 2px 12px rgba(26, 22, 20, 0.07);
-  --shadow-md: 0 6px 24px rgba(26, 22, 20, 0.09);
-  --shadow-lg: 0 12px 40px rgba(26, 22, 20, 0.11);
-  --shadow-xl: 0 20px 60px rgba(26, 22, 20, 0.13);
+  --shadow-xs: 0 1px 4px rgba(26, 31, 58, 0.06);
+  --shadow-sm: 0 2px 12px rgba(26, 31, 58, 0.07);
+  --shadow-md: 0 6px 24px rgba(26, 31, 58, 0.09);
+  --shadow-lg: 0 12px 40px rgba(26, 31, 58, 0.11);
+  --shadow-xl: 0 20px 60px rgba(26, 31, 58, 0.13);
 
   /* Transitions */
   --transition-fast: 150ms ease;
   --transition-base: 250ms ease;
   --transition-slow: 380ms ease;
 
+  --delay-1: 100ms;
+  --delay-2: 200ms;
+  --delay-3: 300ms;
+  --delay-4: 400ms;
+  --delay-5: 500ms;
+
   /* Layout */
   --navbar-height: 68px;
   --content-max: 1200px;
   --content-narrow: 800px;
   --content-tight: 680px;
+
+  /* Glass */
+  --glass-bg:     var(--color-white-alpha-85);
+  --glass-border: var(--color-gold-alpha-15);
+  --backdrop-blur: blur(12px);
+
+  /* Glow / Elevated Shadows */
+  --glow-gold:          0 0 0 1px var(--color-gold-alpha-25), 0 4px 16px rgba(200, 164, 90, 0.15);
+  --glow-error:         0 0 0 2px rgba(192, 57, 43, 0.2), 0 0 8px rgba(192, 57, 43, 0.4);
+  --shadow-card-hover:  0 8px 32px var(--color-black-alpha-15), 0 2px 8px var(--color-gold-alpha-12);
 }

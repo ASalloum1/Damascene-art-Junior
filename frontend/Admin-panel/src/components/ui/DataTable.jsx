@@ -33,9 +33,11 @@ export default function DataTable({
   onSelectChange,
   pagination,
 }) {
+  const selectedSet = new Set(selected);
+
   const allPageSelected =
-    rows.length > 0 && rows.every((r) => selected.includes(r.id));
-  const someSelected = rows.some((r) => selected.includes(r.id));
+    rows.length > 0 ? rows.every((r) => selectedSet.has(r.id)) : false;
+  const someSelected = rows.some((r) => selectedSet.has(r.id));
 
   function handleSelectAll(e) {
     if (!onSelectChange) return;
@@ -43,8 +45,8 @@ export default function DataTable({
       const ids = rows.map((r) => r.id);
       onSelectChange([...new Set([...selected, ...ids])]);
     } else {
-      const ids = rows.map((r) => r.id);
-      onSelectChange(selected.filter((id) => !ids.includes(id)));
+      const ids = new Set(rows.map((r) => r.id));
+      onSelectChange(selected.filter((id) => !ids.has(id)));
     }
   }
 
@@ -80,20 +82,22 @@ export default function DataTable({
         <table className={styles.table}>
           <thead className={styles.thead}>
             <tr>
-              {selectable && (
+              {selectable ? (
                 <th className={[styles.th, styles.checkboxTh].join(' ')}>
                   <input
                     type="checkbox"
                     className={styles.checkbox}
                     checked={allPageSelected}
                     ref={(el) => {
-                      if (el) el.indeterminate = someSelected && !allPageSelected;
+                      if (el) {
+                        el.indeterminate = someSelected ? !allPageSelected : false;
+                      }
                     }}
                     onChange={handleSelectAll}
                     aria-label="تحديد الكل"
                   />
                 </th>
-              )}
+              ) : null}
               {headers.map((col) => (
                 <th
                   key={col.key}
@@ -115,7 +119,7 @@ export default function DataTable({
                 >
                   <span className={styles.thContent}>
                     {col.label}
-                    {col.sortable && getSortIcon(col.key)}
+                    {col.sortable ? getSortIcon(col.key) : null}
                   </span>
                 </th>
               ))}
@@ -126,16 +130,16 @@ export default function DataTable({
             {loading ? (
               skeletonRows.map((i) => (
                 <tr key={i} className={styles.tr}>
-                  {selectable && (
+                  {selectable ? (
                     <td className={styles.td}>
-                      <div className={`${styles.skeletonCell} skeleton`} style={{ width: '16px', height: '16px' }} />
+                      <div className={`${styles.skeletonCell} skeleton-shimmer`} style={{ width: '16px', height: '16px' }} />
                     </td>
-                  )}
+                  ) : null}
                   {headers.map((col) => (
                     <td key={col.key} className={styles.td}>
                       <div
-                        className={`${styles.skeletonCell} skeleton`}
-                        style={{ width: `${60 + Math.random() * 40}%` }}
+                        className={`${styles.skeletonCell} skeleton-shimmer`}
+                        style={{ width: `${60 + ((i * 17 + headers.indexOf(col) * 31) % 40)}%` }}
                       />
                     </td>
                   ))}
@@ -158,7 +162,7 @@ export default function DataTable({
               </tr>
             ) : (
               rows.map((row, rowIndex) => {
-                const isSelected = selected.includes(row.id);
+                const isSelected = selectedSet.has(row.id);
                 return (
                   <tr
                     key={row.id || rowIndex}
@@ -170,7 +174,7 @@ export default function DataTable({
                       .filter(Boolean)
                       .join(' ')}
                   >
-                    {selectable && (
+                    {selectable ? (
                       <td className={styles.td}>
                         <input
                           type="checkbox"
@@ -180,7 +184,7 @@ export default function DataTable({
                           aria-label={`تحديد الصف ${toArabicNum(rowIndex + 1)}`}
                         />
                       </td>
-                    )}
+                    ) : null}
                     {headers.map((col) => (
                       <td key={col.key} className={styles.td}>
                         {col.render
@@ -197,7 +201,7 @@ export default function DataTable({
       </div>
 
       {/* Pagination Footer */}
-      {pagination && (
+      {pagination ? (
         <div className={styles.paginationBar}>
           <div className={styles.paginationInfo}>
             <span className={styles.infoText}>
@@ -275,7 +279,7 @@ export default function DataTable({
             </div>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

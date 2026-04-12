@@ -91,7 +91,7 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      {container &&
+      {container ? (
         createPortal(
           <div className={styles.container} aria-label="الإشعارات">
             {toasts.map((t) => (
@@ -105,7 +105,8 @@ export function ToastProvider({ children }) {
             ))}
           </div>,
           container
-        )}
+        )
+      ) : null}
     </ToastContext.Provider>
   );
 }

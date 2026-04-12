@@ -31,7 +31,7 @@ export default function LineChartWrapper({
 }) {
   return (
     <div className={styles.wrapper}>
-      {title && <h3 className={styles.title}>{title}</h3>}
+      {title ? <h3 className={styles.title}>{title}</h3> : null}
       <ResponsiveContainer width="100%" height={height}>
         <LineChart
           data={data}
@@ -69,11 +69,11 @@ export default function LineChartWrapper({
                 : undefined
             }
           />
-          {lines.length > 1 && (
+          {lines.length > 1 ? (
             <Legend
               wrapperStyle={{ fontFamily: 'Tajawal', fontSize: '12px', direction: 'rtl' }}
             />
-          )}
+          ) : null}
           {lines.map((line) => (
             <Line
               key={line.key}

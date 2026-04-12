@@ -1,7 +1,7 @@
 import { Search } from 'lucide-react';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { ProductCard } from '../components/ProductCard.jsx';
-import { Btn } from '../components/Btn.jsx';
+import { Button } from '../components/Button.jsx';
 import { products } from '../data/index.js';
 import styles from './SearchPage.module.css';
 
@@ -25,7 +25,7 @@ export function SearchPage({ onNavigate }) {
             placeholder="ابحث عن منتج، تصنيف، حرفي..."
             dir="rtl"
           />
-          <Btn variant="primary">بحث</Btn>
+          <Button variant="primary">بحث</Button>
         </div>
       </div>
 

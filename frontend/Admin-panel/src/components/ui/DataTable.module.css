@@ -23,6 +23,18 @@
 /* ── Table Head ── */
 .thead {
   background-color: var(--color-navy);
+  position: relative;
+}
+
+/* Gold gradient underline on thead row */
+.thead tr::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  height: 2px;
+  background: var(--gradient-gold);
+  opacity: 0.6;
 }
 
 .th {
@@ -70,12 +82,16 @@
 
 /* ── Table Body ── */
 .tr {
-  transition: background-color var(--transition-fast);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
   border-block-end: 1px solid var(--color-cream-dark);
+  border-inline-start: 3px solid transparent;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 48px;
 }
 
 .tr:hover {
-  background-color: var(--color-cream);
+  background-color: var(--color-gold-bg);
+  border-inline-start-color: var(--color-gold);
 }
 
 .tr:last-child {
@@ -87,11 +103,12 @@
 }
 
 .altRow:hover {
-  background-color: var(--color-cream);
+  background-color: var(--color-gold-bg);
 }
 
 .selectedRow {
   background-color: var(--color-gold-bg) !important;
+  border-inline-start: 3px solid var(--color-gold);
 }
 
 .td {
@@ -119,6 +136,14 @@
 .skeletonCell {
   height: 14px;
   border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--color-cream-dark) 25%,
+    var(--color-cream) 50%,
+    var(--color-cream-dark) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
 }
 
 /* ── Pagination Bar ── */
@@ -166,6 +191,7 @@
   background-color: var(--color-white);
   color: var(--color-text-primary);
   cursor: pointer;
+  transition: border-color var(--transition-fast);
 }
 
 .pageSizeSelect:focus {
@@ -185,25 +211,32 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
   border: 1px solid var(--color-cream-dark);
   background-color: var(--color-white);
   color: var(--color-text-secondary);
   font-size: var(--font-size-xs);
   cursor: pointer;
   transition: background-color var(--transition-fast), color var(--transition-fast),
-    border-color var(--transition-fast);
+    border-color var(--transition-fast), transform var(--transition-fast);
 }
 
 .pageBtn:hover:not(:disabled) {
   background-color: var(--color-gold-bg);
   border-color: var(--color-gold-light);
   color: var(--color-gold-dark);
+  transform: scale(1.05);
 }
 
 .pageBtn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+.pageBtnActive {
+  background-color: var(--color-gold);
+  color: var(--color-text-on-gold);
+  border-color: var(--color-gold);
 }
 
 .pageIndicator {

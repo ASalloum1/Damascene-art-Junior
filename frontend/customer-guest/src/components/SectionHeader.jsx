@@ -14,7 +14,7 @@ export function SectionHeader({ title, subtitle, light = false, align = 'center'
 
       <h2 className={styles.title}>{title}</h2>
 
-      {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
+      {subtitle ? <p className={styles.subtitle}>{subtitle}</p> : null}
     </div>
   );
 }

@@ -3,11 +3,11 @@ import styles from './QuantitySelector.module.css';
 
 export function QuantitySelector({ value, onChange, min = 1, max = 999 }) {
   const handleDecrement = () => {
-    if (value > min) onChange(value - 1);
+    if (value > min) onChange((v) => v - 1);
   };
 
   const handleIncrement = () => {
-    if (value < max) onChange(value + 1);
+    if (value < max) onChange((v) => v + 1);
   };
 
   return (

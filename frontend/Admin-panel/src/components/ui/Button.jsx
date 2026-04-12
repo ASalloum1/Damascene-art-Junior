@@ -55,9 +55,9 @@ export default function Button({
       aria-busy={loading}
       {...rest}
     >
-      {iconPosition === 'start' && iconEl}
-      {children && <span className={styles.label}>{children}</span>}
-      {iconPosition === 'end' && iconEl}
+      {iconPosition === 'start' ? iconEl : null}
+      {children ? <span className={styles.label}>{children}</span> : null}
+      {iconPosition === 'end' ? iconEl : null}
     </button>
   );
 }

@@ -1,47 +1,48 @@
 import styles from './pages.module.css';
+import notifStyles from './NotificationsPage.module.css';
 import SectionTitle from '../components/SectionTitle';
 import PageCard from '../components/PageCard';
 import Badge from '../components/Badge';
-import { ShoppingCart, AlertTriangle, Star, MessageSquare, DollarSign, Package } from 'lucide-react';
+import { Icon } from '../components/SvgIcons';
 
 const notifications = [
   {
-    icon: ShoppingCart,
+    icon: 'orders',
     text: 'طلب جديد #1084 من أحمد الشامي',
     time: 'منذ ١٠ دقائق',
     read: false,
     type: 'طلب',
   },
   {
-    icon: AlertTriangle,
+    icon: 'warning',
     text: 'مخزون منخفض: مزهرية زجاج منفوخ (٠ قطعة)',
     time: 'منذ ساعة',
     read: false,
     type: 'مخزون',
   },
   {
-    icon: Star,
+    icon: 'reviews',
     text: 'تقييم جديد من سارة مولر على صندوق الصدف',
     time: 'منذ ٣ ساعات',
     read: false,
     type: 'تقييم',
   },
   {
-    icon: MessageSquare,
+    icon: 'messages',
     text: 'رسالة جديدة من جون سميث: استفسار عن الشحن',
     time: 'منذ ٥ ساعات',
     read: true,
     type: 'رسالة',
   },
   {
-    icon: DollarSign,
+    icon: 'dollar',
     text: 'تم استلام دفعة ٩٥٠$ من الطلب #1082',
     time: 'أمس',
     read: true,
     type: 'مالي',
   },
   {
-    icon: Package,
+    icon: 'products',
     text: 'تم تسليم الطلب #1079 بنجاح',
     time: 'أمس',
     read: true,
@@ -53,24 +54,42 @@ export function NotificationsPage() {
   return (
     <div className={`${styles.page} page-enter`}>
       <SectionTitle title="مركز الإشعارات" />
-      <PageCard>
-        {notifications.map((n, i) => {
-          const IconComponent = n.icon;
-          return (
-            <div key={i} className={`${styles.notifRow} ${!n.read ? styles.unread : ''}`}>
-              <div className={styles.notifIconWrap}>
-                <IconComponent size={20} />
+      <div className="stagger-1">
+        <PageCard>
+          {notifications.map((n, i) => {
+            const rowClass = [
+              styles.notifRow,
+              notifStyles.notifRow,
+              !n.read ? styles.unread : '',
+              !n.read ? notifStyles.notifRowUnread : '',
+            ].filter(Boolean).join(' ');
+
+            const iconClass = [
+              styles.notifIconWrap,
+              !n.read ? notifStyles.notifIconWrapUnread : '',
+            ].filter(Boolean).join(' ');
+
+            return (
+              <div key={i} className={rowClass}>
+                <div className={iconClass}>
+                  <Icon name={n.icon} size={20} aria-hidden="true" />
+                </div>
+                <div className={styles.notifContent}>
+                  <div className={`${styles.notifText} ${!n.read ? styles.bold : ''}`}>{n.text}</div>
+                  <div className={styles.notifTime}>{n.time}</div>
+                </div>
+                <Badge text={n.type} variant="neutral" />
+                {!n.read ? (
+                  <div
+                    className={notifStyles.notifDotUnread}
+                    aria-label="إشعار غير مقروء"
+                  />
+                ) : null}
               </div>
-              <div className={styles.notifContent}>
-                <div className={`${styles.notifText} ${!n.read ? styles.bold : ''}`}>{n.text}</div>
-                <div className={styles.notifTime}>{n.time}</div>
-              </div>
-              <Badge text={n.type} variant="neutral" />
-              {!n.read && <div className={styles.notifDot} />}
-            </div>
-          );
-        })}
-      </PageCard>
+            );
+          })}
+        </PageCard>
+      </div>
     </div>
   );
 }

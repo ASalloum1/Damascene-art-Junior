@@ -11,7 +11,7 @@
 
 .heroTitle {
   font-size: var(--font-size-2xl);
-  color: var(--color-ink);
+  color: var(--color-navy);
   margin-block-end: var(--space-4);
   display: flex;
   align-items: center;
@@ -20,7 +20,7 @@
 }
 
 .heroIcon {
-  color: var(--color-wood-mid);
+  color: var(--color-gold);
   margin-inline-end: var(--space-2);
   flex-shrink: 0;
 }
@@ -35,7 +35,7 @@
 .searchInput {
   flex: 1;
   padding: var(--space-4) var(--space-5);
-  border: 2px solid var(--color-wood-mid);
+  border: 2px solid var(--color-gold);
   border-radius: var(--radius-md);
   font-size: var(--font-size-md);
   font-family: var(--font-arabic);
@@ -43,11 +43,11 @@
   outline: none;
   transition: border-color var(--transition-fast);
   background: var(--color-white);
-  color: var(--color-ink);
+  color: var(--color-navy);
 }
 
 .searchInput:focus {
-  border-color: var(--color-wood-dark);
+  border-color: var(--color-gold-dark);
 }
 
 .searchInput::placeholder {
@@ -62,7 +62,7 @@
 
 .resultsKeyword {
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--color-navy);
 }
 
 .grid {

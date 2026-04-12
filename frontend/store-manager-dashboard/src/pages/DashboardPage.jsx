@@ -4,7 +4,6 @@ import PageCard from '../components/PageCard';
 import Table from '../components/Table';
 import Badge from '../components/Badge';
 import MiniBar from '../components/MiniBar';
-import { DollarSign, ShoppingCart, Package, Users } from 'lucide-react';
 
 const recentOrders = [
   ['#1084', 'أحمد الشامي', 'طاولة موزاييك × ١', '١,٢٠٠ $', <Badge key="b1" text="جديد" variant="info" />, '٢٠٢٦/٠٤/٠٣'],
@@ -27,14 +26,14 @@ export function DashboardPage() {
     <div className={`${styles.page} page-enter`}>
       {/* Stat Cards */}
       <div className={styles.statRow}>
-        <StatCard icon={DollarSign}   label="إجمالي المبيعات"  value="٤٥,٢٣٠ $" accentVariant="success"  sub="هذا الشهر" />
-        <StatCard icon={ShoppingCart} label="طلبات جديدة"      value="٣٨"        accentVariant="info"     sub="اليوم" />
-        <StatCard icon={Package}      label="منتجات نشطة"      value="١٥٤"       accentVariant="primary"  sub="إجمالي" />
-        <StatCard icon={Users}        label="عملاء جدد"        value="٢٧"        accentVariant="warning"  sub="هذا الأسبوع" />
+        <div className="stagger-1"><StatCard icon="dollar"   label="إجمالي المبيعات"  value="٤٥,٢٣٠ $" accentVariant="success"  sub="هذا الشهر" /></div>
+        <div className="stagger-2"><StatCard icon="orders" label="طلبات جديدة"      value="٣٨"        accentVariant="info"     sub="اليوم" /></div>
+        <div className="stagger-3"><StatCard icon="products"      label="منتجات نشطة"      value="١٥٤"       accentVariant="primary"  sub="إجمالي" /></div>
+        <div className="stagger-4"><StatCard icon="users"        label="عملاء جدد"        value="٢٧"        accentVariant="warning"  sub="هذا الأسبوع" /></div>
       </div>
 
       {/* Charts Row */}
-      <div className={styles.grid2}>
+      <div className={`${styles.grid2} stagger-2`}>
         <PageCard>
           <h3 className={styles.cardTitle}>المبيعات الأخيرة (آخر ٧ أيام)</h3>
           <div className={styles.barChart}>
@@ -70,13 +69,15 @@ export function DashboardPage() {
       </div>
 
       {/* Recent Orders */}
-      <PageCard>
-        <h3 className={styles.cardTitle}>آخر الطلبات</h3>
-        <Table
-          headers={['رقم الطلب', 'العميل', 'المنتجات', 'المبلغ', 'الحالة', 'التاريخ']}
-          rows={recentOrders}
-        />
-      </PageCard>
+      <div className="stagger-3">
+        <PageCard>
+          <h3 className={styles.cardTitle}>آخر الطلبات</h3>
+          <Table
+            headers={['رقم الطلب', 'العميل', 'المنتجات', 'المبلغ', 'الحالة', 'التاريخ']}
+            rows={recentOrders}
+          />
+        </PageCard>
+      </div>
     </div>
   );
 }

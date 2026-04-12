@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { ChevronDown } from 'lucide-react';
 import styles from './SelectField.module.css';
 
@@ -25,16 +26,17 @@ export default function SelectField({
   id,
   name,
 }) {
-  const selectId = id || `select-${label?.replace(/\s/g, '-') || Math.random()}`;
+  const reactId = useId();
+  const selectId = id || reactId;
 
   return (
     <div className={styles.fieldGroup}>
-      {label && (
+      {label ? (
         <label htmlFor={selectId} className={styles.label}>
           {label}
-          {required && <span className={styles.required} aria-hidden="true"> *</span>}
+          {required ? <span className={styles.required} aria-hidden="true"> *</span> : null}
         </label>
-      )}
+      ) : null}
       <div className={styles.selectWrapper}>
         <select
           id={selectId}
@@ -48,9 +50,9 @@ export default function SelectField({
             .filter(Boolean)
             .join(' ')}
         >
-          {placeholder && (
+          {placeholder ? (
             <option value="">{placeholder}</option>
-          )}
+          ) : null}
           {options.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
@@ -64,11 +66,11 @@ export default function SelectField({
           aria-hidden="true"
         />
       </div>
-      {error && (
+      {error ? (
         <span className={styles.errorMsg} role="alert">
           {error}
         </span>
-      )}
+      ) : null}
     </div>
   );
 }

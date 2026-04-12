@@ -8,15 +8,15 @@ export function TrackingStep({ label, date, stepNumber, status = 'pending', isLa
         <div className={`${styles.circle} ${styles[status]}`}>
           {status === 'done' ? '✓' : stepNumber}
         </div>
-        {!isLast && (
+        {!isLast ? (
           <div className={`${styles.line} ${status === 'done' ? styles.lineDone : ''}`} />
-        )}
+        ) : null}
       </div>
 
       {/* Right column: text */}
       <div className={styles.rightCol}>
         <p className={`${styles.label} ${styles[`label_${status}`]}`}>{label}</p>
-        {date && <p className={styles.date}>{date}</p>}
+        {date ? <p className={styles.date}>{date}</p> : null}
       </div>
     </div>
   );

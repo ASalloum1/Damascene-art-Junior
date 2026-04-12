@@ -22,7 +22,7 @@
 /* ── Gallery ─────────────────────────────────────────── */
 .mainImage {
   height: 400px;
-  background: var(--color-ivory-dark);
+  background: var(--color-cream-mid);
   border-radius: var(--radius-xl);
   display: flex;
   align-items: center;
@@ -39,7 +39,7 @@
 .thumb {
   height: 70px;
   flex: 1;
-  background: var(--color-ivory-dark);
+  background: var(--color-cream-mid);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -50,7 +50,7 @@
 }
 
 .thumbActive {
-  border-color: var(--color-wood-mid);
+  border-color: var(--color-gold);
 }
 
 /* ── Details ─────────────────────────────────────────── */
@@ -61,7 +61,7 @@
 .productTitle {
   font-size: var(--font-size-2xl);
   font-weight: 800;
-  color: var(--color-ink);
+  color: var(--color-navy);
   margin-block-end: var(--space-3);
 }
 
@@ -79,7 +79,7 @@
 .price {
   font-size: var(--font-size-3xl);
   font-weight: 800;
-  color: var(--color-ink);
+  color: var(--color-navy);
 }
 
 .oldPrice {
@@ -91,12 +91,12 @@
 .description {
   font-size: var(--font-size-base);
   line-height: 2;
-  color: var(--color-ink-soft);
+  color: var(--color-navy-light);
   margin-block-end: var(--space-5);
 }
 
 .specs {
-  background: var(--color-ivory-mid);
+  background: var(--color-cream-dark);
   border-radius: var(--radius-md);
   padding: var(--space-4);
   margin-block-end: var(--space-5);
@@ -110,7 +110,7 @@
 
 .specs dt {
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--color-navy);
   display: inline;
 }
 
@@ -120,7 +120,7 @@
 
 .specs dd {
   display: inline;
-  color: var(--color-ink-soft);
+  color: var(--color-navy-light);
   margin-inline-start: 0;
 }
 
@@ -139,7 +139,7 @@
 
 .availability {
   font-size: var(--font-size-sm);
-  color: var(--color-success);
+  color: var(--color-green);
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -167,7 +167,7 @@
 
 .reviewName {
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--color-navy);
   font-size: var(--font-size-sm);
 }
 
@@ -178,7 +178,7 @@
 
 .reviewText {
   font-size: var(--font-size-sm);
-  color: var(--color-ink-soft);
+  color: var(--color-navy-light);
   margin-block-start: var(--space-2);
 }
 

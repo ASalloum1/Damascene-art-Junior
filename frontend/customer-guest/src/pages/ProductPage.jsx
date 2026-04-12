@@ -4,7 +4,7 @@ import { Breadcrumb } from '../components/Breadcrumb.jsx';
 import { Badge } from '../components/Badge.jsx';
 import { StarRating } from '../components/StarRating.jsx';
 import { QuantitySelector } from '../components/QuantitySelector.jsx';
-import { Btn } from '../components/Btn.jsx';
+import { Button } from '../components/Button.jsx';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { ProductCard } from '../components/ProductCard.jsx';
 import { products } from '../data/index.js';
@@ -92,16 +92,16 @@ export function ProductPage({ onNavigate }) {
 
           <div className={styles.actions}>
             <QuantitySelector value={quantity} onChange={setQuantity} />
-            <Btn
+            <Button
               variant="primary"
               icon={<ShoppingCart size={16} />}
               onClick={() => onNavigate?.('cart')}
             >
               أضف للسلة
-            </Btn>
-            <Btn variant="outline" icon={<Heart size={16} />}>
+            </Button>
+            <Button variant="outline" icon={<Heart size={16} />}>
               أضف للمفضلة
-            </Btn>
+            </Button>
           </div>
 
           <p className={styles.availability}>

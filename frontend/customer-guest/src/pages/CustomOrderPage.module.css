@@ -17,7 +17,7 @@
 .intro {
   font-size: var(--font-size-base);
   line-height: 2;
-  color: var(--color-ink-soft);
+  color: var(--color-navy-light);
   margin: 0;
 }
 
@@ -34,7 +34,7 @@
 }
 
 .uploadZone {
-  border: 2px dashed var(--color-ivory-dark);
+  border: 2px dashed var(--color-cream-mid);
   border-radius: var(--radius-md);
   padding: var(--space-6);
   text-align: center;

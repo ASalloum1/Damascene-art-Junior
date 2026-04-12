@@ -1,0 +1,152 @@
+/**
+ * MessagesPage — Premium aesthetic layer
+ * Gold / Navy / Cream palette — RTL-first logical properties
+ */
+
+/* ─── Keyframes ──────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes goldPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 var(--color-gold-alpha-70);
+    background: var(--color-wood-mid);
+  }
+  50% {
+    box-shadow: 0 0 0 5px transparent;
+    background: var(--color-wood-light);
+  }
+}
+
+@keyframes shimmerBorder {
+  0%   { border-inline-start-color: var(--color-wood-mid); }
+  50%  { border-inline-start-color: var(--color-wood-light); }
+  100% { border-inline-start-color: var(--color-wood-mid); }
+}
+
+@keyframes detailFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Message List Items ─────────────────────────────────────── */
+.messageRow {
+  opacity: 0;
+  animation: fadeInUp 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transition:
+    background var(--transition-base),
+    box-shadow var(--transition-base),
+    padding var(--transition-base);
+  border-inline-start: 3px solid transparent;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 80px;
+}
+
+.messageRow:nth-child(1) { animation-delay:  50ms; }
+.messageRow:nth-child(2) { animation-delay: 100ms; }
+.messageRow:nth-child(3) { animation-delay: 150ms; }
+.messageRow:nth-child(4) { animation-delay: 200ms; }
+.messageRow:nth-child(5) { animation-delay: 250ms; }
+.messageRow:nth-child(6) { animation-delay: 300ms; }
+.messageRow:nth-child(7) { animation-delay: 350ms; }
+.messageRow:nth-child(8) { animation-delay: 400ms; }
+
+/* Smooth hover bg transition */
+.messageRow:hover {
+  background: var(--color-ivory-mid);
+  box-shadow: var(--shadow-xs);
+  padding-inline: var(--space-2);
+}
+
+/* ─── Active / Selected: gold shimmer inline-start border ─────── */
+.messageRowActive {
+  border-inline-start: 3px solid var(--color-wood-mid);
+  background: var(--color-gold-alpha-05);
+  animation: shimmerBorder 2.4s ease-in-out infinite;
+}
+
+/* ─── Unread: gold border + bg tint ──────────────────────────── */
+.messageRowUnread {
+  border-inline-start-color: var(--color-wood-mid);
+  background: var(--color-gold-alpha-04);
+}
+
+/* ─── Unread dot: gold pulse ─────────────────────────────────── */
+.messageDotUnread {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-wood-mid);
+  flex-shrink: 0;
+  margin-block-start: 6px;
+  animation: goldPulse 1.8s ease-in-out infinite;
+}
+
+/* ─── Avatar: gold ring border ───────────────────────────────── */
+.messageAvatar {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-full);
+  background: var(--color-ink);
+  color: var(--color-ivory-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: var(--font-size-lg);
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px var(--color-ivory), 0 0 0 4px var(--color-gold-alpha-35);
+  transition: box-shadow var(--transition-base);
+}
+
+.messageRow:hover .messageAvatar {
+  box-shadow: 0 0 0 2px var(--color-ivory), 0 0 0 4px var(--color-wood-mid);
+}
+
+/* ─── Message Detail Panel ───────────────────────────────────── */
+.messageDetail {
+  animation: detailFadeIn 350ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ─── Reply Area ─────────────────────────────────────────────── */
+.replyArea {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-ivory-dark);
+  background: var(--color-ivory);
+  padding: var(--space-3);
+  font-family: var(--font-arabic);
+  font-size: var(--font-size-sm);
+  direction: rtl;
+  resize: vertical;
+  min-height: 60px;
+  max-height: 200px;
+  width: 100%;
+  box-sizing: border-box;
+  color: var(--color-ink-soft);
+  outline: none;
+  transition:
+    min-height var(--transition-slow) cubic-bezier(0.22, 1, 0.36, 1),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.replyArea:focus {
+  min-height: 100px;
+  border-color: var(--color-wood-mid);
+  box-shadow: 0 0 0 3px var(--color-gold-alpha-15);
+  background: var(--color-white);
+}

@@ -11,12 +11,12 @@
   box-shadow: var(--shadow-sm);
   line-height: 2.2;
   font-size: var(--font-size-base);
-  color: var(--color-ink-soft);
+  color: var(--color-navy-light);
 }
 
 .heading {
   font-size: var(--font-size-xl);
-  color: var(--color-ink);
+  color: var(--color-navy);
   margin-block-end: var(--space-3);
   margin-block-start: var(--space-8);
   font-weight: 700;

@@ -1,14 +1,26 @@
+/* ===================================================
+   Header — Glass Morphism · Damascene Art Store Manager
+   =================================================== */
+
 .header {
-  background: var(--color-white);
+  background: var(--color-white-alpha-70);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   padding: 14px var(--space-6);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: var(--shadow-xs);
+  border-bottom: 1px solid var(--color-gold);
   flex-shrink: 0;
   gap: var(--space-4);
-  border-bottom: 1px solid var(--color-ivory-dark);
   min-height: 60px;
+  position: relative;
+  z-index: 10;
+}
+
+/* Remove old gradient bottom border */
+.header::after {
+  display: none;
 }
 
 /* ─── Mobile Menu Button ─────────────────────────────────────── */
@@ -18,12 +30,13 @@
   border: none;
   color: var(--color-ink-soft);
   cursor: pointer;
-  padding: var(--space-1);
+  padding: var(--space-2);
   border-radius: var(--radius-sm);
-  transition: background var(--transition-fast);
+  transition: background var(--transition-fast), color var(--transition-fast);
 }
 .mobileMenuBtn:hover {
-  background: var(--color-ivory-dark);
+  background: var(--color-gold-bg);
+  color: var(--color-gold-dark);
 }
 
 @media (max-width: 768px) {
@@ -45,6 +58,12 @@
   margin: 0;
   font-family: var(--font-arabic);
   flex: 1;
+}
+
+/* The icon inside the page title — use CSS variable color, no inline styles */
+.pageTitleIcon {
+  color: var(--color-gold);
+  flex-shrink: 0;
 }
 
 /* ─── Actions Row ────────────────────────────────────────────── */
@@ -69,25 +88,39 @@
   transition: color var(--transition-fast), background var(--transition-fast);
 }
 .iconBtn:hover {
-  color: var(--color-ink);
-  background: var(--color-ivory-dark);
+  color: var(--color-gold-dark);
+  background: var(--color-gold-alpha-08);
 }
 
+/* Notification badge with pulse-glow animation */
 .badge {
   position: absolute;
   top: 0;
-  right: 0;
+  inset-inline-end: 0;
   width: 16px;
   height: 16px;
   border-radius: var(--radius-full);
   background: var(--color-error);
-  color: var(--color-ivory);
+  color: var(--color-white);
   font-size: 9px;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 0 0 var(--color-gold-alpha-70);
+  }
+  70% {
+    box-shadow: 0 0 0 10px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
 }
 
 /* ─── User Chip ──────────────────────────────────────────────── */
@@ -98,18 +131,25 @@
   cursor: default;
 }
 
+/* User avatar with gold ring */
 .avatar {
   width: 34px;
   height: 34px;
   border-radius: var(--radius-full);
-  background: var(--color-wood-mid);
-  color: var(--color-ivory);
+  background: var(--color-gold);
+  color: var(--color-text-on-gold);
+  border: 2px solid var(--color-gold-alpha-30);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
   font-size: var(--font-size-md);
   flex-shrink: 0;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+.avatar:hover {
+  transform: scale(1.08);
+  box-shadow: var(--glow-gold);
 }
 
 .userName {

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import styles from './Modal.module.css';
@@ -30,8 +30,29 @@ export default function Modal({
   footer,
   closeOnBackdrop = true,
 }) {
+  const titleId = useId();
   const dialogRef = useRef(null);
   const previousFocusRef = useRef(null);
+
+  function trapFocus(e) {
+    if (!dialogRef.current) return;
+    const focusable = dialogRef.current.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) {
+        e.preventDefault();
+        last?.focus();
+      }
+    } else {
+      if (document.activeElement === last) {
+        e.preventDefault();
+        first?.focus();
+      }
+    }
+  }
 
   // Focus trap and scroll lock
   useEffect(() => {
@@ -67,26 +88,6 @@ export default function Modal({
     };
   }, []);
 
-  function trapFocus(e) {
-    if (!dialogRef.current) return;
-    const focusable = dialogRef.current.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (e.shiftKey) {
-      if (document.activeElement === first) {
-        e.preventDefault();
-        last?.focus();
-      }
-    } else {
-      if (document.activeElement === last) {
-        e.preventDefault();
-        first?.focus();
-      }
-    }
-  }
-
   if (!isOpen) return null;
 
   const content = (
@@ -102,12 +103,12 @@ export default function Modal({
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="modal-title"
+        aria-labelledby={titleId}
         tabIndex={-1}
       >
         {/* Header */}
         <div className={styles.header}>
-          <h2 id="modal-title" className={styles.title}>
+          <h2 id={titleId} className={styles.title}>
             {title}
           </h2>
           <button
@@ -124,7 +125,7 @@ export default function Modal({
         <div className={styles.body}>{children}</div>
 
         {/* Footer */}
-        {footer && <div className={styles.footer}>{footer}</div>}
+        {footer ? <div className={styles.footer}>{footer}</div> : null}
       </div>
     </div>
   );

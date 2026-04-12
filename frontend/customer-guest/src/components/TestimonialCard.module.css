@@ -12,7 +12,7 @@
 
 .text {
   font-size: var(--font-size-base);
-  color: var(--color-ink-soft);
+  color: var(--color-navy-light);
   line-height: 1.8;
   margin-bottom: var(--space-4);
   margin-top: 0;
@@ -27,7 +27,7 @@
 .name {
   font-size: var(--font-size-sm);
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--color-navy);
   margin: 0;
 }
 

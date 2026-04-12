@@ -40,13 +40,13 @@
 }
 
 .statIcon {
-  color: var(--color-wood-mid);
+  color: var(--color-gold);
   margin-block-end: var(--space-2);
 }
 
 .statLabel {
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--color-navy);
   font-size: var(--font-size-base);
   margin-block-end: var(--space-1);
 }
@@ -71,7 +71,7 @@
   gap: var(--space-2);
   font-size: var(--font-size-md);
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--color-navy);
   margin-block-end: var(--space-4);
 }
 
@@ -81,7 +81,7 @@
   justify-content: space-between;
   align-items: center;
   padding-block: var(--space-3);
-  border-block-end: 1px solid var(--color-ivory-dark);
+  border-block-end: 1px solid var(--color-cream-mid);
   font-size: var(--font-size-sm);
   gap: var(--space-3);
 }
@@ -92,7 +92,7 @@
 
 .orderId {
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--color-navy);
   min-width: 60px;
 }
 
@@ -103,14 +103,14 @@
 
 .orderTotal {
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--color-navy);
   min-width: 70px;
 }
 
 .trackBtn {
   background: transparent;
   border: none;
-  color: var(--color-wood-mid);
+  color: var(--color-gold);
   cursor: pointer;
   font-weight: 600;
   font-family: var(--font-arabic);
