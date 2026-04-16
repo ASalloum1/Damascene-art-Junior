@@ -1,0 +1,11 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment
+.env
+
+# Vector DB (regenerated from knowledge base via scripts/ingest.py)
+chroma_db/
