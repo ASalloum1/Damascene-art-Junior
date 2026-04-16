@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ImageIcon, Heart, ShoppingCart, Check } from 'lucide-react';
+import { useApi } from '../context/ApiContext.jsx';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
 import { Badge } from '../components/Badge.jsx';
 import { StarRating } from '../components/StarRating.jsx';
@@ -9,13 +10,6 @@ import { SectionHeader } from '../components/SectionHeader.jsx';
 import { ProductCard } from '../components/ProductCard.jsx';
 import { products } from '../data/index.js';
 import styles from './ProductPage.module.css';
-
-const breadcrumbItems = [
-  { label: 'الرئيسية', pageId: 'home' },
-  { label: 'المتجر', pageId: 'shop' },
-  { label: 'فسيفساء', pageId: 'category' },
-  { label: 'طاولة موزاييك دمشقية', pageId: null },
-];
 
 const reviews = [
   {
@@ -33,7 +27,111 @@ const reviews = [
 ];
 
 export function ProductPage({ onNavigate }) {
+  const { baseUrl, endpoints, selectedProductId } = useApi();
   const [quantity, setQuantity] = useState(1);
+  const [productData, setProductData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!selectedProductId) {
+      setError('No product selected');
+      setIsLoading(false);
+      return;
+    }
+
+    const fetchProductDetails = async () => {
+      setIsLoading(true);
+      setError('');
+
+      try {
+        const apiUrl = `${baseUrl}${endpoints.productDetails}`;
+        console.log('Fetching product details from:', apiUrl, 'Product ID:', selectedProductId);
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true',
+          },
+          body: JSON.stringify({ product_id: selectedProductId }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || `API Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Product details received:', data);
+
+        // Map API response
+        const product = data.data.product;
+        let imageUrl = product.image;
+
+        if (imageUrl) {
+          // If it's a full ngrok URL, extract just the /storage/... part
+          if (imageUrl.includes('ngrok') && imageUrl.includes('/storage/')) {
+            const storageIndex = imageUrl.indexOf('/storage/');
+            imageUrl = imageUrl.substring(storageIndex);
+          }
+          // If it's just a filename, add the /storage/ prefix
+          else if (imageUrl && !imageUrl.startsWith('/') && !imageUrl.startsWith('http')) {
+            imageUrl = `/storage/${imageUrl}`;
+          }
+
+          // Decode URI-encoded characters
+          try {
+            imageUrl = decodeURIComponent(imageUrl);
+          } catch (e) {
+            // If decoding fails, use original URL
+          }
+        }
+
+        setProductData({
+          id: product.id,
+          name: product.name,
+          price: parseFloat(product.new_price),
+          oldPrice: parseFloat(product.old_price),
+          image: imageUrl,
+          rating: parseFloat(product.average_rate),
+          category: product.category.name,
+          inStock: product.amount > 0,
+          amount: product.amount,
+        });
+      } catch (err) {
+        console.error('Error fetching product details:', err);
+        setError(err.message || 'Failed to load product details');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProductDetails();
+  }, [selectedProductId, baseUrl, endpoints]);
+
+  if (isLoading) {
+    return (
+      <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--color-stone)' }}>
+        جاري تحميل تفاصيل المنتج...
+      </div>
+    );
+  }
+
+  if (error || !productData) {
+    return (
+      <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--color-red)' }}>
+        {error || 'Failed to load product'}
+      </div>
+    );
+  }
+
+  const breadcrumbItems = [
+    { label: 'الرئيسية', pageId: 'home' },
+    { label: 'المتجر', pageId: 'shop' },
+    { label: productData.category, pageId: 'category' },
+    { label: productData.name, pageId: null },
+  ];
 
   return (
     <div className={styles.page}>
@@ -43,12 +141,38 @@ export function ProductPage({ onNavigate }) {
         {/* ── Gallery ── */}
         <div>
           <div className={styles.mainImage}>
-            <ImageIcon size={80} />
+            {productData.image ? (
+              <img
+                src={productData.image}
+                alt={productData.name}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                }}
+              />
+            ) : (
+              <ImageIcon size={80} />
+            )}
           </div>
           <div className={styles.thumbnails}>
-            {[0, 1, 2, 3].map((i) => (
-              <div key={i} className={`${styles.thumb} ${i === 0 ? styles.thumbActive : ''}`}>
-                <ImageIcon size={24} />
+            {[0].map((i) => (
+              <div key={i} className={`${styles.thumb} ${styles.thumbActive}`}>
+                {productData.image ? (
+                  <img
+                    src={productData.image}
+                    alt={productData.name}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: 'center',
+                    }}
+                  />
+                ) : (
+                  <ImageIcon size={24} />
+                )}
               </div>
             ))}
           </div>
@@ -57,37 +181,22 @@ export function ProductPage({ onNavigate }) {
         {/* ── Details ── */}
         <div>
           <div className={styles.badgeWrap}>
-            <Badge text="الأكثر مبيعاً" variant="primary" />
+            {productData.inStock ? (
+              <Badge text="متوفر" variant="primary" />
+            ) : (
+              <Badge text="غير متوفر" variant="sale" />
+            )}
           </div>
 
-          <h1 className={styles.productTitle}>طاولة موزاييك دمشقية</h1>
+          <h1 className={styles.productTitle}>{productData.name}</h1>
 
           <div className={styles.ratingWrap}>
-            <StarRating rating={5} reviewCount={48} size="md" />
+            <StarRating rating={productData.rating} reviewCount={48} size="md" />
           </div>
 
           <div className={styles.priceBlock}>
-            <span className={styles.price}>١,٢٠٠ $</span>
-            <span className={styles.oldPrice}>١,٤٠٠ $</span>
-            <Badge text="خصم ١٤%" variant="sale" />
-          </div>
-
-          <p className={styles.description}>
-            طاولة موزاييك دمشقية مصنوعة يدوياً بالكامل من خشب الجوز المعتّق، مطعّمة بآلاف القطع
-            من الصدف الطبيعي والخشب الملوّن. كل قطعة فريدة وتحمل لمسة الحرفي الشامي.
-          </p>
-
-          <div className={styles.specs}>
-            <dl>
-              <dt>المواد</dt>
-              <dd>خشب جوز + صدف طبيعي</dd>
-              <dt>الأبعاد</dt>
-              <dd>٦٠×٦٠×٤٥ سم</dd>
-              <dt>الوزن</dt>
-              <dd>٨ كغ</dd>
-              <dt>الحرفي</dt>
-              <dd>الأسطى أبو خالد — ورشة الحميدية</dd>
-            </dl>
+            <span className={styles.price}>{productData.price} $</span>
+            <span className={styles.oldPrice}>{productData.oldPrice} $</span>
           </div>
 
           <div className={styles.actions}>
@@ -106,7 +215,7 @@ export function ProductPage({ onNavigate }) {
 
           <p className={styles.availability}>
             <Check size={16} />
-            متوفر — يُشحن خلال ٣-٥ أيام عمل
+            {productData.inStock ? 'متوفر — يُشحن خلال ٣-٥ أيام عمل' : 'غير متوفر حالياً'}
           </p>
         </div>
       </div>

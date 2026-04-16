@@ -37,7 +37,7 @@ export default function App() {
 
   return (
     <AdminLayout activePage={activePage} setActivePage={setActivePage}>
-      <Page />
+      <Page onNavigate={setActivePage} />
     </AdminLayout>
   );
 }
