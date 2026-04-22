@@ -53,3 +53,22 @@
   cursor: pointer;
   font-family: var(--font-arabic);
 }
+
+.errorMessage {
+  background-color: #fee;
+  border: 1px solid #f99;
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin-block-end: var(--space-5);
+  color: #c33;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-arabic);
+  text-align: center;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}

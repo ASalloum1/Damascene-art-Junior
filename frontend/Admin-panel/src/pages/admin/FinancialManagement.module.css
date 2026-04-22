@@ -162,6 +162,200 @@
   color: var(--color-red);
 }
 
+/* PDF Preview Modal */
+.pdfPreview {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4);
+  background: var(--color-cream);
+  border-radius: var(--radius-md);
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.a4Page {
+  width: 210mm;
+  height: 297mm;
+  background: var(--color-white);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.a4Content {
+  padding: 40px;
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  direction: rtl;
+}
+
+.documentTitle {
+  font-size: 24px;
+  font-weight: var(--font-weight-black);
+  color: var(--color-navy);
+  margin: 0 0 var(--space-2) 0;
+  text-align: center;
+}
+
+.documentSubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin: 0 0 var(--space-4) 0;
+}
+
+.documentMeta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-cream-dark);
+}
+
+.metaItem {
+  display: flex;
+  justify-content: space-between;
+}
+
+.metaLabel {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+}
+
+.metaValue {
+  color: var(--color-text-secondary);
+}
+
+.documentTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--space-4);
+  font-size: 11px;
+}
+
+.documentTable thead {
+  background: var(--color-cream);
+  border-bottom: 2px solid var(--color-gold);
+}
+
+.documentTable th {
+  padding: 8px;
+  text-align: right;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+}
+
+.documentTable td {
+  padding: 8px;
+  border-bottom: 1px solid var(--color-cream-dark);
+  color: var(--color-text-secondary);
+}
+
+.documentTable tbody tr:nth-child(even) {
+  background: var(--color-cream);
+}
+
+.documentFooter {
+  text-align: center;
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-cream-dark);
+}
+
+/* Excel Preview Modal */
+.excelPreview {
+  max-height: 600px;
+  overflow: auto;
+  border: 1px solid var(--color-cream-dark);
+  border-radius: var(--radius-md);
+}
+
+.excelTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-xs);
+}
+
+.excelTable thead {
+  background: var(--color-cream);
+  position: sticky;
+  top: 0;
+}
+
+.excelTable th {
+  padding: var(--space-2);
+  text-align: right;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+  border-bottom: 2px solid var(--color-gold);
+}
+
+.excelTable td {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--color-cream-dark);
+  color: var(--color-text-secondary);
+}
+
+.excelTable tbody tr:hover {
+  background: var(--color-gold-light);
+}
+
+.excelTable tbody tr:nth-child(even) {
+  background: var(--color-cream);
+}
+
+.modalFooter {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+/* Transaction Details Modal */
+.transactionDetails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.detailsField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.detailsField label {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+  font-size: var(--font-size-sm);
+}
+
+.detailsField p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  padding: var(--space-2);
+  background: var(--color-cream);
+  border-radius: var(--radius-md);
+}
+
+/* Transaction PDF Table */
+.documentTable tbody tr:nth-child(odd) {
+  background: var(--color-cream);
+}
+
+.labelCol {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+  width: 40%;
+  border-right: 2px solid var(--color-gold-light);
+  padding-right: var(--space-2);
+}
+
 /* Responsive */
 @media (max-width: 1200px) {
   .statsRow {

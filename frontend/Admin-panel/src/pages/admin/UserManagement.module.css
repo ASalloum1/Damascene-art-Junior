@@ -177,6 +177,49 @@
   color: var(--color-text-secondary);
 }
 
+.viewUserContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.viewUserHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background: var(--gradient-gold-subtle);
+}
+
+.viewUserGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.viewUserItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-cream);
+  border: 1px solid var(--color-cream-dark);
+}
+
+.viewUserLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.viewUserValue {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+}
+
 /* Form */
 .formGrid {
   display: grid;
@@ -187,6 +230,34 @@
 
 .formFull {
   grid-column: 1 / -1;
+}
+
+.resetNotice {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-cream);
+  border-right: 3px solid var(--color-gold);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-navy);
+  line-height: 1.6;
+}
+
+.resetCheckbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-navy);
+  cursor: pointer;
+  user-select: none;
+}
+
+.resetCheckbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-gold);
+  cursor: pointer;
 }
 
 /* Responsive */
@@ -224,6 +295,10 @@
   }
 
   .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .viewUserGrid {
     grid-template-columns: 1fr;
   }
 }

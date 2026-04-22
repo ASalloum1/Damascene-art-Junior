@@ -1,17 +1,17 @@
 import { useState, useMemo } from 'react';
 import {
   Eye,
-  RefreshCw,
   XCircle,
-  RotateCcw,
 } from 'lucide-react';
 import DataTable from '../../components/ui/DataTable.jsx';
 import Badge from '../../components/ui/Badge.jsx';
 import Tabs from '../../components/ui/Tabs.jsx';
 import FilterBar from '../../components/ui/FilterBar.jsx';
 import ActionMenu from '../../components/ui/ActionMenu.jsx';
+import Modal from '../../components/ui/Modal.jsx';
+import Button from '../../components/ui/Button.jsx';
 import { useToast } from '../../components/ui/Toast.jsx';
-import { mockOrders, mockStores } from '../../data/mockData.js';
+import { mockOrders, mockStores, mockProducts } from '../../data/mockData.js';
 import { formatCurrency, formatDate, toArabicNum } from '../../utils/formatters.js';
 import styles from './OrdersManagement.module.css';
 
@@ -34,6 +34,21 @@ function countByStatus(orders, status) {
   return orders.filter((o) => o.status === status).length;
 }
 
+// Generate sample order items from products
+function getOrderItems(orderId) {
+  const sampleItems = [
+    { productId: 'p1', productName: 'طاولة موزاييك دمشقية', quantity: 1, price: 12500 },
+    { productId: 'p2', productName: 'صندوق خشب مطعّم بالصدف', quantity: 2, price: 4800 },
+    { productId: 'p3', productName: 'مرآة زجاج منفوخ', quantity: 1, price: 3200 },
+  ];
+
+  if (orderId === 'o1') return sampleItems.slice(0, 2);
+  if (orderId === 'o2') return sampleItems.slice(1, 2);
+  if (orderId === 'o3') return sampleItems.slice(2, 3);
+
+  return sampleItems.slice(0, 1);
+}
+
 export default function OrdersManagementPage() {
   const { showToast } = useToast();
 
@@ -43,6 +58,8 @@ export default function OrdersManagementPage() {
   const [paymentFilter, setPayment]     = useState(() => '');
   const [page, setPage]                 = useState(() => 1);
   const [pageSize, setPageSize]         = useState(() => PAGE_SIZE);
+  const [viewOpen, setViewOpen]         = useState(false);
+  const [viewOrder, setViewOrder]       = useState(null);
 
   const storeOptions = useMemo(() => 
     mockStores.map((s) => ({ value: s.name, label: s.name })),
@@ -81,6 +98,11 @@ export default function OrdersManagementPage() {
     setStore('');
     setPayment('');
     setPage(1);
+  };
+
+  const handleViewOrder = (order) => {
+    setViewOrder(order);
+    setViewOpen(true);
   };
 
   const headers = useMemo(() => [
@@ -131,26 +153,16 @@ export default function OrdersManagementPage() {
       render: (_, row) => (
         <ActionMenu
           actions={[
-            { 
-              label: 'عرض التفاصيل', 
-              icon: Eye, 
-              onClick: () => showToast({ message: `عرض ${row.orderNumber}`, type: 'info' }) 
+            {
+              label: 'عرض التفاصيل',
+              icon: Eye,
+              onClick: () => handleViewOrder(row)
             },
-            { 
-              label: 'تحديث الحالة', 
-              icon: RefreshCw, 
-              onClick: () => showToast({ message: 'تحديث حالة الطلب', type: 'info' }) 
-            },
-            { 
-              label: 'إلغاء', 
-              icon: XCircle, 
-              danger: true, 
-              onClick: () => showToast({ message: `تم إلغاء ${row.orderNumber}`, type: 'warning' }) 
-            },
-            { 
-              label: 'استرداد', 
-              icon: RotateCcw, 
-              onClick: () => showToast({ message: `تم طلب استرداد ${row.orderNumber}`, type: 'info' }) 
+            {
+              label: 'إلغاء',
+              icon: XCircle,
+              danger: true,
+              onClick: () => showToast({ message: `تم إلغاء الطلب ${row.orderNumber}`, type: 'warning' })
             },
           ]}
         />
@@ -236,14 +248,94 @@ export default function OrdersManagementPage() {
             pageSize,
             total: filtered.length,
             onPageChange: (p) => setPage(p),
-            onPageSizeChange: (s) => { 
-              setPageSize(s); 
-              setPage(1); 
+            onPageSizeChange: (s) => {
+              setPageSize(s);
+              setPage(1);
             },
           }}
           ariaLabel="جدول الطلبات"
         />
       </div>
+
+      {/* View Order Details Modal */}
+      <Modal
+        isOpen={viewOpen}
+        onClose={() => setViewOpen(false)}
+        title={`تفاصيل الطلب: ${viewOrder?.orderNumber}`}
+        size="md"
+        footer={
+          <div className={styles.modalFooter}>
+            <Button variant="ghost" onClick={() => setViewOpen(false)}>إغلاق</Button>
+          </div>
+        }
+      >
+        <div className={styles.orderDetailsContent}>
+          {/* Order Information */}
+          <div className={styles.orderInfoSection}>
+            <h3 className={styles.sectionTitle}>معلومات الطلب</h3>
+            <div className={styles.infoGrid}>
+              <div className={styles.infoItem}>
+                <label>رقم الطلب</label>
+                <p>{viewOrder?.orderNumber}</p>
+              </div>
+              <div className={styles.infoItem}>
+                <label>العميل</label>
+                <p>{viewOrder?.customer}</p>
+              </div>
+              <div className={styles.infoItem}>
+                <label>البريد الإلكتروني</label>
+                <p>{viewOrder?.email}</p>
+              </div>
+              <div className={styles.infoItem}>
+                <label>المتجر</label>
+                <p>{viewOrder?.store}</p>
+              </div>
+              <div className={styles.infoItem}>
+                <label>تاريخ الطلب</label>
+                <p>{formatDate(viewOrder?.date)}</p>
+              </div>
+              <div className={styles.infoItem}>
+                <label>طريقة الدفع</label>
+                <p>{viewOrder?.paymentMethod}</p>
+              </div>
+              <div className={styles.infoItem}>
+                <label>الحالة</label>
+                <p>
+                  <Badge
+                    text={viewOrder?.status}
+                    variant={STATUS_VARIANT[viewOrder?.status] || 'default'}
+                  />
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Order Summary */}
+          <div className={styles.orderSummarySection}>
+            <h3 className={styles.sectionTitle}>ملخص الطلب</h3>
+            <div className={styles.itemsTable}>
+              <div className={styles.tableHeader}>
+                <span className={styles.colProduct}>المنتج</span>
+                <span className={styles.colQuantity}>الكمية</span>
+                <span className={styles.colPrice}>السعر</span>
+                <span className={styles.colTotal}>الإجمالي</span>
+              </div>
+              {getOrderItems(viewOrder?.id).map((item, idx) => (
+                <div key={idx} className={styles.tableRow}>
+                  <span className={styles.colProduct}>{item.productName}</span>
+                  <span className={styles.colQuantity}>{toArabicNum(item.quantity)}</span>
+                  <span className={styles.colPrice}>{formatCurrency(item.price)}</span>
+                  <span className={styles.colTotal}>{formatCurrency(item.price * item.quantity)}</span>
+                </div>
+              ))}
+              <div className={styles.totalRow}>
+                <span>الإجمالي الكلي:</span>
+                <span>{formatCurrency(viewOrder?.amount)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

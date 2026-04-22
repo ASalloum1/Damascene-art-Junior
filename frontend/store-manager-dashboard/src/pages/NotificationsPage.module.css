@@ -1,125 +1,240 @@
-/**
- * NotificationsPage — Premium aesthetic layer
- * Gold / Navy / Cream palette — RTL-first logical properties
- */
-
-/* ─── Keyframes ──────────────────────────────────────────────── */
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.page {
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
 }
 
-/* RTL: slide from the inline-end (visual left in RTL).
-   @keyframes can't live inside a selector, so we declare a separate
-   keyframe and apply it via an [dir='rtl'] selector below. */
-@keyframes slideInRightRTL {
-  from {
-    opacity: 0;
-    transform: translateX(-24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes goldPulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 var(--color-gold-alpha-70);
-    background: var(--color-wood-mid);
-  }
-  50% {
-    box-shadow: 0 0 0 6px transparent;
-    background: var(--color-wood-light);
-  }
-}
-
-/* ─── Staggered Notification Rows ───────────────────────────── */
-.notifRow {
-  opacity: 0;
-  animation: slideInRight 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  transition:
-    background var(--transition-base),
-    box-shadow var(--transition-base);
-}
-
-[dir='rtl'] .notifRow {
-  animation-name: slideInRightRTL;
-}
-
-.notifRow:hover {
-  background: var(--color-ivory-mid) !important;
-  box-shadow: var(--shadow-xs);
-}
-
-/* Stagger delays */
-.notifRow:nth-child(1) { animation-delay:  40ms; }
-.notifRow:nth-child(2) { animation-delay:  90ms; }
-.notifRow:nth-child(3) { animation-delay: 140ms; }
-.notifRow:nth-child(4) { animation-delay: 190ms; }
-.notifRow:nth-child(5) { animation-delay: 240ms; }
-.notifRow:nth-child(6) { animation-delay: 290ms; }
-.notifRow:nth-child(7) { animation-delay: 340ms; }
-.notifRow:nth-child(8) { animation-delay: 390ms; }
-
-/* ─── Unread items: gold inline-start border + warm bg tint ── */
-.notifRowUnread {
-  border-inline-start: 3px solid var(--color-wood-mid);
-  background: var(--color-gold-alpha-04) !important;
-  padding-inline-start: calc(var(--space-2) + 1px);
-}
-
-/* ─── Gold Pulse Dot for unread ──────────────────────────────── */
-.notifDotUnread {
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-full);
-  background: var(--color-wood-mid);
-  flex-shrink: 0;
-  animation: goldPulse 1.8s ease-in-out infinite;
-}
-
-/* ─── Icon wrap accent for unread ────────────────────────────── */
-.notifIconWrapUnread {
-  background: var(--color-gold-alpha-12);
-  color: var(--color-wood-mid);
-}
-
-/* ─── Group Section Separator ────────────────────────────────── */
-.groupSeparator {
+.pageHeader {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  margin-block: var(--space-4);
+}
+.pageHeader:hover .pageTitle::after{
+  width: 155px;
+}
+.headerIcon {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-gold-bg);
+  color: var(--color-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.groupLabel {
-  font-size: var(--font-size-xs);
-  font-weight: 700;
-  color: var(--color-stone);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
-  font-family: var(--font-arabic);
+.pageTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-black);
+  color: var(--color-navy);
+  margin: 0;
+  margin-block-end: var(--space-1);
+  position: relative;
 }
 
-.groupLine {
+.pageTitle::after {
+  content: '';
+  display: block;
+  width: 55px;
+  height: 4px;
+  background: var(--gradient-gold);
+  border-radius: var(--radius-full);
+  margin-block-start: var(--space-1);
+  margin-block-end: var(--space-1);
+  transition: width var(--transition-base);
+}
+
+.unreadBadge {
+  background: var(--color-red);
+  color: var(--color-white);
+  font-size: var(--font-size-tiny);
+  font-weight: var(--font-weight-bold);
+  border-radius: var(--radius-full);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--glass-border);
+  border-block-start: 3px solid transparent;
+  transition: box-shadow var(--transition-base), transform var(--transition-base), border-color var(--transition-base);
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
+  border-block-start-color: var(--color-gold);
+}
+
+.mainTabsRow {
+  padding: 0 var(--space-6);
+  border-block-end: 1px solid var(--color-cream-dark);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Center */
+.centerContent {
+  padding: var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.centerToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding-block-end: var(--space-2);
+}
+
+.notifList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.notifEmpty {
+  padding: var(--space-8);
+}
+
+/* Notification items — staggered entrance */
+.notifItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+  border-block-end: 1px solid var(--color-cream-dark);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  border-radius: var(--radius-md);
+  padding-inline: var(--space-2);
+  position: relative;
+  animation: fadeInUp 0.35s ease-out backwards;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 80px;
+}
+
+.notifItem:nth-child(1) { animation-delay: 0s; }
+.notifItem:nth-child(2) { animation-delay: 0.04s; }
+.notifItem:nth-child(3) { animation-delay: 0.08s; }
+.notifItem:nth-child(4) { animation-delay: 0.12s; }
+.notifItem:nth-child(5) { animation-delay: 0.16s; }
+.notifItem:nth-child(6) { animation-delay: 0.20s; }
+.notifItem:nth-child(7) { animation-delay: 0.24s; }
+.notifItem:nth-child(8) { animation-delay: 0.28s; }
+
+.notifItem:last-child {
+  border-block-end: none;
+}
+
+.notifItem:hover {
+  background: var(--color-cream);
+}
+
+/* Unread items — gold inline-start border + warm bg tint */
+.notifItemUnread {
+  background: var(--color-gold-bg);
+  border-inline-start: 3px solid var(--color-gold);
+}
+
+.notifIconCircle {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notifBody {
   flex: 1;
-  height: 1px;
-  background: linear-gradient(
-    to inline-end,
-    var(--color-ivory-dark),
-    transparent
-  );
-  background: linear-gradient(
-    90deg,
-    var(--color-ivory-dark),
-    transparent
-  );
+  min-width: 0;
+}
+
+.notifTitleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-end: var(--space-1);
+}
+
+.notifTitle {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+}
+
+.notifDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  margin: 0;
+  margin-block-end: var(--space-2);
+  line-height: 1.6;
+}
+
+.notifTime {
+  font-size: var(--font-size-tiny);
+  color: var(--color-text-secondary);
+}
+
+.unreadDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-gold);
+  flex-shrink: 0;
+  margin-block-start: var(--space-2);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(200, 164, 90, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(200, 164, 90, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(200, 164, 90, 0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page {
+    padding: var(--space-4);
+  }
+
+  .centerContent {
+    padding: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: var(--space-3);
+    gap: var(--space-3);
+  }
+
+  .centerContent {
+    padding: var(--space-3);
+  }
 }

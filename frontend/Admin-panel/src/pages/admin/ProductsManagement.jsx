@@ -6,12 +6,16 @@ import {
   Trash2,
   Star,
   Package,
+  ArrowRight,
 } from 'lucide-react';
 import DataTable from '../../components/ui/DataTable.jsx';
 import Badge from '../../components/ui/Badge.jsx';
 import FilterBar from '../../components/ui/FilterBar.jsx';
 import ActionMenu from '../../components/ui/ActionMenu.jsx';
 import ConfirmModal from '../../components/ui/ConfirmModal.jsx';
+import Button from '../../components/ui/Button.jsx';
+import InputField from '../../components/ui/InputField.jsx';
+import Modal from '../../components/ui/Modal.jsx';
 import { useToast } from '../../components/ui/Toast.jsx';
 import { mockProducts, mockStores } from '../../data/mockData.js';
 import { formatCurrency, toArabicNum } from '../../utils/formatters.js';
@@ -36,6 +40,14 @@ const PAGE_SIZE = 10;
 const EMPTY_SELECTION = [];
 const NOOP = () => {};
 
+const INITIAL_PRODUCT_FORM = {
+  name: '',
+  price: '',
+  quantity: '',
+  image: null,
+  imagePreview: '',
+};
+
 export default function ProductsManagementPage() {
   const { showToast } = useToast();
 
@@ -51,6 +63,13 @@ export default function ProductsManagementPage() {
   const [selectedIds, setSelectedIds] = useState([]);
   const [viewMode, setViewMode]       = useState('table'); // 'table' | 'grid'
   const [isLoading, setIsLoading]     = useState(false);
+  const [isAddingProduct, setIsAddingProduct] = useState(false);
+  const [productForm, setProductForm] = useState({ ...INITIAL_PRODUCT_FORM });
+  const [viewOpen, setViewOpen]       = useState(false);
+  const [editOpen, setEditOpen]       = useState(false);
+  const [viewProduct, setViewProduct] = useState(null);
+  const [editProduct, setEditProduct] = useState(null);
+  const [editForm, setEditForm]       = useState(null);
 
   const storeOptions = useMemo(() => 
     mockStores.map((s) => ({ value: s.name, label: s.name })),
@@ -92,6 +111,68 @@ export default function ProductsManagementPage() {
     setConfirmOpen(false);
     showToast({ message: `تم حذف المنتج: ${targetProduct?.name}`, type: 'success' });
     setTarget(null);
+  }
+
+  function handleAddProductClick() {
+    setIsAddingProduct(true);
+    setProductForm({ ...INITIAL_PRODUCT_FORM });
+  }
+
+  function handleCancelAddProduct() {
+    setIsAddingProduct(false);
+    setProductForm({ ...INITIAL_PRODUCT_FORM });
+  }
+
+  function handleImageChange(e) {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setProductForm((f) => ({
+          ...f,
+          image: file,
+          imagePreview: event.target?.result || '',
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function handleSaveProduct() {
+    if (!productForm.name || !productForm.price || !productForm.quantity) {
+      showToast({ message: 'يرجى ملء جميع الحقول', type: 'error' });
+      return;
+    }
+    showToast({ message: `تم إضافة المنتج "${productForm.name}" بنجاح`, type: 'success' });
+    setIsAddingProduct(false);
+    setProductForm({ ...INITIAL_PRODUCT_FORM });
+  }
+
+  function handleViewProduct(product) {
+    setViewProduct(product);
+    setViewOpen(true);
+  }
+
+  function handleEditProduct(product) {
+    setEditProduct(product);
+    setEditForm({
+      name: product.name,
+      price: product.price,
+      stock: product.stock,
+      status: product.status,
+    });
+    setEditOpen(true);
+  }
+
+  function handleSaveEdit() {
+    if (!editForm.name || !editForm.price || !editForm.stock === undefined) {
+      showToast({ message: 'يرجى ملء جميع الحقول', type: 'error' });
+      return;
+    }
+    setEditOpen(false);
+    showToast({ message: `تم تحديث المنتج "${editForm.name}" بنجاح`, type: 'success' });
+    setEditProduct(null);
+    setEditForm(null);
   }
 
   function renderStars(rating) {
@@ -163,8 +244,8 @@ export default function ProductsManagementPage() {
       render: (_, row) => (
         <ActionMenu
           actions={[
-            { label: 'عرض', icon: Eye, onClick: () => showToast({ message: `عرض ${row.name}`, type: 'info' }) },
-            { label: 'تعديل', icon: Pencil, onClick: () => showToast({ message: 'تعديل المنتج', type: 'info' }) },
+            { label: 'عرض', icon: Eye, onClick: () => handleViewProduct(row) },
+            { label: 'تعديل', icon: Pencil, onClick: () => handleEditProduct(row) },
             {
               label: row.status === 'مخفي' ? 'إظهار' : 'إخفاء',
               icon: EyeOff,
@@ -176,6 +257,104 @@ export default function ProductsManagementPage() {
       ),
     },
   ];
+
+  if (isAddingProduct) {
+    return (
+      <div className={`${styles.page} page-enter`}>
+        {/* Add Product Page Header */}
+        <div className={styles.pageHeader}>
+          <div className={styles.headerTitleGroup}>
+            <button
+              className={styles.backButton}
+              onClick={handleCancelAddProduct}
+              aria-label="رجوع"
+            >
+              <ArrowRight size={20} />
+            </button>
+            <div>
+              <h1 className={styles.pageTitle}>إضافة منتج جديد</h1>
+              <p className={styles.pageSubtitle}>أدخل بيانات المنتج الكاملة</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Add Product Form */}
+        <div className={styles.formContainer}>
+          <div className={styles.formContent}>
+            {/* Image Upload */}
+            <div className={styles.imageSection}>
+              <div className={styles.imageUploadArea}>
+                {productForm.imagePreview ? (
+                  <img
+                    src={productForm.imagePreview}
+                    alt="معاينة المنتج"
+                    className={styles.imagePreview}
+                  />
+                ) : (
+                  <div className={styles.imagePlaceholder}>
+                    <Package size={40} strokeWidth={1} />
+                    <p>صورة المنتج</p>
+                  </div>
+                )}
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className={styles.fileInput}
+                id="product-image"
+              />
+              <label htmlFor="product-image" className={styles.uploadLabel}>
+                اختر صورة
+              </label>
+            </div>
+
+            {/* Form Fields */}
+            <div className={styles.formFields}>
+              <InputField
+                label="اسم المنتج"
+                placeholder="أدخل اسم المنتج"
+                value={productForm.name}
+                onChange={(e) => setProductForm((f) => ({ ...f, name: e.target.value }))}
+                required
+              />
+              <InputField
+                label="السعر"
+                type="number"
+                placeholder="أدخل سعر المنتج"
+                value={productForm.price}
+                onChange={(e) => setProductForm((f) => ({ ...f, price: e.target.value }))}
+                required
+              />
+              <InputField
+                label="الكمية"
+                type="number"
+                placeholder="أدخل كمية المنتج"
+                value={productForm.quantity}
+                onChange={(e) => setProductForm((f) => ({ ...f, quantity: e.target.value }))}
+                required
+              />
+            </div>
+
+            {/* Action Buttons */}
+            <div className={styles.formActions}>
+              <Button
+                variant="ghost"
+                onClick={handleCancelAddProduct}
+              >
+                إلغاء
+              </Button>
+              <Button
+                onClick={handleSaveProduct}
+              >
+                إضافة المنتج
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`${styles.page} page-enter`}>
@@ -202,9 +381,9 @@ export default function ProductsManagementPage() {
               <Star size={18} />
             </button>
           </div>
-          <button 
+          <button
             className={styles.addBtn}
-            onClick={() => showToast({ message: 'إضافة منتج جديد قريباً', type: 'info' })}
+            onClick={handleAddProductClick}
           >
             إضافة منتج
           </button>
@@ -321,6 +500,86 @@ export default function ProductsManagementPage() {
           </div>
         )}
       </div>
+
+      {/* View Product Modal */}
+      <Modal
+        isOpen={viewOpen}
+        onClose={() => setViewOpen(false)}
+        title={`عرض المنتج: ${viewProduct?.name}`}
+        size="sm"
+      >
+        <div className={styles.viewProductContent}>
+          <div className={styles.viewField}>
+            <label>اسم المنتج</label>
+            <p>{viewProduct?.name}</p>
+          </div>
+          <div className={styles.viewField}>
+            <label>المتجر</label>
+            <p>{viewProduct?.store}</p>
+          </div>
+          <div className={styles.viewField}>
+            <label>التصنيف</label>
+            <p>
+              <Badge text={viewProduct?.category} variant={CATEGORY_VARIANT[viewProduct?.category] || 'default'} />
+            </p>
+          </div>
+          <div className={styles.viewField}>
+            <label>السعر</label>
+            <p>{formatCurrency(viewProduct?.price)}</p>
+          </div>
+          <div className={styles.viewField}>
+            <label>المخزون</label>
+            <p>{toArabicNum(viewProduct?.stock)}</p>
+          </div>
+          <div className={styles.viewField}>
+            <label>التقييم</label>
+            <p>{toArabicNum(viewProduct?.rating?.toFixed(1))}</p>
+          </div>
+          <div className={styles.viewField}>
+            <label>الحالة</label>
+            <p>
+              <Badge text={viewProduct?.status} variant={STATUS_VARIANT[viewProduct?.status] || 'default'} />
+            </p>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Edit Product Modal */}
+      <Modal
+        isOpen={editOpen}
+        onClose={() => setEditOpen(false)}
+        title={`تعديل المنتج: ${editProduct?.name}`}
+        size="sm"
+        footer={
+          <div className={styles.modalFooter}>
+            <Button variant="ghost" onClick={() => setEditOpen(false)}>إلغاء</Button>
+            <Button onClick={handleSaveEdit}>حفظ التغييرات</Button>
+          </div>
+        }
+      >
+        <div className={styles.editProductForm}>
+          <InputField
+            label="اسم المنتج"
+            value={editForm?.name || ''}
+            onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
+            required
+          />
+          <InputField
+            label="السعر"
+            type="number"
+            value={editForm?.price || ''}
+            onChange={(e) => setEditForm((f) => ({ ...f, price: parseFloat(e.target.value) }))}
+            required
+          />
+          <InputField
+            label="المخزون"
+            type="number"
+            value={editForm?.stock || ''}
+            onChange={(e) => setEditForm((f) => ({ ...f, stock: parseInt(e.target.value) }))}
+            required
+          />
+        </div>
+      </Modal>
 
       {/* Confirm Delete */}
       <ConfirmModal

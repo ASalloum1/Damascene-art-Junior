@@ -7,10 +7,11 @@ import MiniBar from '../../components/ui/MiniBar.jsx';
 import SelectField from '../../components/ui/SelectField.jsx';
 import SearchInput from '../../components/ui/SearchInput.jsx';
 import ConfirmModal from '../../components/ui/ConfirmModal.jsx';
+import Modal from '../../components/ui/Modal.jsx';
 import EmptyState from '../../components/ui/EmptyState.jsx';
 import { useToast } from '../../components/ui/Toast.jsx';
-import { mockReviews } from '../../data/mockData.js';
-import { formatDate } from '../../utils/formatters.js';
+import { mockReviews, mockProducts } from '../../data/mockData.js';
+import { formatDate, formatCurrency } from '../../utils/formatters.js';
 import styles from './ReviewsManagement.module.css';
 
 const STORE_OPTIONS = [
@@ -68,6 +69,8 @@ export default function ReviewsManagementPage() {
   const [statusFilter, setStatusFilter] = useState('');
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [productModalOpen, setProductModalOpen] = useState(false);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -91,11 +94,21 @@ export default function ReviewsManagementPage() {
       ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
       : 0;
 
-  function approveReview(id) {
+  function approveReview(id, productName) {
+    const product = mockProducts.find((p) => p.name === productName);
+    setSelectedProduct(product);
+    setProductModalOpen(true);
+
     setReviews((prev) =>
       prev.map((r) => (r.id === id ? { ...r, status: 'منشور' } : r))
     );
     showToast({ message: 'تم نشر التقييم بنجاح', type: 'success' });
+  }
+
+  function viewProduct(productName) {
+    const product = mockProducts.find((p) => p.name === productName);
+    setSelectedProduct(product);
+    setProductModalOpen(true);
   }
 
   function rejectReview(id) {
@@ -247,9 +260,9 @@ export default function ReviewsManagementPage() {
                     <button
                       type="button"
                       className={[styles.actionBtn, styles.actionApprove].join(' ')}
-                      onClick={() => approveReview(review.id)}
-                      title="نشر التقييم"
-                      aria-label="نشر التقييم"
+                      onClick={() => approveReview(review.id, review.product)}
+                      title="نشر التقييم وعرض المنتج"
+                      aria-label="نشر التقييم وعرض المنتج"
                     >
                       <Check size={15} strokeWidth={2} />
                     </button>
@@ -277,6 +290,7 @@ export default function ReviewsManagementPage() {
                   <button
                     type="button"
                     className={[styles.actionBtn, styles.actionView].join(' ')}
+                    onClick={() => viewProduct(review.product)}
                     title="عرض المنتج"
                     aria-label="عرض المنتج"
                   >
@@ -288,6 +302,64 @@ export default function ReviewsManagementPage() {
           ))}
         </div>
       )}
+
+      {/* Product Modal */}
+      <Modal
+        isOpen={productModalOpen}
+        onClose={() => setProductModalOpen(false)}
+        title={`المنتج: ${selectedProduct?.name}`}
+        size="md"
+      >
+        {selectedProduct ? (
+          <div style={{ padding: '20px 0' }}>
+            <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+              <img
+                src={selectedProduct.image || `https://picsum.photos/seed/${selectedProduct.id}/600/360`}
+                alt={selectedProduct.name}
+                style={{
+                  width: '100%',
+                  maxHeight: '260px',
+                  objectFit: 'cover',
+                  borderRadius: 'var(--radius-md, 8px)',
+                  border: '1px solid var(--color-border, #e5e5e5)',
+                  background: 'var(--color-cream, #f7f4ee)',
+                }}
+                onError={(e) => {
+                  e.currentTarget.src = `https://picsum.photos/seed/${selectedProduct.id}/600/360`;
+                }}
+              />
+            </div>
+            <div style={{ marginBottom: '15px' }}>
+              <strong>اسم المنتج:</strong>
+              <p>{selectedProduct.name}</p>
+            </div>
+            <div style={{ marginBottom: '15px' }}>
+              <strong>المتجر:</strong>
+              <p>{selectedProduct.store}</p>
+            </div>
+            <div style={{ marginBottom: '15px' }}>
+              <strong>الفئة:</strong>
+              <p>{selectedProduct.category}</p>
+            </div>
+            <div style={{ marginBottom: '15px' }}>
+              <strong>السعر:</strong>
+              <p>{formatCurrency(selectedProduct.price)}</p>
+            </div>
+            <div style={{ marginBottom: '15px' }}>
+              <strong>المخزون:</strong>
+              <p>{selectedProduct.stock > 0 ? selectedProduct.stock : 'نفد المخزون'}</p>
+            </div>
+            <div style={{ marginBottom: '15px' }}>
+              <strong>التقييم:</strong>
+              <p>{selectedProduct.rating} / 5 ({selectedProduct.reviewCount} تقييم)</p>
+            </div>
+            <div style={{ marginBottom: '15px' }}>
+              <strong>الحالة:</strong>
+              <p>{selectedProduct.status}</p>
+            </div>
+          </div>
+        ) : null}
+      </Modal>
 
       <ConfirmModal
         isOpen={!!deleteTarget}

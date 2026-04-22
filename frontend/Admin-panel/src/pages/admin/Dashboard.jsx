@@ -69,7 +69,17 @@ const recentOrderHeaders = [
   },
 ];
 
-export default function DashboardPage() {
+const NOOP = () => {};
+
+export default function DashboardPage({ onNavigate = NOOP }) {
+  const handleOpenAllOrders = () => onNavigate('orders');
+  const handleOpenAllOrdersKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleOpenAllOrders();
+    }
+  };
+
   return (
     <div className={`${styles.page} page-enter`}>
       {/* Top Stats Row */}
@@ -181,10 +191,6 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
-          <div className={styles.viewAllLink} role="button" tabIndex={0}>
-            <ArrowLeft size={14} strokeWidth={1.8} aria-hidden="true" />
-            <span>مطالعة السجل الكامل</span>
-          </div>
         </section>
       </div>
 
@@ -195,7 +201,13 @@ export default function DashboardPage() {
             <ShoppingCart size={18} strokeWidth={1.8} className={styles.cardHeaderIcon} aria-hidden="true" />
             <h3 className={styles.cardTitle}>أحدث الطلبيات</h3>
           </div>
-          <div className={styles.viewAllLink} role="button" tabIndex={0}>
+          <div
+            className={styles.viewAllLink}
+            role="button"
+            tabIndex={0}
+            onClick={handleOpenAllOrders}
+            onKeyDown={handleOpenAllOrdersKeyDown}
+          >
             <ArrowLeft size={14} strokeWidth={1.8} aria-hidden="true" />
             <span>عرض كافة الطلبيات</span>
           </div>

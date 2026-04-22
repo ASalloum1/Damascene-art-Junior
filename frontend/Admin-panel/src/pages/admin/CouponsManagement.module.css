@@ -1,0 +1,269 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding-bottom: var(--space-10);
+}
+
+/* Header */
+.pageHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.pageHeader:hover .pageTitle::after {
+  width: 140px;
+}
+
+.headerTitle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.pageTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-black);
+  color: var(--color-navy);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.pageTitle::after {
+  content: '';
+  display: block;
+  width: 55px;
+  height: 4px;
+  background: var(--gradient-gold);
+  border-radius: var(--radius-full);
+  margin-block-start: var(--space-2);
+  transition: width var(--transition-base);
+}
+
+.pageSubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  max-width: 560px;
+  margin: 0;
+}
+
+/* Empty State */
+.emptyState {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-10) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-3);
+  border-block-start: 3px solid transparent;
+  transition: box-shadow var(--transition-base), transform var(--transition-base), border-color var(--transition-base);
+  animation: fadeInUp 0.4s ease-out backwards;
+}
+
+.emptyState:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
+  border-block-start-color: var(--color-gold);
+}
+
+.emptyIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-full);
+  background: var(--color-gold-bg);
+  color: var(--color-gold-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-block-end: var(--space-2);
+  border: 2px solid var(--color-gold);
+  box-shadow: var(--glow-gold);
+}
+
+.emptyTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+  margin: 0;
+}
+
+.emptyHint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  max-width: 420px;
+  margin: 0 0 var(--space-2) 0;
+}
+
+/* Coupons Table */
+.tableCard {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  border-block-start: 3px solid transparent;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  overflow: hidden;
+}
+
+.tableCard:hover {
+  border-block-start-color: var(--color-gold);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.cellName {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+}
+
+.cellCode {
+  font-family: var(--font-mono, monospace);
+  font-size: var(--font-size-sm);
+  color: var(--color-gold-dark);
+  background: var(--color-gold-bg);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.5px;
+}
+
+.cellValue {
+  font-weight: var(--font-weight-black);
+  color: var(--color-navy);
+  white-space: nowrap;
+}
+
+.cellCustomers {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+/* Form grid */
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.formFull {
+  grid-column: 1 / -1;
+}
+
+/* VIP customer picker */
+.vipListLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+  margin-block-end: var(--space-2);
+}
+
+.vipListMeta {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gold-dark);
+  background: var(--color-gold-bg);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
+}
+
+.vipList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-height: 220px;
+  overflow-y: auto;
+  padding: var(--space-2);
+  border: 1px solid var(--color-cream-dark);
+  border-radius: var(--radius-md);
+  background: var(--color-cream);
+  transition: border-color var(--transition-fast);
+}
+
+.vipListError {
+  border-color: var(--color-danger, #d92d20);
+}
+
+.vipItem {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.vipItem:hover {
+  background: var(--color-white);
+}
+
+.vipItemChecked {
+  background: var(--color-gold-bg);
+}
+
+.vipItemChecked:hover {
+  background: var(--color-gold-bg);
+}
+
+.vipCheckbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-gold-dark);
+  cursor: pointer;
+}
+
+.vipName {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+}
+
+.vipEmail {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  text-align: end;
+}
+
+.vipEmpty {
+  margin: 0;
+  padding: var(--space-3);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  background: var(--color-cream);
+  border-radius: var(--radius-md);
+}
+
+.vipErrorText {
+  margin: var(--space-1) 0 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-danger, #d92d20);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .emptyState {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .emptyIcon {
+    width: 64px;
+    height: 64px;
+  }
+}

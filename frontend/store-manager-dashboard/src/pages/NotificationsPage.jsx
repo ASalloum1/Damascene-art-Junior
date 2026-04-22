@@ -1,97 +1,225 @@
-import styles from './pages.module.css';
-import notifStyles from './NotificationsPage.module.css';
-import SectionTitle from '../components/SectionTitle';
-import PageCard from '../components/PageCard';
-import Badge from '../components/Badge';
-import { Icon } from '../components/SvgIcons';
+import { useState, useMemo } from 'react';
+import {
+  Bell,
+  ShoppingCart,
+  AlertTriangle,
+  MessageSquare,
+  DollarSign,
+  UserPlus,
+  CheckCheck,
+} from 'lucide-react';
+import Tabs from '../components/ui/Tabs.jsx';
+import Badge from '../components/ui/Badge.jsx';
+import Button from '../components/ui/Button.jsx';
+import EmptyState from '../components/ui/EmptyState.jsx';
+import { useToast } from '../components/ui/Toast.jsx';
+import { mockNotifications } from '../data/mockData.js';
+import { relativeTime } from '../utils/formatters.js';
+import styles from './NotificationsPage.module.css';
 
-const notifications = [
-  {
-    icon: 'orders',
-    text: 'طلب جديد #1084 من أحمد الشامي',
-    time: 'منذ ١٠ دقائق',
-    read: false,
-    type: 'طلب',
-  },
-  {
-    icon: 'warning',
-    text: 'مخزون منخفض: مزهرية زجاج منفوخ (٠ قطعة)',
-    time: 'منذ ساعة',
-    read: false,
-    type: 'مخزون',
-  },
-  {
-    icon: 'reviews',
-    text: 'تقييم جديد من سارة مولر على صندوق الصدف',
-    time: 'منذ ٣ ساعات',
-    read: false,
-    type: 'تقييم',
-  },
-  {
-    icon: 'messages',
-    text: 'رسالة جديدة من جون سميث: استفسار عن الشحن',
-    time: 'منذ ٥ ساعات',
-    read: true,
-    type: 'رسالة',
-  },
-  {
-    icon: 'dollar',
-    text: 'تم استلام دفعة ٩٥٠$ من الطلب #1082',
-    time: 'أمس',
-    read: true,
-    type: 'مالي',
-  },
-  {
-    icon: 'products',
-    text: 'تم تسليم الطلب #1079 بنجاح',
-    time: 'أمس',
-    read: true,
-    type: 'شحن',
-  },
+const MAIN_TABS = [
+  { id: 'center', label: 'مركز الإشعارات' },
 ];
 
-export function NotificationsPage() {
+const FILTER_TABS = [
+  { id: 'all', label: 'الكل' },
+  { id: 'unread', label: 'غير مقروءة' },
+  { id: 'order', label: 'طلبات' },
+  { id: 'alert', label: 'تنبيهات' },
+  { id: 'message', label: 'رسائل' },
+  { id: 'financial', label: 'مالية' },
+];
+
+function getNotifIcon(type) {
+  const map = {
+    order: ShoppingCart,
+    alert: AlertTriangle,
+    message: MessageSquare,
+    financial: DollarSign,
+    user: UserPlus,
+  };
+  return map[type] || Bell;
+}
+
+function getNotifVariant(type) {
+  const map = {
+    order: 'info',
+    alert: 'warning',
+    message: 'gold',
+    financial: 'success',
+    user: 'purple',
+  };
+  return map[type] || 'default';
+}
+
+function getNotifIconColor(type) {
+  const map = {
+    order: 'var(--color-blue)',
+    alert: 'var(--color-orange)',
+    message: 'var(--color-gold)',
+    financial: 'var(--color-green)',
+    user: 'var(--color-purple)',
+  };
+  return map[type] || 'var(--color-text-secondary)';
+}
+
+function getNotifIconBg(type) {
+  const map = {
+    order: 'var(--color-blue-bg)',
+    alert: 'var(--color-orange-bg)',
+    message: 'var(--color-gold-bg)',
+    financial: 'var(--color-green-bg)',
+    user: 'var(--color-purple-bg)',
+  };
+  return map[type] || 'var(--color-cream-dark)';
+}
+
+function getNotifTypeLabel(type) {
+  const map = {
+    order: 'طلب',
+    alert: 'تنبيه',
+    message: 'رسالة',
+    financial: 'مالية',
+    user: 'مستخدم',
+  };
+  return map[type] || type;
+}
+
+export default function NotificationsPage() {
+  const { showToast } = useToast();
+  const [mainTab, setMainTab] = useState('center');
+  const [filterTab, setFilterTab] = useState('all');
+  const [notifications, setNotifications] = useState(() => mockNotifications);
+
+  const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
+
+  const filtered = useMemo(() => {
+    return notifications.filter((n) => {
+      if (filterTab === 'all') return true;
+      if (filterTab === 'unread') return !n.read;
+      return n.type === filterTab;
+    });
+  }, [notifications, filterTab]);
+
+  const filterTabsWithCounts = useMemo(() =>
+    FILTER_TABS.map((t) => ({
+      ...t,
+      count:
+        t.id === 'all'
+          ? undefined
+          : t.id === 'unread'
+          ? notifications.filter((n) => !n.read).length || undefined
+          : undefined,
+    })), [notifications]);
+
+  function markAllRead() {
+    setNotifications((prev) => prev.map((n) => n.read ? n : { ...n, read: true }));
+    showToast({ message: 'تم تحديد جميع الإشعارات كمقروءة', type: 'success' });
+  }
+
+  function markRead(id) {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id && !n.read ? { ...n, read: true } : n))
+    );
+  }
+
   return (
     <div className={`${styles.page} page-enter`}>
-      <SectionTitle title="مركز الإشعارات" />
-      <div className="stagger-1">
-        <PageCard>
-          {notifications.map((n, i) => {
-            const rowClass = [
-              styles.notifRow,
-              notifStyles.notifRow,
-              !n.read ? styles.unread : '',
-              !n.read ? notifStyles.notifRowUnread : '',
-            ].filter(Boolean).join(' ');
+      <header className={styles.pageHeader}>
+        <div className={styles.headerIcon}>
+          <Bell size={35} strokeWidth={2} />
+        </div>
+        <h1 className={styles.pageTitle}>إدارة الإشعارات</h1>
+        {unreadCount > 0 ? (
+          <span className={styles.unreadBadge} aria-label={`${unreadCount} إشعارات غير مقروءة`}>
+            {unreadCount}
+          </span>
+        ) : null}
+      </header>
 
-            const iconClass = [
-              styles.notifIconWrap,
-              !n.read ? notifStyles.notifIconWrapUnread : '',
-            ].filter(Boolean).join(' ');
+      <section className={styles.card}>
+        <nav className={styles.mainTabsRow}>
+          <Tabs tabs={MAIN_TABS} activeTab={mainTab} onChange={setMainTab} variant="underline" />
+        </nav>
 
-            return (
-              <div key={i} className={rowClass}>
-                <div className={iconClass}>
-                  <Icon name={n.icon} size={20} aria-hidden="true" />
-                </div>
-                <div className={styles.notifContent}>
-                  <div className={`${styles.notifText} ${!n.read ? styles.bold : ''}`}>{n.text}</div>
-                  <div className={styles.notifTime}>{n.time}</div>
-                </div>
-                <Badge text={n.type} variant="neutral" />
-                {!n.read ? (
-                  <div
-                    className={notifStyles.notifDotUnread}
-                    aria-label="إشعار غير مقروء"
+        {mainTab === 'center' ? (
+          <div className={styles.centerContent}>
+            <div className={styles.centerToolbar}>
+              <Tabs
+                tabs={filterTabsWithCounts}
+                activeTab={filterTab}
+                onChange={setFilterTab}
+                variant="pills"
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                icon={CheckCheck}
+                onClick={markAllRead}
+                disabled={unreadCount === 0}
+              >
+                تحديد الكل كمقروء
+              </Button>
+            </div>
+
+            <div className={styles.notifList} role="list" aria-label="قائمة الإشعارات">
+              {filtered.length === 0 ? (
+                <div className={styles.notifEmpty}>
+                  <EmptyState
+                    icon={Bell}
+                    title="سكون في الأرجاء"
+                    description="لا توجد تنبيهات جديدة في الوقت الحالي. سيتم إعلامك فور حدوث أي مستجدات تتعلق بالقطع التراثية."
                   />
-                ) : null}
-              </div>
-            );
-          })}
-        </PageCard>
-      </div>
+                </div>
+              ) : (
+                filtered.map((notif, index) => {
+                  const Icon = getNotifIcon(notif.type);
+                  return (
+                    <div
+                      key={notif.id}
+                      role="listitem"
+                      className={[
+                        styles.notifItem,
+                        !notif.read ? styles.notifItemUnread : '',
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
+                      onClick={() => markRead(notif.id)}
+                      style={{ '--item-index': index }}
+                    >
+                      <div
+                        className={styles.notifIconCircle}
+                        style={{
+                          backgroundColor: getNotifIconBg(notif.type),
+                          color: getNotifIconColor(notif.type),
+                        }}
+                      >
+                        <Icon size={18} strokeWidth={1.8} />
+                      </div>
+                      <div className={styles.notifBody}>
+                        <div className={styles.notifTitleRow}>
+                          <span className={styles.notifTitle}>{notif.title}</span>
+                          <Badge
+                            text={getNotifTypeLabel(notif.type)}
+                            variant={getNotifVariant(notif.type)}
+                            size="sm"
+                          />
+                        </div>
+                        <p className={styles.notifDesc}>{notif.description}</p>
+                        <span className={styles.notifTime}>{relativeTime(notif.timestamp)}</span>
+                      </div>
+                      {!notif.read ? (
+                        <span className={styles.unreadDot} aria-label="غير مقروء" />
+                      ) : null}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        ) : null}
+
+      </section>
     </div>
   );
 }
-
-export default NotificationsPage;

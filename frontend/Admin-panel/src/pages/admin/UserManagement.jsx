@@ -8,7 +8,6 @@ import {
   Eye,
   Pencil,
   KeyRound,
-  UserX,
   Trash2,
   CheckCircle,
   XCircle,
@@ -22,7 +21,6 @@ import ActionMenu from '../../components/ui/ActionMenu.jsx';
 import Modal from '../../components/ui/Modal.jsx';
 import InputField from '../../components/ui/InputField.jsx';
 import SelectField from '../../components/ui/SelectField.jsx';
-import ConfirmModal from '../../components/ui/ConfirmModal.jsx';
 import { useToast } from '../../components/ui/Toast.jsx';
 import { mockUsers, mockStores } from '../../data/mockData.js';
 import { formatDate, relativeTime, toArabicNum } from '../../utils/formatters.js';
@@ -58,9 +56,13 @@ export default function UserManagementPage() {
 
   // Modal state
   const [addOpen, setAddOpen]         = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [targetUser, setTargetUser]   = useState(null);
-
+  const [viewOpen, setViewOpen]       = useState(false);
+  const [viewUser, setViewUser]       = useState(null);
+  const [editOpen, setEditOpen]       = useState(false);
+  const [editForm, setEditForm]       = useState(null);
+  const [resetOpen, setResetOpen]     = useState(false);
+  const [resetUser, setResetUser]     = useState(null);
+  const [resetForm, setResetForm]     = useState({ newPassword: '', confirmPassword: '', sendEmail: true });
   // Add User form state
   const [form, setForm] = useState(() => ({
     firstName: '',
@@ -114,15 +116,55 @@ export default function UserManagementPage() {
     setForm({ firstName: '', lastName: '', email: '', password: '', role: '', store: '', status: 'نشط' });
   };
 
-  const openDeleteConfirm = (user) => {
-    setTargetUser(user);
-    setConfirmOpen(true);
+  const openViewUserModal = useCallback((user) => {
+    setViewUser(user);
+    setViewOpen(true);
+  }, []);
+
+  const openEditUserModal = useCallback((user) => {
+    setEditForm({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role,
+      store: user.store || '',
+      status: user.status,
+    });
+    setEditOpen(true);
+  }, []);
+
+  const handleEditUser = () => {
+    setEditOpen(false);
+    showToast({ message: 'تم حفظ تعديلات المستخدم بنجاح', type: 'success' });
   };
 
-  const handleDelete = () => {
-    setConfirmOpen(false);
-    showToast({ message: `تم حذف المستخدم ${targetUser?.firstName} ${targetUser?.lastName}`, type: 'success' });
-    setTargetUser(null);
+  const openResetPasswordModal = useCallback((user) => {
+    setResetUser(user);
+    setResetForm({ newPassword: '', confirmPassword: '', sendEmail: true });
+    setResetOpen(true);
+  }, []);
+
+  const handleResetPassword = () => {
+    if (!resetForm.newPassword || !resetForm.confirmPassword) {
+      showToast({ message: 'يرجى ملء جميع الحقول', type: 'warning' });
+      return;
+    }
+    if (resetForm.newPassword.length < 8) {
+      showToast({ message: 'كلمة المرور يجب أن تكون ٨ أحرف على الأقل', type: 'error' });
+      return;
+    }
+    if (resetForm.newPassword !== resetForm.confirmPassword) {
+      showToast({ message: 'كلمتا المرور غير متطابقتين', type: 'error' });
+      return;
+    }
+    setResetOpen(false);
+    showToast({
+      message: resetForm.sendEmail
+        ? 'تم إعادة تعيين كلمة المرور وإرسال الإشعار للمستخدم'
+        : 'تم إعادة تعيين كلمة المرور بنجاح',
+      type: 'success',
+    });
   };
 
   const handleBulkAction = (action) => {
@@ -178,20 +220,14 @@ export default function UserManagementPage() {
       render: (_, row) => (
         <ActionMenu
           actions={[
-            { label: 'عرض', icon: Eye, onClick: () => showToast({ message: `عرض ${row.firstName}`, type: 'info' }) },
-            { label: 'تعديل', icon: Pencil, onClick: () => showToast({ message: 'تعديل المستخدم', type: 'info' }) },
-            { label: 'إعادة تعيين كلمة المرور', icon: KeyRound, onClick: () => showToast({ message: 'تم إرسال رابط إعادة التعيين', type: 'success' }) },
-            { 
-              label: row.status === 'نشط' ? 'تعطيل' : 'تفعيل', 
-              icon: row.status === 'نشط' ? UserX : CheckCircle, 
-              onClick: () => showToast({ message: `تم ${row.status === 'نشط' ? 'تعطيل' : 'تفعيل'} المستخدم`, type: 'warning' }) 
-            },
-            { label: 'حذف', icon: Trash2, danger: true, onClick: () => openDeleteConfirm(row) },
+            { label: 'عرض', icon: Eye, onClick: () => openViewUserModal(row) },
+            { label: 'تعديل', icon: Pencil, onClick: () => openEditUserModal(row) },
+            { label: 'إعادة تعيين كلمة المرور', icon: KeyRound, onClick: () => openResetPasswordModal(row) },
           ]}
         />
       ),
     },
-  ], [showToast]);
+  ], [openViewUserModal, openEditUserModal, openResetPasswordModal]);
 
   const storeOptions = useMemo(() => mockStores.map((s) => ({ value: s.name, label: s.name })), []);
 
@@ -368,16 +404,179 @@ export default function UserManagementPage() {
         </div>
       </Modal>
 
-      {/* Confirm Delete Modal */}
-      <ConfirmModal
-        isOpen={confirmOpen}
-        onClose={() => setConfirmOpen(false)}
-        onConfirm={handleDelete}
-        title="تأكيد الحذف"
-        message={`هل أنت متأكد من حذف المستخدم "${targetUser?.firstName} ${targetUser?.lastName}"؟ لا يمكن التراجع عن هذا الإجراء.`}
-        confirmLabel="حذف"
-        danger
-      />
+      <Modal
+        isOpen={viewOpen}
+        onClose={() => setViewOpen(false)}
+        title="عرض بيانات المستخدم"
+        size="md"
+        footer={<Button variant="ghost" onClick={() => setViewOpen(false)}>إغلاق</Button>}
+      >
+        {viewUser ? (
+          <div className={styles.viewUserContent}>
+            <div className={styles.viewUserHeader}>
+              <div className={styles.avatar}>
+                {viewUser.firstName?.[0]}{viewUser.lastName?.[0]}
+              </div>
+              <div>
+                <div className={styles.userName}>{viewUser.firstName} {viewUser.lastName}</div>
+                <div className={styles.userEmail}>{viewUser.email}</div>
+              </div>
+            </div>
+
+            <div className={styles.viewUserGrid}>
+              <div className={styles.viewUserItem}>
+                <span className={styles.viewUserLabel}>الدور</span>
+                <Badge text={viewUser.role} variant={ROLE_VARIANT[viewUser.role] || 'default'} />
+              </div>
+              <div className={styles.viewUserItem}>
+                <span className={styles.viewUserLabel}>الحالة</span>
+                <Badge text={viewUser.status} variant={STATUS_VARIANT[viewUser.status] || 'default'} />
+              </div>
+              <div className={styles.viewUserItem}>
+                <span className={styles.viewUserLabel}>المتجر</span>
+                <span className={styles.viewUserValue}>{viewUser.store ? viewUser.store : '—'}</span>
+              </div>
+              <div className={styles.viewUserItem}>
+                <span className={styles.viewUserLabel}>تاريخ التسجيل</span>
+                <span className={styles.viewUserValue}>{formatDate(viewUser.registeredAt)}</span>
+              </div>
+              <div className={styles.viewUserItem}>
+                <span className={styles.viewUserLabel}>آخر نشاط</span>
+                <span className={styles.viewUserValue}>{relativeTime(viewUser.lastActive)}</span>
+              </div>
+              <div className={styles.viewUserItem}>
+                <span className={styles.viewUserLabel}>معرف المستخدم</span>
+                <span className={styles.viewUserValue}>{viewUser.id}</span>
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </Modal>
+
+      {/* Edit User Modal */}
+      <Modal
+        isOpen={editOpen}
+        onClose={() => setEditOpen(false)}
+        title="تعديل بيانات المستخدم"
+        size="md"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setEditOpen(false)}>إلغاء</Button>
+            <Button onClick={handleEditUser}>حفظ التعديلات</Button>
+          </>
+        }
+      >
+        {editForm ? (
+          <div className={styles.formGrid}>
+            <InputField
+              label="الاسم الأول"
+              value={editForm.firstName}
+              onChange={(e) => setEditForm((f) => ({ ...f, firstName: e.target.value }))}
+              required
+            />
+            <InputField
+              label="اسم العائلة"
+              value={editForm.lastName}
+              onChange={(e) => setEditForm((f) => ({ ...f, lastName: e.target.value }))}
+              required
+            />
+            <div className={styles.formFull}>
+              <InputField
+                label="البريد الإلكتروني"
+                type="email"
+                value={editForm.email}
+                onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
+                required
+              />
+            </div>
+            <SelectField
+              label="الدور"
+              value={editForm.role}
+              onChange={(e) => setEditForm((f) => ({ ...f, role: e.target.value, store: '' }))}
+              options={[
+                { value: 'أدمن', label: 'أدمن' },
+                { value: 'مدير متجر', label: 'مدير متجر' },
+                { value: 'عميل', label: 'عميل' },
+              ]}
+            />
+            {editForm.role === 'مدير متجر' ? (
+              <SelectField
+                label="المتجر"
+                placeholder="اختر المتجر"
+                value={editForm.store}
+                onChange={(e) => setEditForm((f) => ({ ...f, store: e.target.value }))}
+                options={storeOptions}
+              />
+            ) : null}
+            <SelectField
+              label="الحالة"
+              value={editForm.status}
+              onChange={(e) => setEditForm((f) => ({ ...f, status: e.target.value }))}
+              options={[
+                { value: 'نشط', label: 'نشط' },
+                { value: 'معطّل', label: 'معطّل' },
+              ]}
+            />
+          </div>
+        ) : null}
+      </Modal>
+
+      {/* Reset Password Modal */}
+      <Modal
+        isOpen={resetOpen}
+        onClose={() => setResetOpen(false)}
+        title="إعادة تعيين كلمة المرور"
+        size="sm"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setResetOpen(false)}>إلغاء</Button>
+            <Button icon={KeyRound} onClick={handleResetPassword}>إعادة التعيين</Button>
+          </>
+        }
+      >
+        {resetUser ? (
+          <div className={styles.formGrid}>
+            <div className={styles.formFull}>
+              <p className={styles.resetNotice}>
+                سيتم إعادة تعيين كلمة المرور للمستخدم{' '}
+                <strong>{resetUser.firstName} {resetUser.lastName}</strong>
+                {' '}({resetUser.email}).
+              </p>
+            </div>
+            <div className={styles.formFull}>
+              <InputField
+                label="كلمة المرور الجديدة"
+                type="password"
+                placeholder="٨ أحرف على الأقل"
+                value={resetForm.newPassword}
+                onChange={(e) => setResetForm((f) => ({ ...f, newPassword: e.target.value }))}
+                required
+              />
+            </div>
+            <div className={styles.formFull}>
+              <InputField
+                label="تأكيد كلمة المرور"
+                type="password"
+                placeholder="أعد إدخال كلمة المرور"
+                value={resetForm.confirmPassword}
+                onChange={(e) => setResetForm((f) => ({ ...f, confirmPassword: e.target.value }))}
+                required
+              />
+            </div>
+            <div className={styles.formFull}>
+              <label className={styles.resetCheckbox}>
+                <input
+                  type="checkbox"
+                  checked={resetForm.sendEmail}
+                  onChange={(e) => setResetForm((f) => ({ ...f, sendEmail: e.target.checked }))}
+                />
+                <span>إرسال إشعار للمستخدم عبر البريد الإلكتروني</span>
+              </label>
+            </div>
+          </div>
+        ) : null}
+      </Modal>
+
     </div>
   );
 }
