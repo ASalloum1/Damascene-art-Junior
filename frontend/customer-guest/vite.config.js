@@ -6,5 +6,14 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
+    proxy: {
+      '/storage': {
+        target: 'https://d8b7-169-150-196-135.ngrok-free.app',
+        changeOrigin: true,
+        headers: {
+          'ngrok-skip-browser-warning': 'true',
+        },
+      },
+    },
   },
 })

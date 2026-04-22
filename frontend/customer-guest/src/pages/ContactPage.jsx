@@ -1,31 +1,95 @@
+import { useState } from 'react';
 import { Mail, Phone, Smartphone, MapPin, Clock, Map } from 'lucide-react';
+import { useApi } from '../context/ApiContext.jsx';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { InputField } from '../components/InputField.jsx';
 import { Button } from '../components/Button.jsx';
 import styles from './ContactPage.module.css';
 
-export function ContactPage() {
+export function ContactPage({ onNavigate }) {
+  const { baseUrl, bearerToken, endpoints } = useApi();
+  const [description, setDescription] = useState('');
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const handleSubmit = async () => {
+    setError('');
+    setSuccess('');
+
+    if (!description || !subject || !message) {
+      setError('يرجى ملء جميع الحقول لإرسال الرسالة.');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`${baseUrl}/api/customers/contact-us`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${bearerToken}`,
+          'ngrok-skip-browser-warning': 'true',
+        },
+        body: JSON.stringify({
+          subject,
+          message,
+          description,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.message || 'فشل إرسال رسالتك.');
+        return;
+      }
+
+      setSuccess('تم إرسال المراسلة بنجاح. شكرًا لتواصلك معنا.');
+      setDescription('');
+      setSubject('');
+      setMessage('');
+    } catch (err) {
+      console.error('Contact submit error:', err);
+      setError('حدث خطأ في الاتصال بالخادم. حاول مرة أخرى لاحقاً.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <SectionHeader title="آفاق التواصل" subtitle="يُسعدنا استقبال استفساراتكم ومشاركتكم شغف الفن" />
       <div className={styles.grid}>
         {/* Form Column */}
         <div className={styles.formCard}>
-          <InputField label="الاسم الكريم" placeholder="الاسم الكامل كما تودون ظهوره" />
-          <InputField label="عنوان المراسلة الرقمي" type="email" placeholder="email@example.com" />
+          {error ? <div className={styles.errorMessage}>{error}</div> : null}
+          {success ? <div className={styles.successMessage}>{success}</div> : null}
+
           <InputField
-            label="ماهية التواصل"
-            select
-            options={['استفسار عن مقتنى', 'متابعة طلبية', 'طلب قطعة مخصصة', 'مقترح إبداعي', 'أمر آخر']}
+            label="وصف"
+            placeholder="اكتب وصفاً موجزاً لطلبك أو استفسارك"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           />
           <InputField
-            label="تفاصيل الرسالة"
+            label="موضوع"
+            placeholder="موضوع الرسالة"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+          />
+          <InputField
+            label="رسالة"
             textarea
-            placeholder="يرجى تدوين رسالتكم الموقرة هنا..."
+            placeholder="اكتب رسالتك هنا..."
             rows={5}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
           />
-          <Button variant="primary" full>
-            إرسال المراسلة
+          <Button variant="primary" full onClick={handleSubmit} disabled={isLoading}>
+            {isLoading ? 'جاري الإرسال...' : 'إرسال المراسلة'}
           </Button>
         </div>
 

@@ -34,6 +34,14 @@
   background-color: var(--color-white);
 }
 
+.field:disabled {
+  background-color: var(--color-cream-dark);
+  color: var(--color-stone);
+  cursor: not-allowed;
+  border-color: var(--color-cream-mid);
+  opacity: 0.6;
+}
+
 textarea.field {
   resize: vertical;
 }

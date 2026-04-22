@@ -1,4 +1,5 @@
 import { ImageIcon } from 'lucide-react';
+import { useState } from 'react';
 import { Badge } from './Badge.jsx';
 import { StarRating } from './StarRating.jsx';
 import { Button } from './Button.jsx';
@@ -12,7 +13,9 @@ function getBadgeVariant(badgeText) {
 }
 
 export function ProductCard({ product, onNavigate, onAddToCart }) {
-  const { id, name, cat, price, oldPrice, rating, reviews, badge } = product;
+  const { id, name, cat, category, price, oldPrice, originalPrice, rating, reviews, badge, image } = product;
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   return (
     <article
@@ -24,7 +27,19 @@ export function ProductCard({ product, onNavigate, onAddToCart }) {
       aria-label={name}
     >
       <div className={styles.imageArea}>
-        <ImageIcon size={48} className={styles.imagePlaceholder} />
+        {image && !imageError ? (
+          <img 
+            src={image} 
+            alt={name} 
+            className={styles.productImage}
+            onLoad={() => setImageLoaded(true)}
+            onError={() => {
+              console.error('Image failed to load:', image);
+              setImageError(true);
+            }}
+          />
+        ) : null}
+        <ImageIcon size={48} className={`${styles.imagePlaceholder} ${imageLoaded ? styles.hidden : ''}`} />
         {badge ? (
           <div className={styles.badgeOverlay}>
             <Badge text={badge} variant={getBadgeVariant(badge)} />
@@ -33,7 +48,7 @@ export function ProductCard({ product, onNavigate, onAddToCart }) {
       </div>
 
       <div className={styles.body}>
-        <p className={styles.category}>{cat}</p>
+        <p className={styles.category}>{cat || category}</p>
         <h3 className={styles.name}>{name}</h3>
 
         <div className={styles.stars}>
@@ -43,8 +58,8 @@ export function ProductCard({ product, onNavigate, onAddToCart }) {
         <div className={styles.priceRow}>
           <div className={styles.priceGroup}>
             <span className={styles.price}>{price} $</span>
-            {oldPrice ? (
-              <span className={styles.oldPrice}>{oldPrice} $</span>
+            {oldPrice || originalPrice ? (
+              <span className={styles.oldPrice}>{oldPrice || originalPrice} $</span>
             ) : null}
           </div>
 

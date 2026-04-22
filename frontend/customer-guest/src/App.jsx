@@ -1,4 +1,5 @@
 import { useState, useEffect, useTransition } from 'react';
+import { ApiProvider } from './context/ApiContext.jsx';
 import { Navbar } from './components/Navbar.jsx';
 import { Footer } from './components/Footer.jsx';
 import HomePage from './pages/HomePage.jsx';
@@ -69,27 +70,29 @@ export default function App() {
   const ActivePage = pages[activePage] ?? NotFoundPage;
 
   return (
-    <div className={styles.layout}>
-      {isPending ? (
-        <div className="top-progress" aria-hidden="true" />
-      ) : null}
-      <Navbar
-        activePage={activePage}
-        onNavigate={handleNavigate}
-        cartCount={cartCount}
-        mobileMenuOpen={mobileNavOpen}
-        onMobileMenuOpen={() => setMobileNavOpen(true)}
-        onMobileMenuClose={() => setMobileNavOpen(false)}
-      />
-      <main
-        id="main-content"
-        className={styles.content}
-        tabIndex={-1}
-        aria-label="محتوى الصفحة"
-      >
-        <ActivePage onNavigate={handleNavigate} />
-      </main>
-      <Footer onNavigate={handleNavigate} />
-    </div>
+    <ApiProvider>
+      <div className={styles.layout}>
+        {isPending ? (
+          <div className="top-progress" aria-hidden="true" />
+        ) : null}
+        <Navbar
+          activePage={activePage}
+          onNavigate={handleNavigate}
+          cartCount={cartCount}
+          mobileMenuOpen={mobileNavOpen}
+          onMobileMenuOpen={() => setMobileNavOpen(true)}
+          onMobileMenuClose={() => setMobileNavOpen(false)}
+        />
+        <main
+          id="main-content"
+          className={styles.content}
+          tabIndex={-1}
+          aria-label="محتوى الصفحة"
+        >
+          <ActivePage onNavigate={handleNavigate} />
+        </main>
+        <Footer onNavigate={handleNavigate} />
+      </div>
+    </ApiProvider>
   );
 }

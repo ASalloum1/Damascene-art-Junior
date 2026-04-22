@@ -11,6 +11,9 @@ export function InputField({
   options = [],
   id,
   name,
+  value = '',
+  onChange,
+  disabled = false,
 }) {
   const generatedId = useId();
   const fieldId = id || generatedId;
@@ -30,9 +33,12 @@ export function InputField({
           placeholder={placeholder}
           rows={rows}
           className={styles.field}
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
         />
       ) : select ? (
-        <select id={fieldId} name={name} className={`${styles.field} ${styles.select}`}>
+        <select id={fieldId} name={name} className={`${styles.field} ${styles.select}`} value={value} onChange={onChange} disabled={disabled}>
           {placeholder ? (
             <option value="" disabled>
               {placeholder}
@@ -51,6 +57,9 @@ export function InputField({
           type={type}
           placeholder={placeholder}
           className={styles.field}
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
         />
       )}
     </div>
