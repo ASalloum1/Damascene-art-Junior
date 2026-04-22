@@ -15,6 +15,7 @@ import ActionMenu from '../components/ui/ActionMenu.jsx';
 import ConfirmModal from '../components/ui/ConfirmModal.jsx';
 import Button from '../components/ui/Button.jsx';
 import InputField from '../components/ui/InputField.jsx';
+import SelectField from '../components/ui/SelectField.jsx';
 import Modal from '../components/ui/Modal.jsx';
 import { useToast } from '../components/ui/Toast.jsx';
 import { mockProducts, mockStores } from '../data/mockData.js';
@@ -42,6 +43,7 @@ const NOOP = () => {};
 
 const INITIAL_PRODUCT_FORM = {
   name: '',
+  store: '',
   price: '',
   quantity: '',
   image: null,
@@ -139,7 +141,7 @@ export default function ProductsPage() {
   }
 
   function handleSaveProduct() {
-    if (!productForm.name || !productForm.price || !productForm.quantity) {
+    if (!productForm.name || !productForm.store || !productForm.price || !productForm.quantity) {
       showToast({ message: 'يرجى ملء جميع الحقول', type: 'error' });
       return;
     }
@@ -316,6 +318,14 @@ export default function ProductsPage() {
                 placeholder="أدخل اسم المنتج"
                 value={productForm.name}
                 onChange={(e) => setProductForm((f) => ({ ...f, name: e.target.value }))}
+                required
+              />
+              <SelectField
+                label="اسم المتجر"
+                placeholder="اختر المتجر"
+                value={productForm.store}
+                onChange={(e) => setProductForm((f) => ({ ...f, store: e.target.value }))}
+                options={storeOptions}
                 required
               />
               <InputField
