@@ -27,11 +27,15 @@ const reviews = [
 ];
 
 export function ProductPage({ onNavigate }) {
-  const { baseUrl, endpoints, selectedProductId } = useApi();
+  const { baseUrl, endpoints, selectedProductId, bearerToken } = useApi();
   const [quantity, setQuantity] = useState(1);
   const [productData, setProductData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [addToCartMessage, setAddToCartMessage] = useState('');
+  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
+  const [wishlistMessage, setWishlistMessage] = useState('');
 
   useEffect(() => {
     if (!selectedProductId) {
@@ -109,6 +113,96 @@ export function ProductPage({ onNavigate }) {
 
     fetchProductDetails();
   }, [selectedProductId, baseUrl, endpoints]);
+
+  const handleAddToCart = async () => {
+    if (!selectedProductId) {
+      setAddToCartMessage('خطأ: لم يتم تحديد المنتج');
+      return;
+    }
+
+    setIsAddingToCart(true);
+    setAddToCartMessage('');
+
+    try {
+      const cartUrl = `${baseUrl}/api/customers/product-carts`;
+      const response = await fetch(cartUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+          'Authorization': `Bearer ${bearerToken}`,
+        },
+        body: JSON.stringify({
+          product_id: selectedProductId,
+          count: quantity,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `خطأ: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Product added to cart:', data);
+      setAddToCartMessage('✓ تم إضافة المنتج للسلة بنجاح');
+
+      // Reset quantity after successful add
+      setTimeout(() => {
+        setQuantity(1);
+        setAddToCartMessage('');
+      }, 2000);
+    } catch (err) {
+      console.error('Error adding to cart:', err);
+      setAddToCartMessage(`خطأ: ${err.message}`);
+    } finally {
+      setIsAddingToCart(false);
+    }
+  };
+
+  const handleAddToWishlist = async () => {
+    if (!selectedProductId) {
+      setWishlistMessage('خطأ: لم يتم تحديد المنتج');
+      return;
+    }
+
+    setIsAddingToWishlist(true);
+    setWishlistMessage('');
+
+    try {
+      const wishlistUrl = `${baseUrl}/api/customers/wish-lists`;
+      const response = await fetch(wishlistUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+          'Authorization': `Bearer ${bearerToken}`,
+        },
+        body: JSON.stringify({
+          product_id: selectedProductId,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `خطأ: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Product added to wishlist:', data);
+      setWishlistMessage('✓ تم إضافة المنتج للمفضلة بنجاح');
+
+      // Clear message after 2 seconds
+      setTimeout(() => {
+        setWishlistMessage('');
+      }, 2000);
+    } catch (err) {
+      console.error('Error adding to wishlist:', err);
+      setWishlistMessage(`خطأ: ${err.message}`);
+    } finally {
+      setIsAddingToWishlist(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -204,14 +298,46 @@ export function ProductPage({ onNavigate }) {
             <Button
               variant="primary"
               icon={<ShoppingCart size={16} />}
-              onClick={() => onNavigate?.('cart')}
+              onClick={handleAddToCart}
+              disabled={isAddingToCart}
             >
-              أضف للسلة
+              {isAddingToCart ? 'جاري الإضافة...' : 'أضف للسلة'}
             </Button>
-            <Button variant="outline" icon={<Heart size={16} />}>
-              أضف للمفضلة
+            <Button
+              variant="outline"
+              icon={<Heart size={16} />}
+              onClick={handleAddToWishlist}
+              disabled={isAddingToWishlist}
+            >
+              {isAddingToWishlist ? 'جاري الإضافة...' : 'أضف للمفضلة'}
             </Button>
           </div>
+
+          {addToCartMessage && (
+            <p style={{
+              marginTop: 'var(--space-3)',
+              padding: 'var(--space-2) var(--space-3)',
+              borderRadius: 'var(--radius-md)',
+              backgroundColor: addToCartMessage.includes('خطأ') ? '#fee' : '#f0fdf4',
+              color: addToCartMessage.includes('خطأ') ? 'var(--color-red)' : 'var(--color-green)',
+              fontSize: 'var(--font-size-sm)',
+            }}>
+              {addToCartMessage}
+            </p>
+          )}
+
+          {wishlistMessage && (
+            <p style={{
+              marginTop: 'var(--space-3)',
+              padding: 'var(--space-2) var(--space-3)',
+              borderRadius: 'var(--radius-md)',
+              backgroundColor: wishlistMessage.includes('خطأ') ? '#fee' : '#f0fdf4',
+              color: wishlistMessage.includes('خطأ') ? 'var(--color-red)' : 'var(--color-green)',
+              fontSize: 'var(--font-size-sm)',
+            }}>
+              {wishlistMessage}
+            </p>
+          )}
 
           <p className={styles.availability}>
             <Check size={16} />
@@ -246,7 +372,6 @@ export function ProductPage({ onNavigate }) {
               key={product.id}
               product={product}
               onNavigate={() => onNavigate?.('product')}
-              onAddToCart={() => onNavigate?.('cart')}
             />
           ))}
         </div>

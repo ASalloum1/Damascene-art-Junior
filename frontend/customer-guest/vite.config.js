@@ -8,7 +8,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/storage': {
-        target: 'https://d8b7-169-150-196-135.ngrok-free.app',
+        target: process.env.VITE_API_BASE_URL || 'https://undecided-vastly-replica.ngrok-free.dev',
         changeOrigin: true,
         headers: {
           'ngrok-skip-browser-warning': 'true',

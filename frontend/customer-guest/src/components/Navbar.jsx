@@ -7,6 +7,7 @@ export function Navbar({
   activePage,
   onNavigate,
   cartCount = 0,
+  isLoggedIn = false,
   mobileMenuOpen = false,
   onMobileMenuOpen,
   onMobileMenuClose,
@@ -76,16 +77,27 @@ export function Navbar({
               ) : null}
             </button>
 
-            <div className={styles.loginBtn}>
-              <Button
-                variant="outline"
-                size="sm"
-                icon={<User size={14} />}
-                onClick={() => onNavigate?.('login')}
+            {isLoggedIn ? (
+              <button
+                type="button"
+                className={styles.accountBtn}
+                onClick={() => onNavigate?.('account')}
+                aria-label="حسابي"
               >
-                الدخول
-              </Button>
-            </div>
+                <User size={18} />
+              </button>
+            ) : (
+              <div className={styles.loginBtn}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  icon={<User size={14} />}
+                  onClick={() => onNavigate?.('login')}
+                >
+                  الدخول
+                </Button>
+              </div>
+            )}
 
             {/* Hamburger */}
             <button
@@ -148,11 +160,11 @@ export function Navbar({
             full
             icon={<User size={14} />}
             onClick={() => {
-              onNavigate?.('login');
+              onNavigate?.(isLoggedIn ? 'account' : 'login');
               onMobileMenuClose?.();
             }}
           >
-            الدخول
+            {isLoggedIn ? 'حسابي' : 'الدخول'}
           </Button>
         </div>
       </div>

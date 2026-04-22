@@ -12,7 +12,7 @@ The **CustomOrderPage** component has been integrated with the backend Special O
 The API integration uses the following configuration (in `CustomOrderPage.jsx`):
 
 ```javascript
-const API_BASE_URL = 'https://d8b7-169-150-196-135.ngrok-free.app';
+const API_BASE_URL = 'https://undecided-vastly-replica.ngrok-free.dev';
 const API_ENDPOINT = '/api/customers/special-orders';
 const BEARER_TOKEN = 'your_bearer_token_here'; // ⚠️ MUST BE CONFIGURED
 ```

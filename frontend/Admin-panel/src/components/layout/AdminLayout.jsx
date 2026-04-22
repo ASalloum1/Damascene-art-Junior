@@ -11,12 +11,11 @@ const PAGE_TITLES = {
   orders: 'إدارة الطلبات',
   finance: 'الإدارة المالية',
   analytics: 'التقارير والتحليلات',
-  'activity-log': 'سجل النشاطات',
   messages: 'الرسائل والطلبات',
   notifications: 'إدارة الإشعارات',
   reviews: 'إدارة التقييمات',
-  'site-settings': 'إعدادات الموقع',
   profile: 'الملف الشخصي',
+  coupons: 'إدارة الكوبونات',
 };
 
 /**

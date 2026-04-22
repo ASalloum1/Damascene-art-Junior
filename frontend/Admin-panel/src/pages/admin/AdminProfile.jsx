@@ -1,50 +1,16 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   User,
   Save,
   Lock,
-  Bell,
-  Monitor,
-  LogOut,
   Eye,
   EyeOff,
-  Smartphone,
-  Laptop,
 } from 'lucide-react';
 import Badge from '../../components/ui/Badge.jsx';
 import Button from '../../components/ui/Button.jsx';
 import InputField from '../../components/ui/InputField.jsx';
-import DataTable from '../../components/ui/DataTable.jsx';
 import { useToast } from '../../components/ui/Toast.jsx';
-import { relativeTime } from '../../utils/formatters.js';
 import styles from './AdminProfile.module.css';
-
-const MOCK_DEVICES = [
-  {
-    id: 'd1',
-    device: 'Chrome / Windows 11',
-    location: 'دمشق، سوريا',
-    ip: '192.168.1.10',
-    lastActive: '2026-04-05T07:50:00Z',
-    current: true,
-  },
-  {
-    id: 'd2',
-    device: 'Safari / iPhone 15',
-    location: 'دمشق، سوريا',
-    ip: '192.168.1.15',
-    lastActive: '2026-04-04T20:10:00Z',
-    current: false,
-  },
-  {
-    id: 'd3',
-    device: 'Firefox / Ubuntu 22',
-    location: 'بيروت، لبنان',
-    ip: '10.0.0.5',
-    lastActive: '2026-04-03T14:30:00Z',
-    current: false,
-  },
-];
 
 function PasswordStrengthBar({ password }) {
   function getStrength(pw) {
@@ -107,6 +73,7 @@ export default function AdminProfilePage() {
     lastName: 'المحمد',
     email: 'ahmed.almohammad@example.com',
     phone: '+963 11 123 4567',
+    address: 'دمشق، شارع بغداد، بناء 42',
   }));
 
   // Password
@@ -119,16 +86,40 @@ export default function AdminProfilePage() {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  // Notification Prefs
-  const [notifPrefs, setNotifPrefs] = useState(() => ({
-    email: true,
-    site: true,
-    push: false,
-    dailySummary: true,
-  }));
+  // Avatar image
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  const fileInputRef = useRef(null);
 
-  // Devices
-  const [devices, setDevices] = useState(() => MOCK_DEVICES);
+  function openFilePicker() {
+    fileInputRef.current?.click();
+  }
+
+  function handleAvatarChange(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ['image/png', 'image/jpeg'];
+    if (!allowedTypes.includes(file.type)) {
+      showToast({ message: 'يرجى اختيار صورة بصيغة PNG أو JPG', type: 'error' });
+      e.target.value = '';
+      return;
+    }
+
+    const maxSize = 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+      showToast({ message: 'حجم الصورة يجب ألا يتجاوز 2MB', type: 'error' });
+      e.target.value = '';
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    setAvatarUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return url;
+    });
+    showToast({ message: 'تم تحديث الصورة الشخصية', type: 'success' });
+    e.target.value = '';
+  }
 
   function savePersonal() {
     showToast({ message: 'تم حفظ المعلومات الشخصية بنجاح', type: 'success' });
@@ -147,77 +138,17 @@ export default function AdminProfilePage() {
     setPasswords({ current: '', newPass: '', confirm: '' });
   }
 
-  function saveNotifPrefs() {
-    showToast({ message: 'تم حفظ تفضيلات الإشعارات', type: 'success' });
-  }
-
-  function terminateSession(deviceId) {
-    setDevices((prev) => prev.filter((d) => d.id !== deviceId));
-    showToast({ message: 'تم إنهاء الجلسة بنجاح', type: 'success' });
-  }
-
-  function terminateAllOthers() {
-    setDevices((prev) => prev.filter((d) => d.current));
-    showToast({ message: 'تم إنهاء جميع الجلسات الأخرى', type: 'success' });
-  }
-
-  const deviceHeaders = [
-    {
-      key: 'device',
-      label: 'الجهاز',
-      render: (val, row) => (
-        <div className={styles.deviceCell}>
-          {val.includes('iPhone') || val.includes('Android') ? (
-            <Smartphone size={16} strokeWidth={1.8} className={styles.deviceIcon} />
-          ) : (
-            <Laptop size={16} strokeWidth={1.8} className={styles.deviceIcon} />
-          )}
-          <span>{val}</span>
-        </div>
-      ),
-    },
-    { key: 'location', label: 'الموقع' },
-    { key: 'ip', label: 'عنوان IP' },
-    {
-      key: 'lastActive',
-      label: 'آخر نشاط',
-      render: (val) => relativeTime(val),
-    },
-    {
-      key: 'current',
-      label: 'الحالة',
-      render: (val) => (
-        <Badge
-          text={val ? 'الجهاز الحالي' : 'نشط'}
-          variant={val ? 'success' : 'info'}
-        />
-      ),
-    },
-    {
-      key: 'actions',
-      label: 'الإجراء',
-      render: (_, row) =>
-        !row.current ? (
-          <Button
-            variant="danger"
-            size="sm"
-            icon={LogOut}
-            onClick={() => terminateSession(row.id)}
-          >
-            إنهاء الجلسة
-          </Button>
-        ) : (
-          <span className={styles.currentDeviceText}>—</span>
-        ),
-    },
-  ];
 
   return (
     <div className={`${styles.page} page-enter`}>
       {/* Profile Header */}
       <div className={styles.profileHeader}>
         <div className={styles.avatarCircle}>
-          <span className={styles.avatarInitials}>أم</span>
+          {avatarUrl ? (
+            <img src={avatarUrl} alt="الصورة الشخصية" className={styles.avatarImage} />
+          ) : (
+            <span className={styles.avatarInitials}>أم</span>
+          )}
         </div>
         <div className={styles.profileInfo}>
           <h2 className={styles.profileName}>أحمد المحمد</h2>
@@ -260,13 +191,33 @@ export default function AdminProfilePage() {
               value={personal.phone}
               onChange={(e) => setPersonal((p) => ({ ...p, phone: e.target.value }))}
             />
+            <InputField
+              label="العنوان"
+              value={personal.address}
+              onChange={(e) => setPersonal((p) => ({ ...p, address: e.target.value }))}
+            />
           </div>
           <div className={styles.uploadAvatar}>
-            <div className={styles.avatarSmall}>أم</div>
+            <div className={styles.avatarSmall}>
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="الصورة الشخصية" className={styles.avatarImage} />
+              ) : (
+                'أم'
+              )}
+            </div>
             <div className={styles.uploadInfo}>
               <span className={styles.uploadLabel}>صورة الملف الشخصي</span>
               <span className={styles.uploadHint}>PNG أو JPG — الحد الأقصى 2MB</span>
-              <Button variant="outline" size="sm">تغيير الصورة</Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg"
+                onChange={handleAvatarChange}
+                style={{ display: 'none' }}
+              />
+              <Button variant="outline" size="sm" onClick={openFilePicker}>
+                تغيير الصورة
+              </Button>
             </div>
           </div>
           <div className={styles.cardFooter}>
@@ -345,61 +296,6 @@ export default function AdminProfilePage() {
         </div>
       </div>
 
-      {/* Section 3: Notification Prefs */}
-      <div className={styles.card}>
-        <div className={styles.cardHeader}>
-          <div className={[styles.cardHeaderIcon, styles.cardHeaderIconGold].join(' ')}>
-            <Bell size={18} strokeWidth={1.8} />
-          </div>
-          <h3 className={styles.cardTitle}>تفضيلات الإشعارات</h3>
-        </div>
-        <div className={styles.cardBody}>
-          <div className={styles.prefList}>
-            {[
-              { key: 'email', label: 'إشعارات البريد الإلكتروني' },
-              { key: 'site', label: 'إشعارات الموقع' },
-              { key: 'push', label: 'إشعارات الجوال (Push)' },
-              { key: 'dailySummary', label: 'ملخص يومي' },
-            ].map((pref) => (
-              <div key={pref.key} className={styles.prefRow}>
-                <span className={styles.prefLabel}>{pref.label}</span>
-                <ToggleSwitch
-                  checked={notifPrefs[pref.key]}
-                  aria-label={pref.label}
-                  onChange={(v) =>
-                    setNotifPrefs((p) => ({ ...p, [pref.key]: v }))
-                  }
-                />
-              </div>
-            ))}
-          </div>
-          <div className={styles.cardFooter}>
-            <Button variant="primary" icon={Save} onClick={saveNotifPrefs}>
-              حفظ التفضيلات
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Section 4: Active Devices */}
-      <div className={styles.card}>
-        <div className={styles.cardHeader}>
-          <div className={[styles.cardHeaderIcon, styles.cardHeaderIconPurple].join(' ')}>
-            <Monitor size={18} strokeWidth={1.8} />
-          </div>
-          <h3 className={styles.cardTitle}>الأجهزة النشطة</h3>
-        </div>
-        <div className={styles.cardBody}>
-          <DataTable headers={deviceHeaders} rows={devices} />
-          {devices.filter((d) => !d.current).length > 0 ? (
-            <div className={styles.cardFooter}>
-              <Button variant="danger" icon={LogOut} onClick={terminateAllOthers}>
-                إنهاء جميع الجلسات الأخرى
-              </Button>
-            </div>
-          ) : null}
-        </div>
-      </div>
     </div>
   );
 }

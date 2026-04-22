@@ -239,6 +239,170 @@
   margin-inline-start: var(--space-1);
 }
 
+/* Add Product Form */
+.headerTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.backButton {
+  background: var(--color-cream);
+  border: none;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  color: var(--color-navy);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-base);
+}
+
+.backButton:hover {
+  background: var(--color-gold-light);
+  color: var(--color-gold);
+}
+
+.formContainer {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--glass-border);
+}
+
+.formContent {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.imageSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.imageUploadArea {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--color-cream);
+  border: 2px dashed var(--color-gold-light);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  overflow: hidden;
+}
+
+.imageUploadArea:hover {
+  border-color: var(--color-gold);
+  background: var(--color-gold-bg);
+}
+
+.imagePlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+  width: 100%;
+  height: 100%;
+}
+
+.imagePlaceholder p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+.imagePreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadLabel {
+  background: var(--color-gold);
+  color: var(--color-white);
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.uploadLabel:hover {
+  background: var(--color-gold-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--glow-gold);
+}
+
+.formFields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.formActions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--color-cream-dark);
+}
+
+/* View Product Modal */
+.viewProductContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.viewField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.viewField label {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+  font-size: var(--font-size-sm);
+}
+
+.viewField p {
+  color: var(--color-text-secondary);
+  margin: 0;
+  padding: var(--space-2);
+  background: var(--color-cream);
+  border-radius: var(--radius-md);
+}
+
+/* Edit Product Form */
+.editProductForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.modalFooter {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .productGrid {

@@ -1,25 +1,19 @@
 import { createContext, useContext, useState } from 'react';
+import { API_CONFIG } from '../config/api.config.js';
 
 const ApiContext = createContext(null);
 
 export function ApiProvider({ children }) {
   const [selectedProductId, setSelectedProductId] = useState(null);
 
-  // Get token from localStorage (after login) or from .env (for development)
+  // Get token from localStorage (after login) or from config
   const storedToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-  const envToken = import.meta.env.VITE_SPECIAL_ORDERS_BEARER_TOKEN;
-  const bearerToken = storedToken || envToken;
+  const bearerToken = storedToken || API_CONFIG.BEARER_TOKEN;
 
   const apiConfig = {
-    baseUrl: import.meta.env.VITE_API_BASE_URL || 'https://d8b7-169-150-196-135.ngrok-free.app',
+    baseUrl: API_CONFIG.BASE_URL,
     bearerToken: bearerToken,
-    endpoints: {
-      specialOrders: '/api/customers/special-orders',
-      contactUs: '/api/contact',
-      products: '/api/customers/products', // Public endpoint - no auth needed
-      productDetails: '/api/customers/products/details', // Get single product details
-      // Add more endpoints as needed
-    },
+    endpoints: API_CONFIG.ENDPOINTS,
     selectedProductId,
     setSelectedProductId,
   };

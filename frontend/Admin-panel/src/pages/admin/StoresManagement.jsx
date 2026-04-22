@@ -5,11 +5,9 @@ import {
   ShoppingCart,
   Users,
   Pencil,
-  BarChart2,
   PowerOff,
   Store,
   DollarSign,
-  Eye,
 } from 'lucide-react';
 import Badge from '../../components/ui/Badge.jsx';
 import Button from '../../components/ui/Button.jsx';
@@ -39,14 +37,22 @@ const INITIAL_FORM_STATE = {
   status: 'نشط',
 };
 
+const INITIAL_EDIT_STATE = {
+  name: '',
+  status: 'نشط',
+  manager: '',
+};
+
 export default function StoresManagementPage() {
   const { showToast } = useToast();
 
   const [addOpen, setAddOpen]         = useState(false);
+  const [editOpen, setEditOpen]       = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [targetStore, setTargetStore] = useState(null);
 
   const [form, setForm] = useState(() => ({ ...INITIAL_FORM_STATE }));
+  const [editForm, setEditForm] = useState(() => ({ ...INITIAL_EDIT_STATE }));
 
   const managers = useMemo(() => (
     mockUsers
@@ -71,6 +77,26 @@ export default function StoresManagementPage() {
     showToast({ message: `تم ${newStatus} المتجر ${targetStore?.name}`, type: 'warning' });
     setTargetStore(() => null);
   }, [targetStore, showToast]);
+
+  const handleEditStore = useCallback((store) => {
+    setTargetStore(() => store);
+    setEditForm(() => ({
+      name: store.name,
+      status: store.status,
+      manager: store.manager,
+    }));
+    setEditOpen(true);
+  }, []);
+
+  const handleSaveEdit = useCallback(() => {
+    setEditOpen(false);
+    showToast({
+      message: `تم تحديث بيانات المتجر "${editForm.name}" بنجاح`,
+      type: 'success',
+    });
+    setTargetStore(() => null);
+    setEditForm(() => ({ ...INITIAL_EDIT_STATE }));
+  }, [editForm, showToast]);
 
   return (
     <div className={`${styles.page} page-enter`}>
@@ -108,17 +134,7 @@ export default function StoresManagementPage() {
                     {
                       label: 'تعديل البيانات',
                       icon: Pencil,
-                      onClick: () => showToast({ message: `تعديل ${store.name}`, type: 'info' }),
-                    },
-                    {
-                      label: 'عرض التقرير',
-                      icon: BarChart2,
-                      onClick: () => showToast({ message: `عرض تقرير ${store.name}`, type: 'info' }),
-                    },
-                    {
-                      label: 'زيارة المتجر',
-                      icon: Eye,
-                      onClick: () => showToast({ message: `زيارة متجر ${store.name}`, type: 'info' }),
+                      onClick: () => handleEditStore(store),
                     },
                     {
                       label: store.status === 'نشط' ? 'تعطيل المتجر' : 'تفعيل المتجر',
@@ -232,6 +248,48 @@ export default function StoresManagementPage() {
               onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
             />
           </div>
+        </div>
+      </Modal>
+
+      {/* Edit Store Modal */}
+      <Modal
+        isOpen={editOpen}
+        onClose={() => setEditOpen(false)}
+        title={`تعديل بيانات "${targetStore?.name}"`}
+        size="sm"
+        footer={
+          <div className={styles.modalFooter}>
+            <Button variant="ghost" onClick={() => setEditOpen(false)}>إلغاء</Button>
+            <Button onClick={handleSaveEdit}>حفظ التغييرات</Button>
+          </div>
+        }
+      >
+        <div className={styles.formGrid}>
+          <div className={styles.formFull}>
+            <InputField
+              label="تعديل الاسم"
+              placeholder="أدخل اسم المتجر"
+              value={editForm.name}
+              onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
+              required
+            />
+          </div>
+          <SelectField
+            label="الحالة"
+            value={editForm.status}
+            onChange={(e) => setEditForm((f) => ({ ...f, status: e.target.value }))}
+            options={[
+              { value: 'نشط', label: 'نشط' },
+              { value: 'معطّل', label: 'معطّل' },
+            ]}
+          />
+          <SelectField
+            label="مدير المتجر"
+            placeholder="اختر المدير"
+            value={editForm.manager}
+            onChange={(e) => setEditForm((f) => ({ ...f, manager: e.target.value }))}
+            options={managers}
+          />
         </div>
       </Modal>
 
