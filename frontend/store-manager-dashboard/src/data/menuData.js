@@ -6,6 +6,6 @@ export const menuItems = [
   { id: 'reports',       icon: 'reports',       label: 'التقارير والإحصائيات' },
   { id: 'reviews',       icon: 'reviews',       label: 'التقييمات والمراجعات' },
   { id: 'notifications', icon: 'notifications', label: 'الإشعارات' },
-  { id: 'settings',      icon: 'settings',      label: 'الإعدادات' },
+  { id: 'profile',       icon: 'user',          label: 'الملف الشخصي' },
   { id: 'messages',      icon: 'messages',      label: 'الرسائل' },
 ];

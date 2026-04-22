@@ -9,7 +9,7 @@ cp .env.example .env
 
 ### 2. Add your bearer token to `.env`
 ```
-VITE_API_BASE_URL=https://d8b7-169-150-196-135.ngrok-free.app
+VITE_API_BASE_URL=https://undecided-vastly-replica.ngrok-free.dev
 VITE_SPECIAL_ORDERS_BEARER_TOKEN=your_actual_token_here
 ```
 

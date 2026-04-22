@@ -62,7 +62,7 @@ export default function UserManagementPage() {
   const [editForm, setEditForm]       = useState(null);
   const [resetOpen, setResetOpen]     = useState(false);
   const [resetUser, setResetUser]     = useState(null);
-  const [resetForm, setResetForm]     = useState({ password: '', confirmPassword: '' });
+  const [resetForm, setResetForm]     = useState({ newPassword: '', confirmPassword: '', sendEmail: true });
   // Add User form state
   const [form, setForm] = useState(() => ({
     firstName: '',
@@ -141,23 +141,30 @@ export default function UserManagementPage() {
 
   const openResetPasswordModal = useCallback((user) => {
     setResetUser(user);
-    setResetForm({ password: '', confirmPassword: '' });
+    setResetForm({ newPassword: '', confirmPassword: '', sendEmail: true });
     setResetOpen(true);
   }, []);
 
   const handleResetPassword = () => {
-    if (!resetForm.password || !resetForm.confirmPassword) {
-      showToast({ message: 'يرجى إدخال كلمة المرور وتأكيدها', type: 'warning' });
+    if (!resetForm.newPassword || !resetForm.confirmPassword) {
+      showToast({ message: 'يرجى ملء جميع الحقول', type: 'warning' });
       return;
     }
-
-    if (resetForm.password !== resetForm.confirmPassword) {
-      showToast({ message: 'كلمة المرور وتأكيدها غير متطابقين', type: 'error' });
+    if (resetForm.newPassword.length < 8) {
+      showToast({ message: 'كلمة المرور يجب أن تكون ٨ أحرف على الأقل', type: 'error' });
       return;
     }
-
+    if (resetForm.newPassword !== resetForm.confirmPassword) {
+      showToast({ message: 'كلمتا المرور غير متطابقتين', type: 'error' });
+      return;
+    }
     setResetOpen(false);
-    showToast({ message: `تمت إعادة تعيين كلمة المرور للمستخدم ${resetUser?.firstName || ''}`, type: 'success' });
+    showToast({
+      message: resetForm.sendEmail
+        ? 'تم إعادة تعيين كلمة المرور وإرسال الإشعار للمستخدم'
+        : 'تم إعادة تعيين كلمة المرور بنجاح',
+      type: 'success',
+    });
   };
 
   const handleBulkAction = (action) => {
@@ -220,7 +227,7 @@ export default function UserManagementPage() {
         />
       ),
     },
-  ], [showToast, openViewUserModal, openEditUserModal, openResetPasswordModal]);
+  ], [openViewUserModal, openEditUserModal, openResetPasswordModal]);
 
   const storeOptions = useMemo(() => mockStores.map((s) => ({ value: s.name, label: s.name })), []);
 
@@ -398,6 +405,56 @@ export default function UserManagementPage() {
       </Modal>
 
       <Modal
+        isOpen={viewOpen}
+        onClose={() => setViewOpen(false)}
+        title="عرض بيانات المستخدم"
+        size="md"
+        footer={<Button variant="ghost" onClick={() => setViewOpen(false)}>إغلاق</Button>}
+      >
+        {viewUser ? (
+          <div className={styles.viewUserContent}>
+            <div className={styles.viewUserHeader}>
+              <div className={styles.avatar}>
+                {viewUser.firstName?.[0]}{viewUser.lastName?.[0]}
+              </div>
+              <div>
+                <div className={styles.userName}>{viewUser.firstName} {viewUser.lastName}</div>
+                <div className={styles.userEmail}>{viewUser.email}</div>
+              </div>
+            </div>
+
+            <div className={styles.viewUserGrid}>
+              <div className={styles.viewUserItem}>
+                <span className={styles.viewUserLabel}>الدور</span>
+                <Badge text={viewUser.role} variant={ROLE_VARIANT[viewUser.role] || 'default'} />
+              </div>
+              <div className={styles.viewUserItem}>
+                <span className={styles.viewUserLabel}>الحالة</span>
+                <Badge text={viewUser.status} variant={STATUS_VARIANT[viewUser.status] || 'default'} />
+              </div>
+              <div className={styles.viewUserItem}>
+                <span className={styles.viewUserLabel}>المتجر</span>
+                <span className={styles.viewUserValue}>{viewUser.store ? viewUser.store : '—'}</span>
+              </div>
+              <div className={styles.viewUserItem}>
+                <span className={styles.viewUserLabel}>تاريخ التسجيل</span>
+                <span className={styles.viewUserValue}>{formatDate(viewUser.registeredAt)}</span>
+              </div>
+              <div className={styles.viewUserItem}>
+                <span className={styles.viewUserLabel}>آخر نشاط</span>
+                <span className={styles.viewUserValue}>{relativeTime(viewUser.lastActive)}</span>
+              </div>
+              <div className={styles.viewUserItem}>
+                <span className={styles.viewUserLabel}>معرف المستخدم</span>
+                <span className={styles.viewUserValue}>{viewUser.id}</span>
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </Modal>
+
+      {/* Edit User Modal */}
+      <Modal
         isOpen={editOpen}
         onClose={() => setEditOpen(false)}
         title="تعديل بيانات المستخدم"
@@ -464,94 +521,57 @@ export default function UserManagementPage() {
         ) : null}
       </Modal>
 
-      <Modal
-        isOpen={viewOpen}
-        onClose={() => setViewOpen(false)}
-        title="عرض بيانات المستخدم"
-        size="md"
-        footer={<Button variant="ghost" onClick={() => setViewOpen(false)}>إغلاق</Button>}
-      >
-        {viewUser ? (
-          <div className={styles.viewUserContent}>
-            <div className={styles.viewUserHeader}>
-              <div className={styles.avatar}>
-                {viewUser.firstName?.[0]}{viewUser.lastName?.[0]}
-              </div>
-              <div>
-                <div className={styles.userName}>{viewUser.firstName} {viewUser.lastName}</div>
-                <div className={styles.userEmail}>{viewUser.email}</div>
-              </div>
-            </div>
-
-            <div className={styles.viewUserGrid}>
-              <div className={styles.viewUserItem}>
-                <span className={styles.viewUserLabel}>الدور</span>
-                <Badge text={viewUser.role} variant={ROLE_VARIANT[viewUser.role] || 'default'} />
-              </div>
-              <div className={styles.viewUserItem}>
-                <span className={styles.viewUserLabel}>الحالة</span>
-                <Badge text={viewUser.status} variant={STATUS_VARIANT[viewUser.status] || 'default'} />
-              </div>
-              <div className={styles.viewUserItem}>
-                <span className={styles.viewUserLabel}>المتجر</span>
-                <span className={styles.viewUserValue}>{viewUser.store ? viewUser.store : '—'}</span>
-              </div>
-              <div className={styles.viewUserItem}>
-                <span className={styles.viewUserLabel}>تاريخ التسجيل</span>
-                <span className={styles.viewUserValue}>{formatDate(viewUser.registeredAt)}</span>
-              </div>
-              <div className={styles.viewUserItem}>
-                <span className={styles.viewUserLabel}>آخر نشاط</span>
-                <span className={styles.viewUserValue}>{relativeTime(viewUser.lastActive)}</span>
-              </div>
-              <div className={styles.viewUserItem}>
-                <span className={styles.viewUserLabel}>معرف المستخدم</span>
-                <span className={styles.viewUserValue}>{viewUser.id}</span>
-              </div>
-            </div>
-          </div>
-        ) : null}
-      </Modal>
-
+      {/* Reset Password Modal */}
       <Modal
         isOpen={resetOpen}
         onClose={() => setResetOpen(false)}
         title="إعادة تعيين كلمة المرور"
-        size="md"
+        size="sm"
         footer={
           <>
             <Button variant="ghost" onClick={() => setResetOpen(false)}>إلغاء</Button>
-            <Button onClick={handleResetPassword}>حفظ كلمة المرور</Button>
+            <Button icon={KeyRound} onClick={handleResetPassword}>إعادة التعيين</Button>
           </>
         }
       >
         {resetUser ? (
           <div className={styles.formGrid}>
             <div className={styles.formFull}>
-              <div className={styles.resetUserMeta}>
-                إعادة تعيين كلمة المرور للمستخدم:
-                <span className={styles.resetUserName}> {resetUser.firstName} {resetUser.lastName}</span>
-              </div>
+              <p className={styles.resetNotice}>
+                سيتم إعادة تعيين كلمة المرور للمستخدم{' '}
+                <strong>{resetUser.firstName} {resetUser.lastName}</strong>
+                {' '}({resetUser.email}).
+              </p>
             </div>
             <div className={styles.formFull}>
               <InputField
                 label="كلمة المرور الجديدة"
                 type="password"
                 placeholder="٨ أحرف على الأقل"
-                value={resetForm.password}
-                onChange={(e) => setResetForm((f) => ({ ...f, password: e.target.value }))}
+                value={resetForm.newPassword}
+                onChange={(e) => setResetForm((f) => ({ ...f, newPassword: e.target.value }))}
                 required
               />
             </div>
             <div className={styles.formFull}>
               <InputField
-                label="تأكيد كلمة المرور الجديدة"
+                label="تأكيد كلمة المرور"
                 type="password"
-                placeholder="أعد كتابة كلمة المرور"
+                placeholder="أعد إدخال كلمة المرور"
                 value={resetForm.confirmPassword}
                 onChange={(e) => setResetForm((f) => ({ ...f, confirmPassword: e.target.value }))}
                 required
               />
+            </div>
+            <div className={styles.formFull}>
+              <label className={styles.resetCheckbox}>
+                <input
+                  type="checkbox"
+                  checked={resetForm.sendEmail}
+                  onChange={(e) => setResetForm((f) => ({ ...f, sendEmail: e.target.checked }))}
+                />
+                <span>إرسال إشعار للمستخدم عبر البريد الإلكتروني</span>
+              </label>
             </div>
           </div>
         ) : null}

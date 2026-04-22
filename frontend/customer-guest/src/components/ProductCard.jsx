@@ -2,7 +2,6 @@ import { ImageIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from './Badge.jsx';
 import { StarRating } from './StarRating.jsx';
-import { Button } from './Button.jsx';
 import styles from './ProductCard.module.css';
 
 function getBadgeVariant(badgeText) {
@@ -12,7 +11,7 @@ function getBadgeVariant(badgeText) {
   return 'primary';
 }
 
-export function ProductCard({ product, onNavigate, onAddToCart }) {
+export function ProductCard({ product, onNavigate }) {
   const { id, name, cat, category, price, oldPrice, originalPrice, rating, reviews, badge, image } = product;
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
@@ -62,17 +61,6 @@ export function ProductCard({ product, onNavigate, onAddToCart }) {
               <span className={styles.oldPrice}>{oldPrice || originalPrice} $</span>
             ) : null}
           </div>
-
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddToCart?.(product);
-            }}
-          >
-            أضف للسلة
-          </Button>
         </div>
       </div>
     </article>

@@ -37,10 +37,14 @@ export function Header({ activePage, onNavigate, onMobileMenuOpen }) {
         </button>
 
         {/* User avatar */}
-        <div className={styles.userChip}>
+        <button
+          className={styles.userChip}
+          onClick={() => onNavigate('profile')}
+          aria-label="الملف الشخصي"
+        >
           <div className={styles.avatar} aria-hidden="true">م</div>
           <span className={styles.userName}>مدير المتجر</span>
-        </div>
+        </button>
       </div>
     </header>
   );

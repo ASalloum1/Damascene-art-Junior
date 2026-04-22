@@ -73,17 +73,10 @@ const NOOP = () => {};
 
 export default function DashboardPage({ onNavigate = NOOP }) {
   const handleOpenAllOrders = () => onNavigate('orders');
-  const handleOpenActivityLog = () => onNavigate('activity-log');
   const handleOpenAllOrdersKeyDown = (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       handleOpenAllOrders();
-    }
-  };
-  const handleOpenActivityLogKeyDown = (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      handleOpenActivityLog();
     }
   };
 
@@ -197,16 +190,6 @@ export default function DashboardPage({ onNavigate = NOOP }) {
                 <p className={styles.activityDetails}>{activity.details}</p>
               </div>
             ))}
-          </div>
-          <div
-            className={styles.viewAllLink}
-            role="button"
-            tabIndex={0}
-            onClick={handleOpenActivityLog}
-            onKeyDown={handleOpenActivityLogKeyDown}
-          >
-            <ArrowLeft size={14} strokeWidth={1.8} aria-hidden="true" />
-            <span>مطالعة السجل الكامل</span>
           </div>
         </section>
       </div>

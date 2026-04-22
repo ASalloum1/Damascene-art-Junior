@@ -1,0 +1,128 @@
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* ── Pills Variant ── */
+.variant-pills {
+  gap: var(--space-2);
+}
+
+.variant-pills .tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-4);
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-arabic);
+  border: 1px solid var(--color-cream-dark);
+  background-color: var(--color-white);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background-color var(--transition-base), color var(--transition-base),
+    border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.variant-pills .tab:hover:not(.active) {
+  background-color: var(--color-cream);
+  border-color: var(--color-gold-light);
+  color: var(--color-text-primary);
+}
+
+.variant-pills .tab.active {
+  background-color: var(--color-navy);
+  color: var(--color-gold);
+  border-color: var(--color-navy);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Underline Variant ── */
+.variant-underline {
+  border-block-end: 2px solid var(--color-cream-dark);
+  gap: 0;
+}
+
+.variant-underline .tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-block: var(--space-3);
+  padding-inline: var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-arabic);
+  background: transparent;
+  border: none;
+  border-block-end: 2px solid transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  margin-block-end: -2px;
+  position: relative;
+  transition: color var(--transition-base);
+}
+
+.variant-underline .tab::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-end: -2px;
+  width: 0;
+  height: 2px;
+  background-color: var(--color-gold);
+  transform: translateX(50%);
+  transition: width var(--transition-base), inset-inline-start var(--transition-base);
+}
+
+.variant-underline .tab:hover:not(.active) {
+  color: var(--color-text-primary);
+}
+
+.variant-underline .tab.active {
+  color: var(--color-gold-dark);
+  border-block-end-color: transparent;
+}
+
+.variant-underline .tab.active::after {
+  inset-inline-start: 0;
+  width: 100%;
+  transform: translateX(0);
+}
+
+/* ── Count Badge ── */
+.count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding-inline: 4px;
+  background-color: var(--color-cream-dark);
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-tiny);
+  font-weight: var(--font-weight-bold);
+  transition: background-color var(--transition-fast), color var(--transition-fast),
+    transform var(--transition-fast);
+  animation: fadeInScale 0.2s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.variant-pills .tab.active .count,
+.countActive {
+  background-color: var(--color-gold);
+  color: var(--color-text-on-gold);
+}

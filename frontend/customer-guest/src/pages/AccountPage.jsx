@@ -1,4 +1,4 @@
-import { Package, Heart, Star, MapPin } from 'lucide-react';
+import { Package, Heart, Star, MapPin, LogOut } from 'lucide-react';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { Badge } from '../components/Badge.jsx';
 import { InputField } from '../components/InputField.jsx';
@@ -9,7 +9,7 @@ const stats = [
   { icon: Package, label: 'طلباتي', value: '١٢ طلب' },
   { icon: Heart, label: 'المفضلة', value: '٨ منتجات' },
   { icon: Star, label: 'تقييماتي', value: '٥ تقييمات' },
-  { icon: MapPin, label: 'عناويني', value: '٢ عناوين' },
+  { icon: MapPin, label: 'عناويني', value: '٢ عناوين', page: 'addresses' },
 ];
 
 const orders = [
@@ -18,7 +18,7 @@ const orders = [
   { id: '#1065', date: '٠١/٠٣/٢٠٢٦', total: '٨٩٠ $', status: 'تم التسليم', variant: 'success' },
 ];
 
-export function AccountPage({ onNavigate }) {
+export function AccountPage({ onNavigate, onLogout }) {
   return (
     <div className={styles.page}>
       <SectionHeader title="حسابي" subtitle="مرحباً، أحمد الشامي" />
@@ -27,8 +27,25 @@ export function AccountPage({ onNavigate }) {
       <div className={styles.statGrid}>
         {stats.map((stat) => {
           const StatIcon = stat.icon;
+          const clickable = Boolean(stat.page);
           return (
-            <div key={stat.label} className={styles.statCard}>
+            <div
+              key={stat.label}
+              className={styles.statCard}
+              onClick={clickable ? () => onNavigate?.(stat.page) : undefined}
+              role={clickable ? 'button' : undefined}
+              tabIndex={clickable ? 0 : undefined}
+              onKeyDown={
+                clickable
+                  ? (e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        onNavigate?.(stat.page);
+                      }
+                    }
+                  : undefined
+              }
+            >
               <div className={styles.statIcon}>
                 <StatIcon size={28} />
               </div>
@@ -75,6 +92,17 @@ export function AccountPage({ onNavigate }) {
           <InputField label="كلمة المرور" type="password" placeholder="••••••" />
         </div>
         <Button variant="primary">حفظ التغييرات</Button>
+      </div>
+
+      {/* ── Logout ── */}
+      <div className={styles.logoutRow}>
+        <Button
+          variant="outline"
+          icon={<LogOut size={16} />}
+          onClick={onLogout}
+        >
+          تسجيل الخروج
+        </Button>
       </div>
     </div>
   );

@@ -6,7 +6,6 @@ import {
   MessageSquare,
   DollarSign,
   UserPlus,
-  Settings,
   CheckCheck,
 } from 'lucide-react';
 import Tabs from '../../components/ui/Tabs.jsx';
@@ -20,7 +19,6 @@ import styles from './Notifications.module.css';
 
 const MAIN_TABS = [
   { id: 'center', label: 'مركز الإشعارات' },
-  { id: 'settings', label: 'إعدادات الإشعارات' },
 ];
 
 const FILTER_TABS = [
@@ -32,26 +30,6 @@ const FILTER_TABS = [
   { id: 'financial', label: 'مالية' },
 ];
 
-const NOTIFICATION_EVENTS = [
-  { id: 'new_order', label: 'طلب جديد' },
-  { id: 'cancelled_order', label: 'طلب ملغي' },
-  { id: 'low_stock', label: 'مخزون منخفض' },
-  { id: 'new_review', label: 'تقييم جديد' },
-  { id: 'new_message', label: 'رسالة جديدة' },
-  { id: 'new_user', label: 'مستخدم جديد' },
-  { id: 'large_transaction', label: 'عملية مالية كبيرة' },
-  { id: 'suspicious_login', label: 'محاولة دخول مشبوهة' },
-];
-
-/**
- * Initial state for notification settings.
- * Memoized outside the component or used in lazy initialization.
- */
-const INITIAL_SETTINGS = () =>
-  NOTIFICATION_EVENTS.reduce((acc, ev) => {
-    acc[ev.id] = { email: true, site: true, push: false };
-    return acc;
-  }, {});
 
 function getNotifIcon(type) {
   const map = {
@@ -108,27 +86,11 @@ function getNotifTypeLabel(type) {
   return map[type] || type;
 }
 
-function ToggleSwitch({ checked, onChange }) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      onClick={() => onChange(!checked)}
-      className={[styles.toggle, checked ? styles.toggleOn : ''].filter(Boolean).join(' ')}
-      aria-label="تغيير حالة الإشعار"
-    >
-      <span className={styles.toggleThumb} />
-    </button>
-  );
-}
-
 export default function NotificationsPage() {
   const { showToast } = useToast();
   const [mainTab, setMainTab] = useState('center');
   const [filterTab, setFilterTab] = useState('all');
   const [notifications, setNotifications] = useState(() => mockNotifications);
-  const [settings, setSettings] = useState(INITIAL_SETTINGS);
 
   const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
 
@@ -160,17 +122,6 @@ export default function NotificationsPage() {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id && !n.read ? { ...n, read: true } : n))
     );
-  }
-
-  function updateSetting(eventId, channel, value) {
-    setSettings((prev) => ({
-      ...prev,
-      [eventId]: { ...prev[eventId], [channel]: value },
-    }));
-  }
-
-  function saveSettings() {
-    showToast({ message: 'تم حفظ إعدادات الإشعارات بنجاح', type: 'success' });
   }
 
   return (
@@ -269,49 +220,6 @@ export default function NotificationsPage() {
           </div>
         ) : null}
 
-        {mainTab === 'settings' ? (
-          <div className={styles.settingsContent}>
-            <p className={styles.settingsDesc}>
-              حدد القنوات التي تريد تلقي الإشعارات عبرها لكل نوع من الأحداث.
-            </p>
-            <div className={styles.settingsTable}>
-              <div className={styles.settingsHeader}>
-                <span className={styles.settingsEventCol}>الحدث</span>
-                <span className={styles.settingsChannelCol}>البريد الإلكتروني</span>
-                <span className={styles.settingsChannelCol}>الموقع</span>
-                <span className={styles.settingsChannelCol}>الجوال</span>
-              </div>
-              {NOTIFICATION_EVENTS.map((ev) => (
-                <div key={ev.id} className={styles.settingsRow}>
-                  <span className={styles.settingsEventName}>{ev.label}</span>
-                  <div className={styles.settingsChannelCol}>
-                    <ToggleSwitch
-                      checked={settings[ev.id]?.email ?? false}
-                      onChange={(v) => updateSetting(ev.id, 'email', v)}
-                    />
-                  </div>
-                  <div className={styles.settingsChannelCol}>
-                    <ToggleSwitch
-                      checked={settings[ev.id]?.site ?? false}
-                      onChange={(v) => updateSetting(ev.id, 'site', v)}
-                    />
-                  </div>
-                  <div className={styles.settingsChannelCol}>
-                    <ToggleSwitch
-                      checked={settings[ev.id]?.push ?? false}
-                      onChange={(v) => updateSetting(ev.id, 'push', v)}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className={styles.settingsFooter}>
-              <Button variant="primary" icon={Settings} onClick={saveSettings}>
-                حفظ الإعدادات
-              </Button>
-            </div>
-          </div>
-        ) : null}
       </section>
     </div>
   );

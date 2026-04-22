@@ -128,7 +128,15 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  cursor: default;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+.userChip:hover {
+  background: var(--color-gold-alpha-08);
 }
 
 /* User avatar with gold ring */
