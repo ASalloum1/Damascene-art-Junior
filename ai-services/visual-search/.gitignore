@@ -48,3 +48,6 @@ logs/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Local wheels (large binary files, downloaded manually)
+wheels/
