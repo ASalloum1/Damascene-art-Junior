@@ -1,9 +1,17 @@
+
 """
 Application configuration management.
 
 Uses pydantic-settings to load configuration from environment variables
 and .env files with type validation.
 """
+import os
+# Set OpenMP duplicate-lib workaround BEFORE torch is imported anywhere.
+# This prevents the OMP Error #15 on Windows when PyTorch and FAISS
+# are loaded in the same process.
+os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
+
+
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
