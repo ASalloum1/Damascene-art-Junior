@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Visual search runtime data
+data/faiss_index/*.faiss
+data/faiss_index/*.index
+data/samples/*.jpg
+data/samples/*.jpeg
+data/samples/*.png
+data/samples/*.webp
+
+# Keep .gitkeep files
+!.gitkeep
+
+# Logs
+*.log
+logs/
+
+# PyTorch model cache (if downloaded locally)
+.cache/
+*.pt
+*.pth
+*.bin
+*.safetensors
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
