@@ -1,0 +1,57 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3);
+  width: 100%;
+  background: var(--gradient-gold-subtle);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+}
+
+.filterItem {
+  min-width: 160px;
+  flex: 1;
+  max-width: 240px;
+}
+
+.filterItem.wide {
+  min-width: 260px;
+  max-width: 360px;
+}
+
+.resetWrapper {
+  margin-inline-start: auto;
+  align-self: flex-end;
+}
+
+.resetWrapper button {
+  transition: color var(--transition-base), background-color var(--transition-base);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding-inline: 4px;
+  background-color: var(--color-gold);
+  color: var(--color-text-on-gold);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-tiny);
+  font-weight: var(--font-weight-bold);
+  margin-inline-start: var(--space-1);
+  animation: fadeInScale 0.2s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

@@ -14,7 +14,7 @@ The `ApiContext` is already wrapped around your entire application in `App.jsx`.
 Make sure your `.env` file has the bearer token configured:
 
 ```
-VITE_API_BASE_URL=https://d8b7-169-150-196-135.ngrok-free.app
+VITE_API_BASE_URL=https://undecided-vastly-replica.ngrok-free.dev
 VITE_SPECIAL_ORDERS_BEARER_TOKEN=your_actual_token_here
 ```
 
@@ -114,7 +114,7 @@ When implementing API calls in other pages, follow this pattern:
 
 ### Before (Old Way)
 ```jsx
-const API_BASE_URL = 'https://d8b7-169-150-196-135.ngrok-free.app';
+const API_BASE_URL = 'https://undecided-vastly-replica.ngrok-free.dev';
 const BEARER_TOKEN = 'hardcoded_token';
 
 export function MyPage() {

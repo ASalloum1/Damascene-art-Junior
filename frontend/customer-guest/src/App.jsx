@@ -13,6 +13,7 @@ import ConfirmationPage from './pages/ConfirmationPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import AccountPage from './pages/AccountPage.jsx';
+import AddressesPage from './pages/AddressesPage.jsx';
 import CategoryPage from './pages/CategoryPage.jsx';
 import SearchPage from './pages/SearchPage.jsx';
 import WishlistPage from './pages/WishlistPage.jsx';
@@ -36,6 +37,7 @@ const pages = {
   login: LoginPage,
   register: RegisterPage,
   account: AccountPage,
+  addresses: AddressesPage,
   category: CategoryPage,
   search: SearchPage,
   wishlist: WishlistPage,
@@ -51,6 +53,9 @@ export default function App() {
   const [isPending, startTransition] = useTransition();
   const [cartCount] = useState(2);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => typeof window !== 'undefined' && !!localStorage.getItem('token')
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -67,6 +72,13 @@ export default function App() {
     setMobileNavOpen(false);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setIsLoggedIn(false);
+    handleNavigate('home');
+  };
+
   const ActivePage = pages[activePage] ?? NotFoundPage;
 
   return (
@@ -79,6 +91,7 @@ export default function App() {
           activePage={activePage}
           onNavigate={handleNavigate}
           cartCount={cartCount}
+          isLoggedIn={isLoggedIn}
           mobileMenuOpen={mobileNavOpen}
           onMobileMenuOpen={() => setMobileNavOpen(true)}
           onMobileMenuClose={() => setMobileNavOpen(false)}
@@ -89,7 +102,7 @@ export default function App() {
           tabIndex={-1}
           aria-label="محتوى الصفحة"
         >
-          <ActivePage onNavigate={handleNavigate} />
+          <ActivePage onNavigate={handleNavigate} onLogout={handleLogout} />
         </main>
         <Footer onNavigate={handleNavigate} />
       </div>

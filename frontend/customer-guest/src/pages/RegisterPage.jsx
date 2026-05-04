@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { Gem } from 'lucide-react';
+import { API_CONFIG } from '../config/api.config.js';
 import { InputField } from '../components/InputField.jsx';
 import { Button } from '../components/Button.jsx';
 import styles from './RegisterPage.module.css';
-
-const API_BASE_URL = 'https://d8b7-169-150-196-135.ngrok-free.app';
 
 export function RegisterPage({ onNavigate }) {
   const [firstName, setFirstName] = useState('');
@@ -40,7 +39,7 @@ export function RegisterPage({ onNavigate }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/customers/register`, {
+      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.register}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

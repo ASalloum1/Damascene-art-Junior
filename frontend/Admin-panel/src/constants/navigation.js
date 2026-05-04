@@ -6,12 +6,11 @@ import {
   ShoppingCart,
   DollarSign,
   BarChart2,
-  ClipboardList,
   MessageSquare,
   Bell,
   Star,
-  Settings,
   UserCircle,
+  TicketPercent,
 } from 'lucide-react';
 
 // Navigation items for the admin sidebar
@@ -53,11 +52,6 @@ export const NAV_ITEMS = [
     icon: BarChart2,
   },
   {
-    id: 'activity-log',
-    label: 'سجل النشاطات',
-    icon: ClipboardList,
-  },
-  {
     id: 'messages',
     label: 'الرسائل والطلبات',
     icon: MessageSquare,
@@ -76,13 +70,13 @@ export const NAV_ITEMS = [
     badge: 'reviews',
   },
   {
-    id: 'site-settings',
-    label: 'إعدادات الموقع',
-    icon: Settings,
-  },
-  {
     id: 'profile',
     label: 'الملف الشخصي',
     icon: UserCircle,
+  },
+  {
+    id: 'coupons',
+    label: 'إدارة الكوبونات',
+    icon: TicketPercent,
   },
 ];

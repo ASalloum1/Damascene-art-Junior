@@ -85,6 +85,119 @@
   font-family: var(--font-arabic);
 }
 
+/* Order Details Modal */
+.orderDetailsContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.orderInfoSection,
+.orderSummarySection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+  margin: 0;
+  padding-bottom: var(--space-2);
+  border-bottom: 2px solid var(--color-gold-light);
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.infoItem label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+}
+
+.infoItem p {
+  margin: 0;
+  font-size: var(--font-size-base);
+  color: var(--color-navy);
+  padding: var(--space-2);
+  background: var(--color-cream);
+  border-radius: var(--radius-md);
+}
+
+/* Items Table */
+.itemsTable {
+  border: 1px solid var(--color-cream-dark);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  background: var(--color-cream);
+  padding: var(--space-3);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+  border-bottom: 1px solid var(--color-cream-dark);
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-cream);
+  align-items: center;
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.colProduct,
+.colQuantity,
+.colPrice,
+.colTotal {
+  font-size: var(--font-size-sm);
+}
+
+.colQuantity,
+.colPrice,
+.colTotal {
+  text-align: center;
+}
+
+.totalRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding: var(--space-3);
+  background: var(--color-gold-light);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-navy);
+  border-top: 2px solid var(--color-gold);
+}
+
+.totalRow span:last-child {
+  text-align: center;
+  grid-column: 4;
+}
+
+.modalFooter {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .page {

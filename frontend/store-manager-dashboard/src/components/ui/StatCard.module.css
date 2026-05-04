@@ -1,0 +1,84 @@
+.card {
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  transition: box-shadow var(--transition-base), transform var(--transition-base), border-color var(--transition-base);
+  position: relative;
+  border-block-start: 3px solid transparent;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
+  border-block-start-color: var(--color-gold);
+}
+
+.top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.iconCircle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-lg);
+  flex-shrink: 0;
+  background-image: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.25), transparent 70%);
+}
+
+.trend {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  padding-block: 2px;
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-xl);
+  transition: transform var(--transition-fast);
+}
+
+.trendUp {
+  color: var(--color-green);
+  background-color: var(--color-green-bg);
+}
+
+.trendDown {
+  color: var(--color-red);
+  background-color: var(--color-red-bg);
+}
+
+.trendNeutral {
+  color: var(--color-text-secondary);
+  background-color: var(--color-cream-dark);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-black);
+  color: var(--color-navy);
+  line-height: 1.2;
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-block-start: var(--space-1);
+}

@@ -130,3 +130,10 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Logout ─────────────────────────────────────────── */
+.logoutRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-block-start: var(--space-6);
+}
