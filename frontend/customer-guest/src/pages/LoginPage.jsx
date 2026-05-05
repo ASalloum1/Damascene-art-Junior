@@ -5,12 +5,27 @@ import { InputField } from '../components/InputField.jsx';
 import { Button } from '../components/Button.jsx';
 import styles from './LoginPage.module.css';
 
-export function LoginPage({ onNavigate }) {
+const PAGE_LABEL = {
+  cart: 'لعرض سلة التسوق',
+  wishlist: 'لعرض قائمة المفضلة',
+  checkout: 'لإتمام عملية الشراء',
+  account: 'للوصول إلى حسابك',
+  addresses: 'لإدارة عناوينك',
+  'my-orders': 'لعرض طلباتك',
+  'my-reviews': 'لعرض تقييماتك',
+  custom: 'لطلب قطعة مخصّصة',
+};
+
+export function LoginPage({ onNavigate, onLoginSuccess, requiredFor }) {
   const { baseUrl } = useApi();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const authHint = requiredFor
+    ? `يُرجى تسجيل الدخول ${PAGE_LABEL[requiredFor] ?? 'للمتابعة'}`
+    : null;
 
   const handleLogin = async () => {
     // Reset error state
@@ -58,7 +73,11 @@ export function LoginPage({ onNavigate }) {
         window.location.href = 'http://localhost:5175/';
       } else {
         // Default to customer account page
-        window.location.href = 'http://localhost:5173/';
+        if (typeof onLoginSuccess === 'function') {
+          onLoginSuccess();
+        } else {
+          window.location.href = 'http://localhost:5173/';
+        }
       }
     } catch (err) {
       setError('حدث خطأ في الاتصال بالخادم');
@@ -73,6 +92,12 @@ export function LoginPage({ onNavigate }) {
       <div className={styles.card}>
         <Gem size={48} className={styles.gemIcon} />
         <h2 className={styles.heading}>تسجيل الدخول</h2>
+
+        {authHint ? (
+          <div className={styles.authHint} role="status" aria-live="polite">
+            {authHint}
+          </div>
+        ) : null}
 
         {error ? <div className={styles.errorMessage}>{error}</div> : null}
 
