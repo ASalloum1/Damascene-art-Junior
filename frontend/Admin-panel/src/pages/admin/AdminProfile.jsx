@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   User,
   Save,
@@ -10,9 +10,6 @@ import Badge from '../../components/ui/Badge.jsx';
 import Button from '../../components/ui/Button.jsx';
 import InputField from '../../components/ui/InputField.jsx';
 import { useToast } from '../../components/ui/Toast.jsx';
-import { useAdmin } from '../../context/AdminContext.jsx';
-import { API_CONFIG } from '../../config/api.config.js';
-import { apiRequest } from '../../utils/adminApi.js';
 import styles from './AdminProfile.module.css';
 
 function PasswordStrengthBar({ password }) {
@@ -69,15 +66,14 @@ function ToggleSwitch({ checked, onChange, 'aria-label': ariaLabel }) {
 
 export default function AdminProfilePage() {
   const { showToast } = useToast();
-  const { profile, refreshProfile } = useAdmin();
 
   // Personal Info
   const [personal, setPersonal] = useState(() => ({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address: '',
+    firstName: 'أحمد',
+    lastName: 'المحمد',
+    email: 'ahmed.almohammad@example.com',
+    phone: '+963 11 123 4567',
+    address: 'دمشق، شارع بغداد، بناء 42',
   }));
 
   // Password
@@ -93,20 +89,6 @@ export default function AdminProfilePage() {
   // Avatar image
   const [avatarUrl, setAvatarUrl] = useState(null);
   const fileInputRef = useRef(null);
-
-  useEffect(() => {
-    if (!profile) {
-      return;
-    }
-
-    setPersonal({
-      firstName: profile.first_name || '',
-      lastName: profile.last_name || '',
-      email: profile.email || '',
-      phone: profile.phone || '',
-      address: profile.address || '',
-    });
-  }, [profile]);
 
   function openFilePicker() {
     fileInputRef.current?.click();
@@ -139,45 +121,11 @@ export default function AdminProfilePage() {
     e.target.value = '';
   }
 
-  async function savePersonal() {
-    try {
-      const data = await apiRequest(API_CONFIG.ENDPOINTS.profile, {
-        method: 'PUT',
-        body: {
-          first_name: personal.firstName,
-          last_name: personal.lastName,
-          email: personal.email,
-          phone: personal.phone,
-          address: personal.address,
-        },
-      });
-
-      const updatedProfile = data?.data?.profile || {};
-      const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
-
-      if (storedUser) {
-        localStorage.setItem(
-          'user',
-          JSON.stringify({
-            ...storedUser,
-            first_name: updatedProfile.first_name || personal.firstName,
-            last_name: updatedProfile.last_name || personal.lastName,
-            email: updatedProfile.email || personal.email,
-            phone: updatedProfile.phone || personal.phone,
-            address: updatedProfile.address || personal.address,
-          })
-        );
-        window.dispatchEvent(new Event('auth-changed'));
-      }
-
-      await refreshProfile();
-      showToast({ message: 'تم حفظ المعلومات الشخصية بنجاح', type: 'success' });
-    } catch (error) {
-      showToast({ message: error.message || 'تعذر حفظ المعلومات الشخصية', type: 'error' });
-    }
+  function savePersonal() {
+    showToast({ message: 'تم حفظ المعلومات الشخصية بنجاح', type: 'success' });
   }
 
-  async function updatePassword() {
+  function updatePassword() {
     if (!passwords.current || !passwords.newPass || !passwords.confirm) {
       showToast({ message: 'يرجى ملء جميع حقول كلمة المرور', type: 'warning' });
       return;
@@ -186,21 +134,8 @@ export default function AdminProfilePage() {
       showToast({ message: 'كلمة المرور الجديدة وتأكيدها غير متطابقتين', type: 'error' });
       return;
     }
-
-    try {
-      await apiRequest(API_CONFIG.ENDPOINTS.profilePassword, {
-        method: 'PUT',
-        body: {
-          current_password: passwords.current,
-          password: passwords.newPass,
-          password_confirmation: passwords.confirm,
-        },
-      });
-      showToast({ message: 'تم تحديث كلمة المرور بنجاح', type: 'success' });
-      setPasswords({ current: '', newPass: '', confirm: '' });
-    } catch (error) {
-      showToast({ message: error.message || 'تعذر تحديث كلمة المرور', type: 'error' });
-    }
+    showToast({ message: 'تم تحديث كلمة المرور بنجاح', type: 'success' });
+    setPasswords({ current: '', newPass: '', confirm: '' });
   }
 
 
@@ -216,11 +151,11 @@ export default function AdminProfilePage() {
           )}
         </div>
         <div className={styles.profileInfo}>
-          <h2 className={styles.profileName}>{profile?.full_name || `${personal.firstName} ${personal.lastName}`.trim() || 'المشرف العام'}</h2>
-          <p className={styles.profileEmail}>{personal.email || '—'}</p>
+          <h2 className={styles.profileName}>أحمد المحمد</h2>
+          <p className={styles.profileEmail}>ahmed.almohammad@example.com</p>
           <div className={styles.profileMeta}>
             <Badge text="مشرف عام" variant="gold" />
-            <span className={styles.profileSince}>{profile?.status_label || 'نشط'}</span>
+            <span className={styles.profileSince}>منذ يناير ٢٠٢٥</span>
           </div>
         </div>
       </div>

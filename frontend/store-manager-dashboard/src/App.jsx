@@ -12,7 +12,6 @@ import NotificationsPage from './pages/NotificationsPage';
 import ProfilePage from './pages/ProfilePage';
 import MessagesPage from './pages/MessagesPage';
 import styles from './App.module.css';
-import { StoreManagerProvider, useStoreManager } from './context/StoreManagerContext.jsx';
 
 const pages = {
   dashboard: DashboardPage,
@@ -26,21 +25,12 @@ const pages = {
   messages: MessagesPage,
 };
 
-function StoreShell() {
+export default function App() {
   const [activePage, setActivePage] = useState('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { isBootstrapping, notificationCount, profile } = useStoreManager();
 
   const ActivePage = pages[activePage];
-
-  if (isBootstrapping) {
-    return (
-      <div style={{ padding: '48px', textAlign: 'center' }}>
-        جاري تهيئة لوحة مدير المتجر...
-      </div>
-    );
-  }
 
   return (
     <ToastProvider>
@@ -58,8 +48,6 @@ function StoreShell() {
             activePage={activePage}
             onNavigate={(page) => setActivePage(page)}
             onMobileMenuOpen={() => setMobileOpen(true)}
-            notificationCount={notificationCount}
-            userName={profile?.full_name || `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || 'مدير المتجر'}
           />
           <main id="main-content" className={styles.content} aria-label="محتوى الصفحة">
             <div key={activePage} className={styles.pageWrapper}>
@@ -69,13 +57,5 @@ function StoreShell() {
         </div>
       </div>
     </ToastProvider>
-  );
-}
-
-export default function App() {
-  return (
-    <StoreManagerProvider>
-      <StoreShell />
-    </StoreManagerProvider>
   );
 }

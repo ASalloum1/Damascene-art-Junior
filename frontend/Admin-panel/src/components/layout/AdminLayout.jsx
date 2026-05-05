@@ -25,14 +25,7 @@ const PAGE_TITLES = {
  * @param {string} activePage
  * @param {function} setActivePage
  */
-export default function AdminLayout({
-  children,
-  activePage,
-  setActivePage,
-  badgeCounts,
-  notificationCount,
-  adminName,
-}) {
+export default function AdminLayout({ children, activePage, setActivePage }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     try {
       return localStorage.getItem('sidebarCollapsed') === 'true';
@@ -58,13 +51,13 @@ export default function AdminLayout({
         onToggle={toggleSidebar}
         activePage={activePage}
         onNavigate={setActivePage}
-        badgeCounts={badgeCounts}
+        badgeCounts={{ messages: 3, notifications: 5, reviews: 2 }}
       />
       <div className={styles.main}>
         <TopBar
           title={PAGE_TITLES[activePage] || 'لوحة التحكم'}
-          notificationCount={notificationCount}
-          adminName={adminName}
+          notificationCount={5}
+          adminName="المشرف العام"
           onNotificationClick={() => setActivePage('notifications')}
           onProfileClick={() => setActivePage('profile')}
         />

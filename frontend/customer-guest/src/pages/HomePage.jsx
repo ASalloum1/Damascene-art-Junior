@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Layers, TreePine, Sparkles, Scissors, Flame, CircleDot, Diamond } from 'lucide-react';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { Button } from '../components/Button.jsx';
@@ -6,9 +5,7 @@ import { ProductCard } from '../components/ProductCard.jsx';
 import { CategoryCard } from '../components/CategoryCard.jsx';
 import { TestimonialCard } from '../components/TestimonialCard.jsx';
 import { Ornament } from '../components/Ornament.jsx';
-import { products, categories as defaultCategories, testimonials } from '../data/index.js';
-import { useApi } from '../context/ApiContext.jsx';
-import { API_CONFIG } from '../config/api.config.js';
+import { products, categories, testimonials } from '../data/index.js';
 import styles from './HomePage.module.css';
 
 const categoryIconMap = {
@@ -20,61 +17,7 @@ const categoryIconMap = {
   pottery: CircleDot,
 };
 
-const getCategoryKey = (name = '') => {
-  const lower = name.toLowerCase();
-  if (lower.includes('wood') || lower.includes('خشب')) return 'wood';
-  if (lower.includes('glass') || lower.includes('زجاج')) return 'glass';
-  if (lower.includes('mosaic') || lower.includes('فسيفساء') || lower.includes('موزاييك')) return 'mosaic';
-  if (lower.includes('brocade') || lower.includes('بروكار')) return 'brocade';
-  if (lower.includes('brass') || lower.includes('نحاس')) return 'brass';
-  if (lower.includes('pottery') || lower.includes('فخار') || lower.includes('خزف')) return 'pottery';
-  return 'mosaic';
-};
-
 export function HomePage({ onNavigate }) {
-  const { baseUrl, endpoints, setSelectedCategory, setSelectedProductId } = useApi();
-  const [categoriesData, setCategoriesData] = useState([]);
-  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
-  const [fetchError, setFetchError] = useState(false);
-
-  useEffect(() => {
-    async function loadCategories() {
-      setIsLoadingCategories(true);
-      setFetchError(false);
-      const url = `${baseUrl}${endpoints.categories}`;
-      console.log('[HomePage] fetching categories from', url);
-      try {
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: API_CONFIG.DEFAULT_HEADERS,
-        });
-
-        console.log('[HomePage] categories response status', response.status);
-        const data = await response.json();
-        console.log('[HomePage] categories response body', data);
-
-        if (!response.ok) {
-          throw new Error(`Failed to load categories: ${response.status}`);
-        }
-
-        if (data?.data?.categories?.length) {
-          setCategoriesData(data.data.categories);
-          return;
-        }
-
-        setCategoriesData(defaultCategories);
-      } catch (error) {
-        console.error('[HomePage] Category fetch failed:', error);
-        setFetchError(true);
-        setCategoriesData(defaultCategories);
-      } finally {
-        setIsLoadingCategories(false);
-      }
-    }
-
-    loadCategories();
-  }, [baseUrl, endpoints.categories]);
-
   return (
     <div>
       {/* ── 1. Hero ── */}
@@ -112,31 +55,15 @@ export function HomePage({ onNavigate }) {
             subtitle="تجوّل بين روائع الفنون التي تأسر الحواس"
           />
           <div className={styles.categoryGrid}>
-            {isLoadingCategories ? (
-              <p className={styles.loading}>جاري تحميل الفئات...</p>
-            ) : categoriesData.length > 0 ? (
-              categoriesData.map((cat) => {
-                const iconKey = getCategoryKey(cat.name);
-                return (
-                  <CategoryCard
-                    key={cat.id}
-                    name={cat.name}
-                    count={cat.count ?? 0}
-                    icon={categoryIconMap[iconKey]}
-                    onClick={() => {
-                      setSelectedCategory({ id: cat.id, name: cat.name });
-                      onNavigate?.('category');
-                    }}
-                  />
-                );
-              })
-            ) : (
-              <p className={styles.empty}>
-                {fetchError
-                  ? 'تعذر تحميل الفئات. الرجاء المحاولة لاحقاً.'
-                  : 'لا توجد فئات متاحة حالياً.'}
-              </p>
-            )}
+            {categories.map((cat) => (
+              <CategoryCard
+                key={cat.id}
+                name={cat.name}
+                count={cat.count}
+                icon={categoryIconMap[cat.id]}
+                onClick={() => onNavigate?.('category')}
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -153,10 +80,7 @@ export function HomePage({ onNavigate }) {
               <ProductCard
                 key={product.id}
                 product={product}
-                onNavigate={(productId) => {
-                  setSelectedProductId(productId);
-                  onNavigate?.('product');
-                }}
+                onNavigate={() => onNavigate?.('product')}
                 onAddToCart={() => onNavigate?.('cart')}
               />
             ))}

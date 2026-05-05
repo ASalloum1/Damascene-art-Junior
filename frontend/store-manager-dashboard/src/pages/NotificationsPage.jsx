@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Bell,
   ShoppingCart,
@@ -13,10 +13,8 @@ import Badge from '../components/ui/Badge.jsx';
 import Button from '../components/ui/Button.jsx';
 import EmptyState from '../components/ui/EmptyState.jsx';
 import { useToast } from '../components/ui/Toast.jsx';
+import { mockNotifications } from '../data/mockData.js';
 import { relativeTime } from '../utils/formatters.js';
-import { useStoreManager } from '../context/StoreManagerContext';
-import { API_CONFIG } from '../config/api.config.js';
-import { apiRequest, getNotificationTypeLabel } from '../utils/storeApi.js';
 import styles from './NotificationsPage.module.css';
 
 const MAIN_TABS = [
@@ -76,16 +74,22 @@ function getNotifIconBg(type) {
   return map[type] || 'var(--color-cream-dark)';
 }
 
+function getNotifTypeLabel(type) {
+  const map = {
+    order: 'طلب',
+    alert: 'تنبيه',
+    message: 'رسالة',
+    financial: 'مالية',
+    user: 'مستخدم',
+  };
+  return map[type] || type;
+}
+
 export default function NotificationsPage() {
   const { showToast } = useToast();
-  const { notifications: contextNotifications, refreshNotifications } = useStoreManager();
   const [mainTab, setMainTab] = useState('center');
   const [filterTab, setFilterTab] = useState('all');
-  const [notifications, setNotifications] = useState([]);
-
-  useEffect(() => {
-    setNotifications(contextNotifications);
-  }, [contextNotifications]);
+  const [notifications, setNotifications] = useState(() => mockNotifications);
 
   const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
 
@@ -108,35 +112,15 @@ export default function NotificationsPage() {
           : undefined,
     })), [notifications]);
 
-  async function markAllRead() {
-    try {
-      await apiRequest(API_CONFIG.ENDPOINTS.notificationsReadAll, {
-        method: 'POST',
-        body: {},
-      });
-      await refreshNotifications();
-      showToast({ message: 'تم تحديد جميع الإشعارات كمقروءة', type: 'success' });
-    } catch (error) {
-      showToast({ message: error.message || 'تعذر تحديث الإشعارات', type: 'error' });
-    }
+  function markAllRead() {
+    setNotifications((prev) => prev.map((n) => n.read ? n : { ...n, read: true }));
+    showToast({ message: 'تم تحديد جميع الإشعارات كمقروءة', type: 'success' });
   }
 
-  async function markRead(id) {
-    const item = notifications.find((notification) => notification.id === id);
-
-    if (!item || item.read) {
-      return;
-    }
-
-    try {
-      await apiRequest(API_CONFIG.ENDPOINTS.notificationRead(id), {
-        method: 'POST',
-        body: {},
-      });
-      await refreshNotifications();
-    } catch (error) {
-      showToast({ message: error.message || 'تعذر تحديث الإشعار', type: 'error' });
-    }
+  function markRead(id) {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id && !n.read ? { ...n, read: true } : n))
+    );
   }
 
   return (

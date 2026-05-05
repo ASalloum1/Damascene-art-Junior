@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useState } from 'react';
 import {
   DollarSign,
   ShoppingCart,
@@ -6,7 +5,7 @@ import {
   Store,
   Award,
   Clock,
-  ArrowLeft,
+  ArrowLeft
 } from 'lucide-react';
 import StatCard from '../../components/ui/StatCard.jsx';
 import DataTable from '../../components/ui/DataTable.jsx';
@@ -14,34 +13,38 @@ import Badge from '../../components/ui/Badge.jsx';
 import MiniBar from '../../components/ui/MiniBar.jsx';
 import BarChartWrapper from '../../components/charts/BarChartWrapper.jsx';
 import PieChartWrapper from '../../components/charts/PieChartWrapper.jsx';
+import {
+  monthlyRevenue,
+  ordersByStatus,
+  topProducts,
+  recentActivities,
+  mockOrders,
+} from '../../data/mockData.js';
 import { formatCurrency, formatDate, toArabicNum } from '../../utils/formatters.js';
 import { COLORS } from '../../constants/colors.js';
-import { API_CONFIG } from '../../config/api.config.js';
-import { apiRequest, getStatusLabel } from '../../utils/adminApi.js';
 import styles from './Dashboard.module.css';
 
 const ORDER_STATUS_VARIANT = {
-  'مكتمل': 'success',
+  'مكتمل':       'success',
   'قيد التجهيز': 'info',
-  'تم الشحن': 'purple',
-  'جديد': 'warning',
-  'ملغي': 'danger',
-  'مرتجع': 'default',
+  'تم الشحن':    'purple',
+  'جديد':        'warning',
+  'ملغي':        'danger',
+  'مرتجع':       'default',
 };
 
 const ACTIVITY_ACTION_VARIANT = {
-  create: 'success',
-  update: 'info',
-  delete: 'danger',
-  login: 'default',
-  approve: 'success',
-  reject: 'danger',
+  'إضافة':        'success',
+  'تعديل':        'info',
+  'حذف':          'danger',
+  'تسجيل دخول':  'default',
+  'تحديث حالة':  'warning',
 };
 
 const recentOrderHeaders = [
   { key: 'orderNumber', label: 'معرف الطلبية' },
-  { key: 'store', label: 'رواق المتجر' },
-  { key: 'customer', label: 'المقتني' },
+  { key: 'store',       label: 'رواق المتجر' },
+  { key: 'customer',    label: 'المقتني' },
   {
     key: 'productsCount',
     label: 'المقتنيات',
@@ -66,128 +69,9 @@ const recentOrderHeaders = [
   },
 ];
 
-const EMPTY_SUMMARY = {
-  total_sales: 0,
-  new_orders_today: 0,
-  active_products: 0,
-  new_customers: 0,
-};
-
 const NOOP = () => {};
 
-function normalizeDailySales(items = []) {
-  return items.map((item, index) => ({
-    name: item.name || item.label || item.day || item.date || `يوم ${index + 1}`,
-    value: Number(item.value || item.sales || item.total || 0),
-  }));
-}
-
-function normalizeTopProducts(items = []) {
-  const maxSold = Math.max(...items.map((item) => Number(item.sold || item.orders_count || item.count || 0)), 1);
-
-  return items.map((item) => {
-    const sold = Number(item.sold || item.orders_count || item.count || 0);
-    return {
-      id: item.id,
-      name: item.name || item.product || 'منتج',
-      sold,
-      total: maxSold,
-    };
-  });
-}
-
-function normalizeOrders(items = []) {
-  return items.map((order) => ({
-    id: order.id,
-    orderNumber: order.order_number || `#${order.id}`,
-    store: order.store || order.store_name || order.shipping?.store || '—',
-    customer: order.customer || order.customer_name || order.shipping?.recipient_name || '—',
-    productsCount: order.products_count || order.items_count || order.items?.length || 0,
-    amount: Number(order.order_total || order.amount || order.total_price || 0),
-    status: order.status_label || getStatusLabel(order.status),
-    date: order.created_at || order.updated_at,
-  }));
-}
-
-function normalizeStatusChart(items = [], fallbackOrders = []) {
-  if (items.length > 0) {
-    return items.map((item) => ({
-      name: item.name || item.label || getStatusLabel(item.status),
-      value: Number(item.value || item.count || 0),
-      color: item.color,
-    }));
-  }
-
-  const grouped = fallbackOrders.reduce((acc, order) => {
-    acc[order.status] = (acc[order.status] || 0) + 1;
-    return acc;
-  }, {});
-
-  return Object.entries(grouped).map(([name, value]) => ({ name, value }));
-}
-
-function normalizeActivities(items = []) {
-  return items.map((activity, index) => ({
-    id: activity.id || index,
-    action: activity.action || activity.type || 'update',
-    user: activity.user || activity.actor || activity.actor_name || 'النظام',
-    details: activity.details || activity.description || activity.title || 'تم تسجيل نشاط جديد',
-  }));
-}
-
 export default function DashboardPage({ onNavigate = NOOP }) {
-  const [loading, setLoading] = useState(true);
-  const [summary, setSummary] = useState(EMPTY_SUMMARY);
-  const [recentOrders, setRecentOrders] = useState([]);
-  const [topProducts, setTopProducts] = useState([]);
-  const [salesLast7Days, setSalesLast7Days] = useState([]);
-  const [ordersByStatus, setOrdersByStatus] = useState([]);
-  const [recentActivities, setRecentActivities] = useState([]);
-
-  useEffect(() => {
-    let mounted = true;
-
-    async function loadDashboard() {
-      setLoading(true);
-
-      try {
-        const [dashboardData, analyticsData] = await Promise.all([
-          apiRequest(API_CONFIG.ENDPOINTS.dashboard),
-          apiRequest(API_CONFIG.ENDPOINTS.analytics),
-        ]);
-
-        if (!mounted) {
-          return;
-        }
-
-        const dashboardPayload = dashboardData?.data || {};
-        const analyticsPayload = analyticsData?.data || {};
-        const normalizedOrders = normalizeOrders(dashboardPayload.recent_orders || []);
-
-        setSummary({ ...EMPTY_SUMMARY, ...(dashboardPayload.summary || {}) });
-        setRecentOrders(normalizedOrders);
-        setTopProducts(normalizeTopProducts(dashboardPayload.top_products || []));
-        setSalesLast7Days(normalizeDailySales(dashboardPayload.sales_last_7_days || []));
-        setOrdersByStatus(
-          normalizeStatusChart(analyticsPayload.orders_by_status || [], normalizedOrders)
-        );
-        setRecentActivities(normalizeActivities(analyticsPayload.recent_activities || []));
-      } catch (error) {
-        console.error('Admin dashboard load failed:', error);
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    }
-
-    loadDashboard();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
   const handleOpenAllOrders = () => onNavigate('orders');
   const handleOpenAllOrdersKeyDown = (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -196,16 +80,15 @@ export default function DashboardPage({ onNavigate = NOOP }) {
     }
   };
 
-  const safeTopProducts = useMemo(() => topProducts.slice(0, 5), [topProducts]);
-
   return (
     <div className={`${styles.page} page-enter`}>
+      {/* Top Stats Row */}
       <section className={styles.statsRow} aria-label="إحصائيات عامة">
         <div className="stagger-1">
           <StatCard
             icon={DollarSign}
             label="إجمالي العوائد الملكية"
-            value={formatCurrency(summary.total_sales)}
+            value="١٢٥,٤٣٠ $"
             color="green"
             subtitle="خلال الشهر الحالي"
           />
@@ -214,41 +97,42 @@ export default function DashboardPage({ onNavigate = NOOP }) {
           <StatCard
             icon={ShoppingCart}
             label="مجموع الطلبيات"
-            value={toArabicNum(summary.new_orders_today)}
+            value="٤٨٦"
             color="blue"
-            subtitle="طلبات جديدة اليوم"
+            subtitle="خلال الشهر الحالي"
           />
         </div>
         <div className="stagger-3">
           <StatCard
             icon={Users}
             label="إجمالي رواد المنصة"
-            value={toArabicNum(summary.new_customers)}
+            value="١,٢٤٥"
             color="gold"
-            subtitle="عملاء جدد"
+            subtitle="عضوية نشطة"
           />
         </div>
         <div className="stagger-4">
           <StatCard
             icon={Store}
             label="الأروقة النشطة"
-            value={toArabicNum(summary.active_products)}
+            value="٣"
             color="orange"
-            subtitle="منتج نشط"
+            subtitle="من أصل ٤ دور عرض"
           />
         </div>
       </section>
 
+      {/* Row 2: Revenue Chart + Top Products */}
       <div className={styles.row2}>
         <section className={styles.chartCard} aria-label="بيان العوائد">
           <BarChartWrapper
-            data={salesLast7Days}
+            data={monthlyRevenue}
             xKey="name"
             yKey="value"
             color={COLORS.gold}
-            title="مبيعات آخر ٧ أيام"
+            title="بيان العوائد الشهري"
             height={280}
-            formatValue={(v) => `${Math.round(v)}`}
+            formatValue={(v) => `${Math.round(v / 1000)}k`}
           />
         </section>
 
@@ -258,8 +142,8 @@ export default function DashboardPage({ onNavigate = NOOP }) {
             <h3 className={styles.cardTitle}>المقتنيات الأكثر تفضيلاً</h3>
           </header>
           <div className={styles.productsList}>
-            {safeTopProducts.map((product, index) => (
-              <div key={product.id || index} className={styles.productItem}>
+            {topProducts.map((product, index) => (
+              <div key={index} className={styles.productItem}>
                 <span className={styles.productRank}>{toArabicNum(index + 1)}</span>
                 <div className={styles.productBarWrapper}>
                   <MiniBar
@@ -276,6 +160,7 @@ export default function DashboardPage({ onNavigate = NOOP }) {
         </section>
       </div>
 
+      {/* Row 3: Orders by Status + Recent Activities */}
       <div className={styles.row3}>
         <section className={styles.pieCard} aria-label="توزع الطلبيات">
           <PieChartWrapper
@@ -309,6 +194,7 @@ export default function DashboardPage({ onNavigate = NOOP }) {
         </section>
       </div>
 
+      {/* Row 4: Recent Orders Table */}
       <section className={styles.tableCard} aria-label="أحدث الطلبيات">
         <header className={styles.tableCardHeader}>
           <div className={styles.cardHeader}>
@@ -328,8 +214,7 @@ export default function DashboardPage({ onNavigate = NOOP }) {
         </header>
         <DataTable
           headers={recentOrderHeaders}
-          rows={recentOrders.slice(0, 5)}
-          loading={loading}
+          rows={mockOrders.slice(0, 5)}
         />
       </section>
     </div>

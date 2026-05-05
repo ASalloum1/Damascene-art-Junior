@@ -6,24 +6,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    strictPort: true,
-    allowedHosts: ['.ngrok-free.app', '.ngrok-free.dev'],
     proxy: {
-      '/api': {
-        target: 'http://127.0.0.1:8000',
-        changeOrigin: true,
-      },
       '/storage': {
-        target: 'http://127.0.0.1:8000',
+        target: process.env.VITE_API_BASE_URL || 'https://undecided-vastly-replica.ngrok-free.dev',
         changeOrigin: true,
-      },
-      '/admin': {
-        target: 'http://localhost:5174',
-        changeOrigin: true,
-      },
-      '/store': {
-        target: 'http://localhost:5175',
-        changeOrigin: true,
+        headers: {
+          'ngrok-skip-browser-warning': 'true',
+        },
       },
     },
   },

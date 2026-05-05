@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Eye,
-  Truck,
-  CheckCircle2,
+  XCircle,
 } from 'lucide-react';
 import DataTable from '../../components/ui/DataTable.jsx';
 import Badge from '../../components/ui/Badge.jsx';
@@ -12,148 +11,108 @@ import ActionMenu from '../../components/ui/ActionMenu.jsx';
 import Modal from '../../components/ui/Modal.jsx';
 import Button from '../../components/ui/Button.jsx';
 import { useToast } from '../../components/ui/Toast.jsx';
+import { mockOrders, mockStores, mockProducts } from '../../data/mockData.js';
 import { formatCurrency, formatDate, toArabicNum } from '../../utils/formatters.js';
-import { API_CONFIG } from '../../config/api.config.js';
-import { apiRequest, getPaymentMethodLabel, getStatusLabel } from '../../utils/adminApi.js';
 import styles from './OrdersManagement.module.css';
 
 const STATUS_VARIANT = {
-  مكتمل: 'success',
+  'مكتمل':       'success',
   'قيد التجهيز': 'info',
-  'تم الشحن': 'purple',
-  جديد: 'warning',
-  ملغي: 'danger',
-  مرتجع: 'default',
+  'تم الشحن':    'purple',
+  'جديد':        'warning',
+  'ملغي':        'danger',
+  'مرتجع':       'default',
 };
 
 const PAGE_SIZE = 10;
 const EMPTY_SELECTION = [];
 const NOOP = () => {};
 
-function normalizeOrder(order) {
-  return {
-    id: order.id,
-    orderNumber: order.order_number || `#${order.id}`,
-    store: order.store || order.store_name || '—',
-    customer: order.customer || order.customer_name || order.shipping?.recipient_name || '—',
-    email: order.email || '—',
-    productsCount: Number(order.products_count || order.items_count || order.product_carts?.length || 0),
-    amount: Number(order.amount || order.order_total || order.total_price || 0),
-    paymentMethod: order.payment_method_label || getPaymentMethodLabel(order.payment_method),
-    status: order.status_label || getStatusLabel(order.status),
-    statusKey: order.status,
-    date: order.created_at || order.updated_at,
-    items: order.items || order.product_carts || [],
-  };
-}
-
+// Compute counts per status
 function countByStatus(orders, status) {
   if (status === 'الكل') return orders.length;
-  return orders.filter((order) => order.status === status).length;
+  return orders.filter((o) => o.status === status).length;
+}
+
+// Generate sample order items from products
+function getOrderItems(orderId) {
+  const sampleItems = [
+    { productId: 'p1', productName: 'طاولة موزاييك دمشقية', quantity: 1, price: 12500 },
+    { productId: 'p2', productName: 'صندوق خشب مطعّم بالصدف', quantity: 2, price: 4800 },
+    { productId: 'p3', productName: 'مرآة زجاج منفوخ', quantity: 1, price: 3200 },
+  ];
+
+  if (orderId === 'o1') return sampleItems.slice(0, 2);
+  if (orderId === 'o2') return sampleItems.slice(1, 2);
+  if (orderId === 'o3') return sampleItems.slice(2, 3);
+
+  return sampleItems.slice(0, 1);
 }
 
 export default function OrdersManagementPage() {
   const { showToast } = useToast();
-  const [orders, setOrders] = useState([]);
-  const [stores, setStores] = useState([]);
-  const [activeTab, setActiveTab] = useState('الكل');
-  const [search, setSearch] = useState('');
-  const [storeFilter, setStore] = useState('');
-  const [paymentFilter, setPayment] = useState('');
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(PAGE_SIZE);
-  const [viewOpen, setViewOpen] = useState(false);
-  const [viewOrder, setViewOrder] = useState(null);
 
-  const loadOrders = useCallback(async () => {
-    try {
-      const data = await apiRequest(API_CONFIG.ENDPOINTS.orders);
-      setOrders((data?.data?.orders || []).map(normalizeOrder));
-    } catch (error) {
-      showToast({ message: error.message || 'تعذر تحميل الطلبات', type: 'error' });
-    }
-  }, [showToast]);
+  const [activeTab, setActiveTab]       = useState(() => 'الكل');
+  const [search, setSearch]             = useState(() => '');
+  const [storeFilter, setStore]         = useState(() => '');
+  const [paymentFilter, setPayment]     = useState(() => '');
+  const [page, setPage]                 = useState(() => 1);
+  const [pageSize, setPageSize]         = useState(() => PAGE_SIZE);
+  const [viewOpen, setViewOpen]         = useState(false);
+  const [viewOrder, setViewOrder]       = useState(null);
 
-  const loadStores = useCallback(async () => {
-    try {
-      const data = await apiRequest(API_CONFIG.ENDPOINTS.stores);
-      setStores(data?.data?.stores || []);
-    } catch (error) {
-      showToast({ message: error.message || 'تعذر تحميل المتاجر', type: 'error' });
-    }
-  }, [showToast]);
-
-  useEffect(() => {
-    loadOrders();
-    loadStores();
-  }, [loadOrders, loadStores]);
-
-  const storeOptions = useMemo(
-    () => stores.map((store) => ({ value: store.name, label: store.name })),
-    [stores]
+  const storeOptions = useMemo(() => 
+    mockStores.map((s) => ({ value: s.name, label: s.name })),
+    []
   );
 
-  const tabs = useMemo(() => [
-    { id: 'الكل', label: 'الكل', count: countByStatus(orders, 'الكل') },
-    { id: 'جديد', label: 'جديد', count: countByStatus(orders, 'جديد') },
-    { id: 'قيد التجهيز', label: 'قيد التجهيز', count: countByStatus(orders, 'قيد التجهيز') },
-    { id: 'تم الشحن', label: 'تم الشحن', count: countByStatus(orders, 'تم الشحن') },
-    { id: 'مكتمل', label: 'مكتمل', count: countByStatus(orders, 'مكتمل') },
-    { id: 'ملغي', label: 'ملغي', count: countByStatus(orders, 'ملغي') },
-    { id: 'مرتجع', label: 'مرتجع', count: countByStatus(orders, 'مرتجع') },
-  ], [orders]);
+  const TABS = useMemo(() => [
+    { id: 'الكل',          label: 'الكل',          count: countByStatus(mockOrders, 'الكل') },
+    { id: 'جديد',          label: 'جديد',          count: countByStatus(mockOrders, 'جديد') },
+    { id: 'قيد التجهيز',   label: 'قيد التجهيز',   count: countByStatus(mockOrders, 'قيد التجهيز') },
+    { id: 'تم الشحن',      label: 'تم الشحن',      count: countByStatus(mockOrders, 'تم الشحن') },
+    { id: 'مكتمل',         label: 'مكتمل',         count: countByStatus(mockOrders, 'مكتمل') },
+    { id: 'ملغي',          label: 'ملغي',          count: countByStatus(mockOrders, 'ملغي') },
+    { id: 'مرتجع',         label: 'مرتجع',         count: countByStatus(mockOrders, 'مرتجع') },
+  ], []);
 
   const filtered = useMemo(() => {
-    return orders.filter((order) => {
-      const matchTab = activeTab === 'الكل' || order.status === activeTab;
-      const matchSearch =
-        !search ||
-        order.orderNumber.toLowerCase().includes(search.toLowerCase()) ||
-        order.customer.toLowerCase().includes(search.toLowerCase());
-      const matchStore = !storeFilter || order.store === storeFilter;
-      const matchPayment = !paymentFilter || order.paymentMethod === paymentFilter;
+    return mockOrders.filter((o) => {
+      const matchTab     = activeTab === 'الكل' || o.status === activeTab;
+      const matchSearch  = !search || 
+        o.orderNumber.toLowerCase().includes(search.toLowerCase()) || 
+        o.customer.toLowerCase().includes(search.toLowerCase());
+      const matchStore   = !storeFilter || o.store === storeFilter;
+      const matchPayment = !paymentFilter || o.paymentMethod === paymentFilter;
       return matchTab && matchSearch && matchStore && matchPayment;
     });
-  }, [orders, activeTab, search, storeFilter, paymentFilter]);
+  }, [activeTab, search, storeFilter, paymentFilter]);
 
-  const pagedRows = useMemo(
-    () => filtered.slice((page - 1) * pageSize, page * pageSize),
+  const pagedRows = useMemo(() => 
+    filtered.slice((page - 1) * pageSize, page * pageSize),
     [filtered, page, pageSize]
   );
 
-  function resetFilters() {
+  const resetFilters = () => {
     setSearch('');
     setStore('');
     setPayment('');
     setPage(1);
-  }
+  };
 
-  function handleViewOrder(order) {
+  const handleViewOrder = (order) => {
     setViewOrder(order);
     setViewOpen(true);
-  }
+  };
 
-  async function updateOrderStatus(order, status) {
-    try {
-      await apiRequest(API_CONFIG.ENDPOINTS.orderStatus(order.id), {
-        method: 'POST',
-        body: { status },
-      });
-      showToast({ message: 'تم تحديث حالة الطلب', type: 'success' });
-      await loadOrders();
-    } catch (error) {
-      showToast({ message: error.message || 'تعذر تحديث حالة الطلب', type: 'error' });
-    }
-  }
-
-  const headers = [
+  const headers = useMemo(() => [
     { key: 'orderNumber', label: 'رقم الطلب' },
-    { key: 'store', label: 'المتجر' },
+    { key: 'store',       label: 'المتجر' },
     {
       key: 'customer',
       label: 'العميل',
       render: (val, row) => (
-        <div className={styles.customerCell}>
+        <div className={styles.customerCell} aria-label={`العميل: ${val}`}>
           <span className={styles.customerName}>{val}</span>
           <span className={styles.customerEmail}>{row.email}</span>
         </div>
@@ -174,7 +133,13 @@ export default function OrdersManagementPage() {
     {
       key: 'status',
       label: 'الحالة',
-      render: (val) => <Badge text={val} variant={STATUS_VARIANT[val] || 'default'} />,
+      render: (val) => (
+        <Badge 
+          text={val} 
+          variant={STATUS_VARIANT[val] || 'default'} 
+          aria-label={`حالة الطلب: ${val}`}
+        />
+      ),
     },
     {
       key: 'date',
@@ -188,34 +153,46 @@ export default function OrdersManagementPage() {
       render: (_, row) => (
         <ActionMenu
           actions={[
-            { label: 'عرض التفاصيل', icon: Eye, onClick: () => handleViewOrder(row) },
-            { label: 'تم الشحن', icon: Truck, onClick: () => updateOrderStatus(row, 'shipped') },
-            { label: 'مكتمل', icon: CheckCircle2, onClick: () => updateOrderStatus(row, 'completed') },
+            {
+              label: 'عرض التفاصيل',
+              icon: Eye,
+              onClick: () => handleViewOrder(row)
+            },
+            {
+              label: 'إلغاء',
+              icon: XCircle,
+              danger: true,
+              onClick: () => showToast({ message: `تم إلغاء الطلب ${row.orderNumber}`, type: 'warning' })
+            },
           ]}
         />
       ),
     },
-  ];
+  ], [showToast]);
 
   return (
     <div className={`${styles.page} page-enter`} role="main" aria-labelledby="page-title">
+      {/* Header */}
       <div className={styles.pageHeader}>
         <h1 id="page-title" className={styles.pageTitle}>إدارة الطلبات</h1>
-        <p className={styles.pageSubtitle}>متابعة حالات الطلبات ومعالجتها من الاستلام حتى التسليم</p>
+                <p className={styles.pageSubtitle}>متابعة حالات الطلبات ومعالجتها من الاستلام حتى التسليم</p>
+
       </div>
 
+      {/* Status Tabs */}
       <div className={styles.tabsContainer} role="navigation" aria-label="تصفية حسب الحالة">
         <Tabs
-          tabs={tabs}
+          tabs={TABS}
           activeTab={activeTab}
-          onChange={(id) => {
-            setActiveTab(id);
-            setPage(1);
+          onChange={(id) => { 
+            setActiveTab(id); 
+            setPage(1); 
           }}
           variant="pills"
         />
       </div>
 
+      {/* Filter Bar */}
       <FilterBar
         filters={[
           {
@@ -248,10 +225,9 @@ export default function OrdersManagementPage() {
               setPage(1);
             },
             options: [
-              { value: 'بطاقة ائتمان', label: 'بطاقة ائتمان' },
+              { value: 'بطاقة ائتمان',   label: 'بطاقة ائتمان' },
               { value: 'دفع عند التسليم', label: 'دفع عند التسليم' },
-              { value: 'تحويل بنكي', label: 'تحويل بنكي' },
-              { value: 'PayPal', label: 'PayPal' },
+              { value: 'تحويل بنكي',     label: 'تحويل بنكي' },
             ],
           },
         ]}
@@ -259,6 +235,7 @@ export default function OrdersManagementPage() {
         activeCount={[search, storeFilter, paymentFilter].filter(Boolean).length}
       />
 
+      {/* Table */}
       <div className={styles.tableCard}>
         <DataTable
           headers={headers}
@@ -270,40 +247,70 @@ export default function OrdersManagementPage() {
             page,
             pageSize,
             total: filtered.length,
-            onPageChange: (value) => setPage(value),
-            onPageSizeChange: (value) => {
-              setPageSize(value);
+            onPageChange: (p) => setPage(p),
+            onPageSizeChange: (s) => {
+              setPageSize(s);
               setPage(1);
             },
           }}
+          ariaLabel="جدول الطلبات"
         />
       </div>
 
+      {/* View Order Details Modal */}
       <Modal
         isOpen={viewOpen}
         onClose={() => setViewOpen(false)}
         title={`تفاصيل الطلب: ${viewOrder?.orderNumber}`}
         size="md"
-        footer={(
+        footer={
           <div className={styles.modalFooter}>
             <Button variant="ghost" onClick={() => setViewOpen(false)}>إغلاق</Button>
           </div>
-        )}
+        }
       >
         <div className={styles.orderDetailsContent}>
+          {/* Order Information */}
           <div className={styles.orderInfoSection}>
             <h3 className={styles.sectionTitle}>معلومات الطلب</h3>
             <div className={styles.infoGrid}>
-              <div className={styles.infoItem}><label>رقم الطلب</label><p>{viewOrder?.orderNumber}</p></div>
-              <div className={styles.infoItem}><label>العميل</label><p>{viewOrder?.customer}</p></div>
-              <div className={styles.infoItem}><label>البريد الإلكتروني</label><p>{viewOrder?.email}</p></div>
-              <div className={styles.infoItem}><label>المتجر</label><p>{viewOrder?.store}</p></div>
-              <div className={styles.infoItem}><label>تاريخ الطلب</label><p>{formatDate(viewOrder?.date)}</p></div>
-              <div className={styles.infoItem}><label>طريقة الدفع</label><p>{viewOrder?.paymentMethod}</p></div>
-              <div className={styles.infoItem}><label>الحالة</label><p><Badge text={viewOrder?.status} variant={STATUS_VARIANT[viewOrder?.status] || 'default'} /></p></div>
+              <div className={styles.infoItem}>
+                <label>رقم الطلب</label>
+                <p>{viewOrder?.orderNumber}</p>
+              </div>
+              <div className={styles.infoItem}>
+                <label>العميل</label>
+                <p>{viewOrder?.customer}</p>
+              </div>
+              <div className={styles.infoItem}>
+                <label>البريد الإلكتروني</label>
+                <p>{viewOrder?.email}</p>
+              </div>
+              <div className={styles.infoItem}>
+                <label>المتجر</label>
+                <p>{viewOrder?.store}</p>
+              </div>
+              <div className={styles.infoItem}>
+                <label>تاريخ الطلب</label>
+                <p>{formatDate(viewOrder?.date)}</p>
+              </div>
+              <div className={styles.infoItem}>
+                <label>طريقة الدفع</label>
+                <p>{viewOrder?.paymentMethod}</p>
+              </div>
+              <div className={styles.infoItem}>
+                <label>الحالة</label>
+                <p>
+                  <Badge
+                    text={viewOrder?.status}
+                    variant={STATUS_VARIANT[viewOrder?.status] || 'default'}
+                  />
+                </p>
+              </div>
             </div>
           </div>
 
+          {/* Order Summary */}
           <div className={styles.orderSummarySection}>
             <h3 className={styles.sectionTitle}>ملخص الطلب</h3>
             <div className={styles.itemsTable}>
@@ -313,12 +320,12 @@ export default function OrdersManagementPage() {
                 <span className={styles.colPrice}>السعر</span>
                 <span className={styles.colTotal}>الإجمالي</span>
               </div>
-              {(viewOrder?.items || []).map((item, index) => (
-                <div key={index} className={styles.tableRow}>
-                  <span className={styles.colProduct}>{item.product?.name || item.product_name || '—'}</span>
-                  <span className={styles.colQuantity}>{toArabicNum(item.count || item.quantity || 0)}</span>
-                  <span className={styles.colPrice}>{formatCurrency(item.product?.new_price || item.price || 0)}</span>
-                  <span className={styles.colTotal}>{formatCurrency(item.sum_price || (item.product?.new_price || item.price || 0) * (item.count || item.quantity || 0))}</span>
+              {getOrderItems(viewOrder?.id).map((item, idx) => (
+                <div key={idx} className={styles.tableRow}>
+                  <span className={styles.colProduct}>{item.productName}</span>
+                  <span className={styles.colQuantity}>{toArabicNum(item.quantity)}</span>
+                  <span className={styles.colPrice}>{formatCurrency(item.price)}</span>
+                  <span className={styles.colTotal}>{formatCurrency(item.price * item.quantity)}</span>
                 </div>
               ))}
               <div className={styles.totalRow}>

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Mail, Phone, Smartphone, MapPin, Clock, Map } from 'lucide-react';
 import { useApi } from '../context/ApiContext.jsx';
-import { API_CONFIG } from '../config/api.config.js';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { InputField } from '../components/InputField.jsx';
 import { Button } from '../components/Button.jsx';
@@ -28,11 +27,12 @@ export function ContactPage({ onNavigate }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${baseUrl}${endpoints.contactUs}`, {
+      const response = await fetch(`${baseUrl}/api/customers/contact-us`, {
         method: 'POST',
         headers: {
-          ...API_CONFIG.DEFAULT_HEADERS,
-          Authorization: `Bearer ${bearerToken}`,
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${bearerToken}`,
+          'ngrok-skip-browser-warning': 'true',
         },
         body: JSON.stringify({
           subject,

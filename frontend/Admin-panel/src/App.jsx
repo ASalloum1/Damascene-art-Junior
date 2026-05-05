@@ -12,7 +12,6 @@ import NotificationsPage from './pages/admin/Notifications.jsx';
 import ReviewsManagementPage from './pages/admin/ReviewsManagement.jsx';
 import AdminProfilePage from './pages/admin/AdminProfile.jsx';
 import CouponsManagementPage from './pages/admin/CouponsManagement.jsx';
-import { AdminProvider, useAdmin } from './context/AdminContext.jsx';
 
 const PAGES = {
   dashboard: DashboardPage,
@@ -29,37 +28,14 @@ const PAGES = {
   coupons: CouponsManagementPage,
 };
 
-function AdminShell() {
+export default function App() {
   const [activePage, setActivePage] = useState('dashboard');
-  const { badgeCounts, isBootstrapping, profile } = useAdmin();
 
   const Page = PAGES[activePage] || DashboardPage;
 
-  if (isBootstrapping) {
-    return (
-      <div style={{ padding: '48px', textAlign: 'center' }}>
-        جاري تهيئة لوحة التحكم...
-      </div>
-    );
-  }
-
   return (
-    <AdminLayout
-      activePage={activePage}
-      setActivePage={setActivePage}
-      badgeCounts={badgeCounts}
-      notificationCount={badgeCounts.notifications}
-      adminName={profile?.full_name || `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || 'المشرف العام'}
-    >
+    <AdminLayout activePage={activePage} setActivePage={setActivePage}>
       <Page onNavigate={setActivePage} />
     </AdminLayout>
-  );
-}
-
-export default function App() {
-  return (
-    <AdminProvider>
-      <AdminShell />
-    </AdminProvider>
   );
 }
