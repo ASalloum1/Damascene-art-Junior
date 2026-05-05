@@ -232,4 +232,4 @@ def get_system_prompt(language: str = "auto") -> str:
         return SYSTEM_PROMPT_AR
     elif language == "en":
         return SYSTEM_PROMPT_EN
-    return SYSTEM_PROMPT_AR + "\\n\\n" + SYSTEM_PROMPT_EN
+    return SYSTEM_PROMPT_AR + "\n\n" + SYSTEM_PROMPT_EN

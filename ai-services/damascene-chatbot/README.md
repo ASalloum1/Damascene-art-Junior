@@ -5,23 +5,25 @@ A bilingual (Arabic/English) RAG-powered chatbot API for the Damascene Art e-com
 ## Architecture
 
 ```
-Customer → Laravel API → RAG Service (FastAPI) → Gemini API
+Customer → Laravel API → RAG Service (FastAPI) → OpenAI-compatible LLM proxy
                               ↕
                          ChromaDB (Vector DB)
                               ↑
                      Knowledge Base (2,035 QA pairs)
 ```
 
+The LLM call goes through an OpenAI-compatible endpoint (Skywork proxy by default), so any compatible provider (OpenRouter, vLLM, LM Studio, etc.) can be swapped in by changing `LLM_BASE_URL`.
+
 ## Quick Start
 
 ### 1. Install dependencies
 
 ```bash
-cd damascene-rag-service
+cd ai-services/damascene-chatbot
 pip install -r requirements.txt
 ```
 
-> **Note:** First run will download the embedding model (~2.2 GB). This is a one-time download.
+> **Note:** First run of the ingest script will download the embedding model (~2.2 GB) into the Hugging Face cache. This is a one-time download.
 
 ### 2. Configure environment
 
@@ -29,12 +31,13 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Edit `.env` and add your Gemini API key:
-```
-GEMINI_API_KEY=your_key_here
-```
+`.env.example` ships with working defaults for the Skywork proxy. If you want to point at a different OpenAI-compatible provider, edit `.env`:
 
-Get your API key from: https://aistudio.google.com/apikey
+```
+LLM_BASE_URL=https://your-provider.example/v1
+LLM_API_KEY=your_key_here
+LLM_MODEL=your-model-id
+```
 
 ### 3. Place the knowledge base file
 
@@ -110,12 +113,12 @@ curl -X POST "http://localhost:8000/search?query=shipping+to+europe&top_k=3"
 ## Project Structure
 
 ```
-damascene-rag-service/
+damascene-chatbot/
 ├── app/
 │   ├── __init__.py
 │   ├── config.py          # Environment configuration
 │   ├── embeddings.py      # ChromaDB + embedding model
-│   ├── llm.py             # Gemini API integration
+│   ├── llm.py             # OpenAI-compatible LLM client
 │   ├── prompts.py         # System prompts (AR/EN)
 │   └── main.py            # FastAPI app + endpoints
 ├── scripts/
@@ -123,7 +126,7 @@ damascene-rag-service/
 │   └── run.py             # Server start script
 ├── .env.example
 ├── requirements.txt
-├── damascene_knowledge_base.json  # Place here
+├── damascene_knowledge_base.json
 └── README.md
 ```
 
@@ -148,7 +151,9 @@ class ChatbotService
 
     public function chat(string $message, string $sessionId, array $history = []): array
     {
-        $response = Http::timeout(15)
+        // Timeout is 60s because the RAG service streams the LLM response
+        // and very long answers can take 20–30s to fully arrive.
+        $response = Http::timeout(60)
             ->post("{$this->ragUrl}/chat", [
                 'message'              => $message,
                 'session_id'           => $sessionId,

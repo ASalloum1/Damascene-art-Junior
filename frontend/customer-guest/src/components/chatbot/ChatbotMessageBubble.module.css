@@ -1,0 +1,195 @@
+/* ─────────────────────────────────────────────────────────────────
+   ChatbotMessageBubble — Damascene marquetry bubbles.
+   Asymmetric corner radii anchor the bubble to its speaker.
+   Hairline gold-alpha border = "inlay seam".
+   ───────────────────────────────────────────────────────────────── */
+
+.row {
+  display: flex;
+  width: 100%;
+  animation: bubbleEnter 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.rowUser {
+  /* User bubbles trail toward the speaker side. */
+  justify-content: flex-end;
+}
+
+.rowAssistant {
+  justify-content: flex-start;
+}
+
+@keyframes bubbleEnter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bubble {
+  max-width: 78%;
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-arabic);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  border: 1px solid transparent;
+  box-shadow: var(--shadow-xs);
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  position: relative;
+}
+
+/* ── User: warm gold-tinted "carved gold" tablet ──────────────── */
+.user {
+  background:
+    linear-gradient(
+      180deg,
+      var(--color-cream) 0%,
+      var(--color-gold-bg) 100%
+    );
+  color: var(--color-navy-deep);
+  border-color: var(--color-gold-alpha-25);
+  /* Asymmetric: flatten the corner that points at the speaker (bottom-end in LTR/RTL alike). */
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-lg);
+}
+
+/* In RTL the speaker is on the right; flip the flattened corner accordingly. */
+[dir='rtl'] .user {
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm);
+}
+
+/* ── Assistant: cool cream/glass tablet ───────────────────────── */
+.assistant {
+  background: var(--color-cream);
+  color: var(--color-navy);
+  border-color: var(--color-gold-alpha-15);
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm);
+}
+
+[dir='rtl'] .assistant {
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-lg);
+}
+
+/* ── System (e.g. error notice) ───────────────────────────────── */
+.system {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  border-color: var(--color-error);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  margin-inline: auto;
+}
+
+/* When the bubble itself is errored (failed user send), tint accordingly. */
+.errored {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 1px var(--color-error-bg);
+}
+
+.content {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.line {
+  display: inline;
+}
+
+.link {
+  color: var(--color-gold-dark);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.link:hover {
+  color: var(--color-gold);
+}
+
+.link:focus-visible {
+  outline: none;
+  box-shadow: var(--glow-gold);
+  border-radius: var(--radius-sm);
+}
+
+/* Streaming caret — blinks softly while the assistant is still typing. */
+.caret {
+  display: inline-block;
+  margin-inline-start: 2px;
+  color: var(--color-gold);
+  animation: bubbleCaret 1s steps(1) infinite;
+}
+
+@keyframes bubbleCaret {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+/* ── Error row (retry button) ─────────────────────────────────── */
+.errorRow {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--color-error);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.errorMsg {
+  color: var(--color-error);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+}
+
+.retryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 4px 10px;
+  background: var(--color-cream);
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-full);
+  font-family: var(--font-arabic);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.retryBtn:hover {
+  background: var(--color-error);
+  color: var(--color-cream);
+}
+
+.retryBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--glow-error);
+}
+
+@media (max-width: 767px) {
+  .bubble {
+    max-width: 86%;
+    font-size: var(--font-size-sm);
+    padding: var(--space-3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    animation: none;
+  }
+  .caret {
+    animation: none;
+  }
+}

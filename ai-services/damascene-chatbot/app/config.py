@@ -23,5 +23,13 @@ class Settings:
     TOP_K: int = int(os.getenv("TOP_K", "5"))
     COLLECTION_NAME: str = "damascene_kb"
 
+    # Security — when API_KEY is empty, /chat /ingest /search are unauthenticated.
+    # When set, callers must send X-API-Key: <value>.
+    API_KEY: str = os.getenv("API_KEY", "")
+    # Comma-separated allowed CORS origins. Use "*" to allow any origin.
+    CORS_ORIGINS: list[str] = [
+        o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",") if o.strip()
+    ]
+
 
 settings = Settings()

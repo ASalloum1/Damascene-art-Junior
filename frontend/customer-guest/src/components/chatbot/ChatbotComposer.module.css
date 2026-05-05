@@ -1,0 +1,198 @@
+/* ─────────────────────────────────────────────────────────────────
+   ChatbotComposer — quiet bar at the bottom of the drawer.
+   The textarea sits inside a "well" with a hairline gold inlay.
+   The send button is a polished gold pill that flips to a "stop"
+   square while the assistant is generating.
+   ───────────────────────────────────────────────────────────────── */
+
+.composer {
+  flex: 0 0 auto;
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  background: var(--color-cream);
+  border-top: 1px solid var(--color-gold-alpha-15);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.fieldWrap {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  background: var(--color-white);
+  border: 1px solid var(--color-gold-alpha-15);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.fieldWrap:focus-within {
+  border-color: var(--color-gold);
+  box-shadow: var(--glow-gold);
+}
+
+.fieldOver {
+  border-color: var(--color-error);
+}
+
+.fieldOver:focus-within {
+  border-color: var(--color-error);
+  box-shadow: var(--glow-error);
+}
+
+.shake {
+  animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+.textarea {
+  flex: 1;
+  min-height: 24px;
+  max-height: 160px;
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--color-navy);
+  font-family: var(--font-arabic);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  resize: none;
+  overflow-y: hidden;
+}
+
+.textarea::placeholder {
+  color: var(--color-stone);
+}
+
+.textarea:disabled {
+  color: var(--color-stone);
+  cursor: not-allowed;
+}
+
+/* ── Send / stop button ───────────────────────────────────────── */
+.sendBtn {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-gold-alpha-25);
+  background:
+    radial-gradient(
+      circle at 30% 25%,
+      var(--color-gold-light) 0%,
+      var(--color-gold) 60%,
+      var(--color-gold-dark) 100%
+    );
+  color: var(--color-navy-deep);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-xs);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.sendBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.sendBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.sendBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--glow-gold);
+}
+
+.sendBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.sendBtnStop {
+  background: var(--color-error);
+  color: var(--color-cream);
+  border-color: var(--color-error);
+}
+
+.sendBtnStop:hover:not(:disabled) {
+  background: var(--color-error);
+  filter: brightness(0.95);
+}
+
+.sendBtnStop:focus-visible {
+  outline: none;
+  box-shadow: var(--glow-error);
+}
+
+/* ── Meta row (hint + counter) ────────────────────────────────── */
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-family: var(--font-arabic);
+  font-size: var(--font-size-xs);
+  color: var(--color-stone);
+  padding-inline: var(--space-2);
+}
+
+.hint {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.counter {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-stone-mid);
+}
+
+.counterWarn {
+  color: var(--color-warning);
+  font-weight: 500;
+}
+
+.counterError {
+  color: var(--color-error);
+  font-weight: 700;
+}
+
+@media (max-width: 767px) {
+  .composer {
+    padding: var(--space-2) var(--space-3) calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+  }
+  .hint {
+    display: none;
+  }
+  .meta {
+    justify-content: flex-end;
+  }
+  .textarea {
+    font-size: var(--font-size-sm);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shake {
+    animation: none;
+  }
+  .sendBtn {
+    transition: none;
+  }
+  .sendBtn:hover {
+    transform: none;
+  }
+}

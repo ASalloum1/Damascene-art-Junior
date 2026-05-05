@@ -280,75 +280,6 @@
   gap: var(--space-6);
 }
 
-.imageSection {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  align-items: center;
-}
-
-.imageUploadArea {
-  width: 100%;
-  aspect-ratio: 4/3;
-  background: var(--color-cream);
-  border: 2px dashed var(--color-gold-light);
-  border-radius: var(--radius-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition-base);
-  overflow: hidden;
-}
-
-.imageUploadArea:hover {
-  border-color: var(--color-gold);
-  background: var(--color-gold-bg);
-}
-
-.imagePlaceholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  color: var(--color-text-secondary);
-  width: 100%;
-  height: 100%;
-}
-
-.imagePlaceholder p {
-  margin: 0;
-  font-size: var(--font-size-sm);
-}
-
-.imagePreview {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.fileInput {
-  display: none;
-}
-
-.uploadLabel {
-  background: var(--color-gold);
-  color: var(--color-white);
-  padding: var(--space-2) var(--space-5);
-  border-radius: var(--radius-md);
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-sm);
-  cursor: pointer;
-  transition: all var(--transition-base);
-}
-
-.uploadLabel:hover {
-  background: var(--color-gold-dark);
-  transform: translateY(-1px);
-  box-shadow: var(--glow-gold);
-}
-
 .formFields {
   display: flex;
   flex-direction: column;
@@ -361,6 +292,35 @@
   justify-content: flex-end;
   padding-block-start: var(--space-4);
   border-block-start: 1px solid var(--color-cream-dark);
+}
+
+/* Read-only form field — used for the locked store value (the store-manager
+   only has access to his own store, so it's displayed but not selectable).
+   Styled to mirror InputField visually but muted to signal "non-editable". */
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 100%;
+}
+
+.formLabel {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.readonlyValue {
+  width: 100%;
+  padding-block: var(--space-2);
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-cream-dark);
+  border-radius: var(--radius-md);
+  background-color: var(--color-cream);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-arabic);
+  direction: rtl;
 }
 
 /* View Product Modal */

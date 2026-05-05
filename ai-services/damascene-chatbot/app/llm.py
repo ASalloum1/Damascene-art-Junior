@@ -1,7 +1,11 @@
+import logging
+
 from openai import OpenAI
 
 from app.config import settings
 from app.prompts import get_system_prompt
+
+logger = logging.getLogger(__name__)
 
 
 class LLMService:
@@ -9,7 +13,7 @@ class LLMService:
 
     def __init__(self):
         if not settings.LLM_API_KEY:
-            print("WARNING: LLM_API_KEY not set. LLM calls will fail.")
+            logger.warning("LLM_API_KEY not set. LLM calls will fail.")
             self.client = None
             return
 
@@ -18,7 +22,7 @@ class LLMService:
             api_key=settings.LLM_API_KEY,
         )
         self.model = settings.LLM_MODEL
-        print(f"LLM configured: {self.model} via {settings.LLM_BASE_URL}")
+        logger.info(f"LLM configured: {self.model} via {settings.LLM_BASE_URL}")
 
     def _detect_language(self, text: str) -> str:
         """Simple language detection based on Arabic character presence."""
@@ -77,16 +81,25 @@ class LLMService:
         messages.append({"role": "user", "content": user_message})
 
         try:
-            response = self.client.chat.completions.create(
+            # Stream because the upstream proxy returns SSE chunks even when
+            # stream=False, which breaks the SDK's non-streaming JSON parser.
+            stream = self.client.chat.completions.create(
                 model=self.model,
                 messages=messages,
                 temperature=0.7,
                 top_p=0.8,
-                max_tokens=1024,
+                stream=True,
             )
-            return response.choices[0].message.content.strip()
-        except Exception as e:
-            print(f"LLM API error: {e}")
+            parts: list[str] = []
+            for chunk in stream:
+                if not chunk.choices:
+                    continue
+                delta = chunk.choices[0].delta.content
+                if delta:
+                    parts.append(delta)
+            return "".join(parts).strip()
+        except Exception:
+            logger.exception("LLM API error")
             if language == "ar":
                 return "نعتذر، حدث خطأ تقني. يرجى المحاولة مرة أخرى أو التواصل مع فريقنا مباشرة."
             return "We apologize for the technical difficulty. Please try again or contact our team directly."

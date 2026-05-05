@@ -1,0 +1,59 @@
+/* ─────────────────────────────────────────────────────────────────
+   ChatbotTypingIndicator — three breathing dots inside an
+   assistant-styled tablet. Slower-than-default cadence (1.2s)
+   so it reads as considered breathing rather than a spinner.
+   ───────────────────────────────────────────────────────────────── */
+
+.row {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-cream);
+  border: 1px solid var(--color-gold-alpha-15);
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm);
+  box-shadow: var(--shadow-xs);
+}
+
+[dir='rtl'] .bubble {
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-lg);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-gold);
+  display: inline-block;
+  animation: typingDot 1.2s ease-in-out infinite;
+  transform-origin: center;
+  opacity: 0.4;
+}
+
+.dot1 { animation-delay: 0ms; }
+.dot2 { animation-delay: 160ms; }
+.dot3 { animation-delay: 320ms; }
+
+@keyframes typingDot {
+  0%, 80%, 100% {
+    transform: scale(0.7);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot {
+    animation: none;
+    opacity: 0.7;
+  }
+}

@@ -1,0 +1,5 @@
+.cameraBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--glow-gold);
+  border-radius: var(--radius-sm);
+}

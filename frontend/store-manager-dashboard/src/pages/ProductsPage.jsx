@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   Eye,
   Pencil,
@@ -15,9 +15,10 @@ import ActionMenu from '../components/ui/ActionMenu.jsx';
 import ConfirmModal from '../components/ui/ConfirmModal.jsx';
 import Button from '../components/ui/Button.jsx';
 import InputField from '../components/ui/InputField.jsx';
-import SelectField from '../components/ui/SelectField.jsx';
 import Modal from '../components/ui/Modal.jsx';
 import { useToast } from '../components/ui/Toast.jsx';
+import ProductImagesManager from '../components/products/ProductImagesManager.jsx';
+import * as productImagesApi from '../api';
 import { mockProducts, mockStores } from '../data/mockData.js';
 import { formatCurrency, toArabicNum } from '../utils/formatters.js';
 import styles from './ProductsPage.module.css';
@@ -38,16 +39,19 @@ const CATEGORY_VARIANT = {
 };
 
 const PAGE_SIZE = 10;
-const EMPTY_SELECTION = [];
-const NOOP = () => {};
+
+// TODO: replace with logged-in user's store when auth lands.
+// The store-manager only has access to his own store, so this is hardcoded
+// to the first store in mockStores ("المتجر الرئيسي" — managed by "فاطمة الحسن"
+// per mockUsers). When auth context exists, read it from there instead.
+const CURRENT_STORE_NAME = 'المتجر الرئيسي';
 
 const INITIAL_PRODUCT_FORM = {
   name: '',
-  store: '',
+  store: CURRENT_STORE_NAME, // locked to the manager's store; not user-editable
   price: '',
   quantity: '',
-  image: null,
-  imagePreview: '',
+  images: [],        // populated by ProductImagesManager
 };
 
 export default function ProductsPage() {
@@ -67,12 +71,14 @@ export default function ProductsPage() {
   const [isLoading, setIsLoading]     = useState(false);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [productForm, setProductForm] = useState({ ...INITIAL_PRODUCT_FORM });
+  const [editingProductId, setEditingProductId] = useState(null);
+  const [initialImages, setInitialImages] = useState(undefined);
+  const [isSubmittingProduct, setIsSubmittingProduct] = useState(false);
   const [viewOpen, setViewOpen]       = useState(false);
-  const [editOpen, setEditOpen]       = useState(false);
   const [viewProduct, setViewProduct] = useState(null);
-  const [editProduct, setEditProduct] = useState(null);
-  const [editForm, setEditForm]       = useState(null);
 
+  // Filter-only store options (the products-table store filter is out of
+  // scope for the form-store-readonly change; left intact deliberately).
   const storeOptions = useMemo(() =>
     mockStores.map((s) => ({ value: s.name, label: s.name })),
     []
@@ -116,38 +122,79 @@ export default function ProductsPage() {
   }
 
   function handleAddProductClick() {
-    setIsAddingProduct(true);
+    setEditingProductId(null);
+    setInitialImages([]);
     setProductForm({ ...INITIAL_PRODUCT_FORM });
+    setIsAddingProduct(true);
   }
 
   function handleCancelAddProduct() {
     setIsAddingProduct(false);
+    setEditingProductId(null);
+    setInitialImages([]);
     setProductForm({ ...INITIAL_PRODUCT_FORM });
   }
 
-  function handleImageChange(e) {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setProductForm((f) => ({
-          ...f,
-          image: file,
-          imagePreview: event.target?.result || '',
-        }));
-      };
-      reader.readAsDataURL(file);
-    }
-  }
+  const handleImagesChange = useCallback((images) => {
+    setProductForm((f) => ({ ...f, images }));
+  }, []);
 
-  function handleSaveProduct() {
-    if (!productForm.name || !productForm.store || !productForm.price || !productForm.quantity) {
+  async function handleSaveProduct() {
+    // Note: store is always populated (locked to the manager's store), so it
+    // is intentionally NOT part of the empty-fields check.
+    if (!productForm.name || !productForm.price || !productForm.quantity) {
       showToast({ message: 'يرجى ملء جميع الحقول', type: 'error' });
       return;
     }
-    showToast({ message: `تم إضافة المنتج "${productForm.name}" بنجاح`, type: 'success' });
-    setIsAddingProduct(false);
-    setProductForm({ ...INITIAL_PRODUCT_FORM });
+    setIsSubmittingProduct(true);
+    try {
+      if (editingProductId === null) {
+        // CREATE MODE — text fields would be POSTed first, then images uploaded
+        // against the returned productId. No real product CRUD backend exists
+        // yet, so we synthesize an id with Date.now().
+        // TODO: replace with real productsApi.create() when backend lands
+        const productId = Date.now();
+        if (productForm.images.length > 0) {
+          try {
+            await productImagesApi.upload(productId, productForm.images);
+          } catch (uploadErr) {
+            // Recovery: the product "exists" but images failed. Pivot to
+            // edit mode in place so the user can retry without re-typing
+            // any fields. Their work is preserved.
+            console.error('Image upload failed after product creation', uploadErr);
+            setEditingProductId(productId);
+            setInitialImages([]);
+            showToast({
+              message: 'تم إنشاء المنتج، لكن فشل رفع الصور — يمكنك إعادة المحاولة',
+              type: 'warning',
+            });
+            return;
+          }
+        }
+        showToast({
+          message: `تم إضافة المنتج "${productForm.name}" بنجاح`,
+          type: 'success',
+        });
+        handleCancelAddProduct();
+      } else {
+        // EDIT MODE — image mutations are committed live by ProductImagesManager
+        // through the dedicated API endpoints. Only text fields would be
+        // PATCHed here.
+        // TODO: replace with real productsApi.update(editingProductId, fields) when backend lands
+        showToast({
+          message: `تم تحديث المنتج "${productForm.name}" بنجاح`,
+          type: 'success',
+        });
+        handleCancelAddProduct();
+      }
+    } catch (err) {
+      showToast({
+        message: err?.message || 'حدث خطأ غير متوقع',
+        type: 'error',
+      });
+    } finally {
+      setIsSubmittingProduct(false);
+    }
   }
 
   function handleViewProduct(product) {
@@ -156,25 +203,22 @@ export default function ProductsPage() {
   }
 
   function handleEditProduct(product) {
-    setEditProduct(product);
-    setEditForm({
+    setEditingProductId(product.id);
+    setProductForm({
       name: product.name,
+      // Store is locked to the manager's store; fall back to the hardcoded
+      // value if the product (somehow) lacks one.
+      store: product.store || CURRENT_STORE_NAME,
       price: product.price,
-      stock: product.stock,
-      status: product.status,
+      quantity: product.stock, // mockData calls this field "stock"
+      images: [],
     });
-    setEditOpen(true);
-  }
-
-  function handleSaveEdit() {
-    if (!editForm.name || !editForm.price || !editForm.stock === undefined) {
-      showToast({ message: 'يرجى ملء جميع الحقول', type: 'error' });
-      return;
-    }
-    setEditOpen(false);
-    showToast({ message: `تم تحديث المنتج "${editForm.name}" بنجاح`, type: 'success' });
-    setEditProduct(null);
-    setEditForm(null);
+    // No real product GET endpoint exists yet; render the empty grid + a
+    // functional drop zone immediately rather than spin a never-resolving
+    // skeleton.
+    // TODO: replace with productsApi.get(product.id) when backend lands.
+    setInitialImages([]);
+    setIsAddingProduct(true);
   }
 
   function renderStars(rating) {
@@ -261,9 +305,18 @@ export default function ProductsPage() {
   ];
 
   if (isAddingProduct) {
+    const isEditMode = editingProductId !== null;
+    const pageTitle = isEditMode
+      ? `تعديل المنتج: ${productForm.name}`
+      : 'إضافة منتج جديد';
+    const pageSubtitle = isEditMode
+      ? 'حدّث بيانات المنتج وصوره'
+      : 'أدخل بيانات المنتج الكاملة';
+    const submitLabel = isEditMode ? 'حفظ التغييرات' : 'إضافة المنتج';
+
     return (
       <div className={`${styles.page} page-enter`}>
-        {/* Add Product Page Header */}
+        {/* Add / Edit Product Page Header */}
         <div className={styles.pageHeader}>
           <div className={styles.headerTitleGroup}>
             <button
@@ -274,42 +327,22 @@ export default function ProductsPage() {
               <ArrowRight size={20} />
             </button>
             <div>
-              <h1 className={styles.pageTitle}>إضافة منتج جديد</h1>
-              <p className={styles.pageSubtitle}>أدخل بيانات المنتج الكاملة</p>
+              <h1 className={styles.pageTitle}>{pageTitle}</h1>
+              <p className={styles.pageSubtitle}>{pageSubtitle}</p>
             </div>
           </div>
         </div>
 
-        {/* Add Product Form */}
+        {/* Add / Edit Product Form */}
         <div className={styles.formContainer}>
           <div className={styles.formContent}>
-            {/* Image Upload */}
-            <div className={styles.imageSection}>
-              <div className={styles.imageUploadArea}>
-                {productForm.imagePreview ? (
-                  <img
-                    src={productForm.imagePreview}
-                    alt="معاينة المنتج"
-                    className={styles.imagePreview}
-                  />
-                ) : (
-                  <div className={styles.imagePlaceholder}>
-                    <Package size={40} strokeWidth={1} />
-                    <p>صورة المنتج</p>
-                  </div>
-                )}
-              </div>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className={styles.fileInput}
-                id="product-image"
-              />
-              <label htmlFor="product-image" className={styles.uploadLabel}>
-                اختر صورة
-              </label>
-            </div>
+            {/* Image Manager (drop zone + grid) */}
+            <ProductImagesManager
+              productId={editingProductId}
+              initialImages={initialImages}
+              onImagesChange={handleImagesChange}
+              maxImages={10}
+            />
 
             {/* Form Fields */}
             <div className={styles.formFields}>
@@ -320,14 +353,12 @@ export default function ProductsPage() {
                 onChange={(e) => setProductForm((f) => ({ ...f, name: e.target.value }))}
                 required
               />
-              <SelectField
-                label="اسم المتجر"
-                placeholder="اختر المتجر"
-                value={productForm.store}
-                onChange={(e) => setProductForm((f) => ({ ...f, store: e.target.value }))}
-                options={storeOptions}
-                required
-              />
+              {/* Store — read-only display. The store-manager only has access
+                  to his own store, so this is locked rather than selectable. */}
+              <div className={styles.formField}>
+                <label className={styles.formLabel}>اسم المتجر</label>
+                <div className={styles.readonlyValue}>{productForm.store}</div>
+              </div>
               <InputField
                 label="السعر"
                 type="number"
@@ -351,13 +382,16 @@ export default function ProductsPage() {
               <Button
                 variant="ghost"
                 onClick={handleCancelAddProduct}
+                disabled={isSubmittingProduct}
               >
                 إلغاء
               </Button>
               <Button
                 onClick={handleSaveProduct}
+                loading={isSubmittingProduct}
+                disabled={isSubmittingProduct}
               >
-                إضافة المنتج
+                {submitLabel}
               </Button>
             </div>
           </div>
@@ -551,43 +585,6 @@ export default function ProductsPage() {
               <Badge text={viewProduct?.status} variant={STATUS_VARIANT[viewProduct?.status] || 'default'} />
             </p>
           </div>
-        </div>
-      </Modal>
-
-      {/* Edit Product Modal */}
-      <Modal
-        isOpen={editOpen}
-        onClose={() => setEditOpen(false)}
-        title={`تعديل المنتج: ${editProduct?.name}`}
-        size="sm"
-        footer={
-          <div className={styles.modalFooter}>
-            <Button variant="ghost" onClick={() => setEditOpen(false)}>إلغاء</Button>
-            <Button onClick={handleSaveEdit}>حفظ التغييرات</Button>
-          </div>
-        }
-      >
-        <div className={styles.editProductForm}>
-          <InputField
-            label="اسم المنتج"
-            value={editForm?.name || ''}
-            onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
-            required
-          />
-          <InputField
-            label="السعر"
-            type="number"
-            value={editForm?.price || ''}
-            onChange={(e) => setEditForm((f) => ({ ...f, price: parseFloat(e.target.value) }))}
-            required
-          />
-          <InputField
-            label="المخزون"
-            type="number"
-            value={editForm?.stock || ''}
-            onChange={(e) => setEditForm((f) => ({ ...f, stock: parseInt(e.target.value) }))}
-            required
-          />
         </div>
       </Modal>
 
