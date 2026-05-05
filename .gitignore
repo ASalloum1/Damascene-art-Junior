@@ -57,3 +57,9 @@ skills-lock.json
 # Local test artifacts
 .chatbot-*-screenshot.png
 
+# Vendored Python wheels (re-downloaded from a wheelhouse, not in VCS)
+ai-services/visual-search/wheels/
+
+# Generated FAISS indices
+ai-services/visual-search/data/faiss_index/
+
