@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Trash2, ImageIcon } from 'lucide-react';
+import { Trash2, ImageIcon, ShoppingCart } from 'lucide-react';
 import { useApi } from '../context/ApiContext.jsx';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { QuantitySelector } from '../components/QuantitySelector.jsx';
@@ -316,10 +316,16 @@ export function CartPage({ onNavigate }) {
 
       {isEmpty ? (
         <div className={styles.emptyState}>
-          <p className={styles.emptyTitle}>سلتكم خالية من الكنوز</p>
-          <p className={styles.emptyDesc}>بانتظاركم روائع دمشقية تستحق الاقتناء. تصفحوا مجموعتنا وابدأوا حكايتكم الخاصة.</p>
+          <ShoppingCart
+            className={styles.emptyIcon}
+            size={72}
+            strokeWidth={1.5}
+            aria-hidden="true"
+          />
+          <p className={styles.emptyTitle}>سلة المشتريات فارغة</p>
+          <p className={styles.emptyDesc}>لم تُضف أي قطعة بعد إلى سلتك. تصفّح مجموعتنا واختر ما يناسبك.</p>
           <Button variant="primary" onClick={() => onNavigate?.('shop')}>
-            استكشاف المجموعة
+            تصفّح المتجر
           </Button>
         </div>
       ) : (
