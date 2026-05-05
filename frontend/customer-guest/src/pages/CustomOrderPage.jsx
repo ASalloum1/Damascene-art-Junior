@@ -93,7 +93,6 @@ export function CustomOrderPage() {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${bearerToken}`,
-          'ngrok-skip-browser-warning': 'true',
         },
         body: JSON.stringify(requestBody),
       });

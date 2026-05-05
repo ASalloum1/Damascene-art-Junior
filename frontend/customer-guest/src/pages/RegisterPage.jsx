@@ -1,11 +1,19 @@
 import { useState } from 'react';
 import { Gem } from 'lucide-react';
+import { useApi } from '../context/ApiContext.jsx';
 import { API_CONFIG } from '../config/api.config.js';
 import { InputField } from '../components/InputField.jsx';
 import { Button } from '../components/Button.jsx';
+import {
+  extractAuthData,
+  loginWithCredentials,
+  persistAuthSession,
+  redirectToUserLanding,
+} from '../utils/auth.js';
 import styles from './RegisterPage.module.css';
 
 export function RegisterPage({ onNavigate }) {
+  const { baseUrl, endpoints } = useApi();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -39,11 +47,9 @@ export function RegisterPage({ onNavigate }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.register}`, {
+      const response = await fetch(`${baseUrl}${endpoints.register}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: API_CONFIG.DEFAULT_HEADERS,
         body: JSON.stringify({
           name: `${firstName} ${lastName}`,
           phone,
@@ -61,10 +67,30 @@ export function RegisterPage({ onNavigate }) {
         return;
       }
 
-      // Registration successful - redirect to login
-      onNavigate?.('login');
+      const authData = extractAuthData(data);
+
+      if (authData.token && authData.user) {
+        persistAuthSession(authData);
+        redirectToUserLanding(authData.user);
+        return;
+      }
+
+      const loginData = await loginWithCredentials({
+        baseUrl,
+        email,
+        password,
+        loginEndpoint: endpoints.login,
+      });
+      const loginAuthData = extractAuthData(loginData);
+
+      if (!loginAuthData.token || !loginAuthData.user) {
+        throw new Error('تم إنشاء الحساب لكن تعذر إكمال تسجيل الدخول تلقائيًا');
+      }
+
+      persistAuthSession(loginAuthData);
+      redirectToUserLanding(loginAuthData.user);
     } catch (err) {
-      setError('حدث خطأ في الاتصال بالخادم');
+      setError(err.message || 'حدث خطأ في الاتصال بالخادم');
       console.error('Registration error:', err);
     } finally {
       setIsLoading(false);

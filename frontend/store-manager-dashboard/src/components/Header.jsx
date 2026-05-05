@@ -2,7 +2,13 @@ import styles from './Header.module.css';
 import { Icon } from './SvgIcons';
 import { menuItems } from '../data/menuData';
 
-export function Header({ activePage, onNavigate, onMobileMenuOpen }) {
+export function Header({
+  activePage,
+  onNavigate,
+  onMobileMenuOpen,
+  notificationCount = 0,
+  userName = 'مدير المتجر',
+}) {
   const currentItem = menuItems.find((m) => m.id === activePage);
 
   return (
@@ -30,10 +36,12 @@ export function Header({ activePage, onNavigate, onMobileMenuOpen }) {
         <button
           className={styles.iconBtn}
           onClick={() => onNavigate('notifications')}
-          aria-label="الإشعارات — ٣ إشعارات جديدة"
+          aria-label={`الإشعارات — ${notificationCount} إشعارات جديدة`}
         >
           <Icon name="bell" size={18} />
-          <span className={styles.badge} aria-hidden="true">٣</span>
+          {notificationCount > 0 ? (
+            <span className={styles.badge} aria-hidden="true">{notificationCount}</span>
+          ) : null}
         </button>
 
         {/* User avatar */}
@@ -43,7 +51,7 @@ export function Header({ activePage, onNavigate, onMobileMenuOpen }) {
           aria-label="الملف الشخصي"
         >
           <div className={styles.avatar} aria-hidden="true">م</div>
-          <span className={styles.userName}>مدير المتجر</span>
+          <span className={styles.userName}>{userName}</span>
         </button>
       </div>
     </header>

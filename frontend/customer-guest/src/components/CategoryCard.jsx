@@ -7,6 +7,8 @@ export function CategoryCard({ name, icon: Icon, count, onClick }) {
     }
   };
 
+  const countText = typeof count === 'number' && count > 0 ? `${count} منتج` : 'عرض المزيد';
+
   return (
     <article
       className={styles.card}
@@ -20,7 +22,7 @@ export function CategoryCard({ name, icon: Icon, count, onClick }) {
         <Icon size={44} className={styles.icon} />
       ) : null}
       <p className={styles.name}>{name}</p>
-      <p className={styles.count}>{count} منتج</p>
+      <p className={styles.count}>{countText}</p>
     </article>
   );
 }

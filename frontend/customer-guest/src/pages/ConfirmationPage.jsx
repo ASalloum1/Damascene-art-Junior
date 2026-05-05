@@ -1,15 +1,21 @@
 import { CheckCircle2 } from 'lucide-react';
+import { useApi } from '../context/ApiContext.jsx';
 import { Button } from '../components/Button.jsx';
 import styles from './ConfirmationPage.module.css';
 
-const orderDetails = [
-  { label: 'المنتجات', value: 'طاولة موزاييك + صندوق صدف' },
-  { label: 'الإجمالي', value: '١,٤٧٥ $' },
-  { label: 'طريقة الدفع', value: 'بطاقة ائتمان' },
-  { label: 'التوصيل المتوقع', value: '١٠-١٥ أبريل ٢٠٢٦' },
-];
-
 export function ConfirmationPage({ onNavigate }) {
+  const { latestPlacedOrder, setSelectedOrderId } = useApi();
+
+  const orderDetails = [
+    { label: 'الإجمالي', value: `${latestPlacedOrder?.total_price ?? latestPlacedOrder?.subtotal ?? '—'} $` },
+    { label: 'طريقة الدفع', value: latestPlacedOrder?.payment_method_label ?? '—' },
+    { label: 'حالة الطلب', value: latestPlacedOrder?.status_label ?? '—' },
+    {
+      label: 'المستلم',
+      value: latestPlacedOrder?.shipping?.recipient_name ?? '—',
+    },
+  ];
+
   return (
     <div className={styles.page}>
       <CheckCircle2 size={64} className={styles.icon} />
@@ -17,7 +23,7 @@ export function ConfirmationPage({ onNavigate }) {
       <h1 className={styles.title}>شكراً لك! تم تأكيد طلبك</h1>
 
       <p className={styles.orderNum}>
-        رقم الطلب: <span>#1084</span>
+        رقم الطلب: <span>{latestPlacedOrder?.order_number || '—'}</span>
       </p>
 
       <div className={styles.detailsCard}>
@@ -31,7 +37,15 @@ export function ConfirmationPage({ onNavigate }) {
       </div>
 
       <div className={styles.ctaRow}>
-        <Button variant="primary" onClick={() => onNavigate?.('tracking')}>
+        <Button
+          variant="primary"
+          onClick={() => {
+            if (latestPlacedOrder?.id) {
+              setSelectedOrderId(latestPlacedOrder.id);
+            }
+            onNavigate?.('tracking');
+          }}
+        >
           تتبع الطلب
         </Button>
         <Button variant="outline" onClick={() => onNavigate?.('shop')}>

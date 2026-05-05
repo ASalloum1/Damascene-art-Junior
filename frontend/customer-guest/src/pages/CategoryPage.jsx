@@ -1,28 +1,73 @@
+import { useEffect, useState } from 'react';
 import { Layers } from 'lucide-react';
+import { useApi } from '../context/ApiContext.jsx';
 import { PageHero } from '../components/PageHero.jsx';
 import { ProductCard } from '../components/ProductCard.jsx';
-import { products } from '../data/index.js';
+import { mapApiProduct, readJsonSafely } from '../utils/customerApi.js';
 import styles from './CategoryPage.module.css';
 
 export function CategoryPage({ onNavigate }) {
-  const mosaicProducts = products.filter((p) => p.cat === 'فسيفساء');
-  const fillerProducts = products.slice(0, 2);
-  const displayProducts = [...mosaicProducts, ...fillerProducts].slice(0, 8);
+  const { baseUrl, endpoints, selectedCategory, setSelectedProductId } = useApi();
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    async function loadCategoryProducts() {
+      if (!selectedCategory?.id) {
+        setProducts([]);
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      setError('');
+
+      try {
+        const response = await fetch(`${baseUrl}${endpoints.categoryProducts(selectedCategory.id)}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        const data = await readJsonSafely(response);
+
+        if (!response.ok) {
+          throw new Error(data.message || 'فشل تحميل منتجات الفئة');
+        }
+
+        setProducts((data?.data?.products || []).map(mapApiProduct));
+      } catch (categoryError) {
+        setError(categoryError.message || 'تعذر تحميل منتجات الفئة');
+        setProducts([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadCategoryProducts();
+  }, [baseUrl, endpoints, selectedCategory]);
 
   return (
     <div className={styles.page}>
       <PageHero
         icon={Layers}
-        title="فسيفساء / موزاييك"
-        subtitle="فن الفسيفساء الدمشقي — آلاف القطع الصغيرة تتحد لتشكل تحفة فنية خالدة"
+        title={selectedCategory?.name || 'الفئة المختارة'}
+        subtitle="استكشف المنتجات المتاحة ضمن هذه الفئة مباشرة من قاعدة البيانات."
       />
       <div className={styles.container}>
+        {isLoading ? <p>جاري تحميل منتجات الفئة...</p> : null}
+        {error ? <p style={{ color: 'var(--color-red)' }}>{error}</p> : null}
+        {!isLoading && !error && products.length === 0 ? <p>لا توجد منتجات في هذه الفئة حالياً.</p> : null}
         <div className={styles.grid}>
-          {displayProducts.map((product) => (
+          {products.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
-              onNavigate={() => onNavigate?.('product')}
+              onNavigate={(productId) => {
+                setSelectedProductId(productId);
+                onNavigate?.('product');
+              }}
               onAddToCart={() => onNavigate?.('cart')}
             />
           ))}

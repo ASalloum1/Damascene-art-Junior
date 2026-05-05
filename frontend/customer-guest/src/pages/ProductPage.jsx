@@ -9,6 +9,7 @@ import { Button } from '../components/Button.jsx';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { ProductCard } from '../components/ProductCard.jsx';
 import { products } from '../data/index.js';
+import { getAuthHeaders, getDefaultHeaders, mapApiProduct, readJsonSafely } from '../utils/customerApi.js';
 import styles from './ProductPage.module.css';
 
 const reviews = [
@@ -27,7 +28,7 @@ const reviews = [
 ];
 
 export function ProductPage({ onNavigate }) {
-  const { baseUrl, endpoints, selectedProductId, bearerToken } = useApi();
+  const { baseUrl, endpoints, selectedProductId, bearerToken, refreshCartSummary } = useApi();
   const [quantity, setQuantity] = useState(1);
   const [productData, setProductData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -54,54 +55,24 @@ export function ProductPage({ onNavigate }) {
 
         const response = await fetch(apiUrl, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': 'true',
-          },
+          headers: getDefaultHeaders(),
           body: JSON.stringify({ product_id: selectedProductId }),
         });
 
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
+          const errorData = await readJsonSafely(response);
           throw new Error(errorData.message || `API Error: ${response.status}`);
         }
 
         const data = await response.json();
         console.log('Product details received:', data);
 
-        // Map API response
         const product = data.data.product;
-        let imageUrl = product.image;
-
-        if (imageUrl) {
-          // If it's a full ngrok URL, extract just the /storage/... part
-          if (imageUrl.includes('ngrok') && imageUrl.includes('/storage/')) {
-            const storageIndex = imageUrl.indexOf('/storage/');
-            imageUrl = imageUrl.substring(storageIndex);
-          }
-          // If it's just a filename, add the /storage/ prefix
-          else if (imageUrl && !imageUrl.startsWith('/') && !imageUrl.startsWith('http')) {
-            imageUrl = `/storage/${imageUrl}`;
-          }
-
-          // Decode URI-encoded characters
-          try {
-            imageUrl = decodeURIComponent(imageUrl);
-          } catch (e) {
-            // If decoding fails, use original URL
-          }
-        }
+        const mappedProduct = mapApiProduct(product);
 
         setProductData({
-          id: product.id,
-          name: product.name,
-          price: parseFloat(product.new_price),
-          oldPrice: parseFloat(product.old_price),
-          image: imageUrl,
-          rating: parseFloat(product.average_rate),
-          category: product.category.name,
-          inStock: product.amount > 0,
-          amount: product.amount,
+          ...mappedProduct,
+          category: product.category?.name || '',
         });
       } catch (err) {
         console.error('Error fetching product details:', err);
@@ -127,11 +98,7 @@ export function ProductPage({ onNavigate }) {
       const cartUrl = `${baseUrl}/api/customers/product-carts`;
       const response = await fetch(cartUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
-          'Authorization': `Bearer ${bearerToken}`,
-        },
+        headers: getAuthHeaders(bearerToken),
         body: JSON.stringify({
           product_id: selectedProductId,
           count: quantity,
@@ -146,6 +113,7 @@ export function ProductPage({ onNavigate }) {
       const data = await response.json();
       console.log('Product added to cart:', data);
       setAddToCartMessage('✓ تم إضافة المنتج للسلة بنجاح');
+      refreshCartSummary();
 
       // Reset quantity after successful add
       setTimeout(() => {
@@ -173,11 +141,7 @@ export function ProductPage({ onNavigate }) {
       const wishlistUrl = `${baseUrl}/api/customers/wish-lists`;
       const response = await fetch(wishlistUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
-          'Authorization': `Bearer ${bearerToken}`,
-        },
+        headers: getAuthHeaders(bearerToken),
         body: JSON.stringify({
           product_id: selectedProductId,
         }),

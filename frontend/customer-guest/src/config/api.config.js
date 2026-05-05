@@ -5,17 +5,38 @@
  */
 
 export const API_CONFIG = {
-  // Base URL for all API requests
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'https://undecided-vastly-replica.ngrok-free.dev',
+  // Use the current frontend origin and let Vite proxy /api and /storage to Laravel.
+  BASE_URL: '',
 
   // Endpoints
   ENDPOINTS: {
     specialOrders: '/api/customers/special-orders',
-    contactUs: '/api/contact',
+    contactUs: '/api/customers/contact-us',
     products: '/api/customers/products',
     productDetails: '/api/customers/products/details',
+    categories: '/api/customers/categories',
+    categoryProducts: (categoryId) => `/api/customers/categories/${categoryId}/products`,
+    search: '/api/customers/search',
+    cart: '/api/customers/carts/in-progres',
+    cartSummary: '/api/customers/cart-summary',
     login: '/api/login',
     register: '/api/customers/register',
+    account: '/api/customers/account',
+    profile: '/api/customers/profile',
+    profilePassword: '/api/customers/profile/password',
+    orders: '/api/customers/orders',
+    latestOrders: '/api/customers/orders/latest',
+    orderDetails: (orderId) => `/api/customers/orders/${orderId}`,
+    orderTracking: (orderId) => `/api/customers/orders/${orderId}/tracking`,
+    checkout: '/api/customers/checkout',
+    addresses: '/api/customers/addresses',
+    addressesDelete: '/api/customers/addresses/delete',
+    wishlists: '/api/customers/wish-lists',
+    productCarts: '/api/customers/product-carts',
+    productCartDelete: '/api/customers/product-carts/delete',
+    productCartPlusOne: '/api/customers/product-carts/plus-one',
+    productCartMinusOne: '/api/customers/product-carts/minus-one',
+    applyCoupon: '/api/customers/carts/apply-coupon',
   },
 
   // Bearer token for authenticated requests
@@ -24,7 +45,6 @@ export const API_CONFIG = {
   // Request headers
   DEFAULT_HEADERS: {
     'Content-Type': 'application/json',
-    'ngrok-skip-browser-warning': 'true',
   },
 };
 
