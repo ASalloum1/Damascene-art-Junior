@@ -48,3 +48,12 @@ venv/
 # Coverage
 coverage/
 *.lcov
+
+# Local agent / tooling state
+.agents/
+.claude/
+skills-lock.json
+
+# Local test artifacts
+.chatbot-*-screenshot.png
+
