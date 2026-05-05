@@ -59,6 +59,7 @@
   --color-gold-alpha-12: color-mix(in srgb, var(--color-gold), transparent 88%);
   --color-gold-alpha-15: color-mix(in srgb, var(--color-gold), transparent 85%);
   --color-gold-alpha-25: color-mix(in srgb, var(--color-gold), transparent 75%);
+  --color-gold-alpha-35: color-mix(in srgb, var(--color-gold), transparent 65%);
   --color-white-alpha-15: color-mix(in srgb, var(--color-white), transparent 85%);
   --color-white-alpha-85: color-mix(in srgb, var(--color-white), transparent 15%);
   --color-navy-alpha-60: color-mix(in srgb, var(--color-navy), transparent 40%);

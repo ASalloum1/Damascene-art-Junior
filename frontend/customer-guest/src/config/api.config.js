@@ -16,6 +16,10 @@ export const API_CONFIG = {
     productDetails: '/api/customers/products/details',
     login: '/api/login',
     register: '/api/customers/register',
+    visualSearch: '/api/visual-search',
+    visualSearchClick: '/api/visual-search/click',
+    chat: '/api/chat',
+    chatHealth: '/api/chat/health',
   },
 
   // Bearer token for authenticated requests

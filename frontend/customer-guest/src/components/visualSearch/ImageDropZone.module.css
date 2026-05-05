@@ -1,0 +1,158 @@
+.dropZone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  width: 100%;
+  min-height: 480px;
+  padding: var(--space-8);
+  background: var(--color-cream);
+  border: 2px dashed var(--color-gold);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  text-align: center;
+  color: inherit;
+  position: relative;
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    border-style var(--transition-base);
+}
+
+.dropZoneDragging {
+  background: var(--color-gold-bg);
+  border-style: solid;
+}
+
+.dropZone:focus-visible {
+  outline: none;
+  box-shadow: var(--glow-gold);
+}
+
+.icon {
+  color: var(--color-gold);
+  flex-shrink: 0;
+}
+
+.helper {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-navy);
+  margin: 0;
+}
+
+.subHelper {
+  font-size: var(--font-size-sm);
+  color: var(--color-stone-mid);
+  margin: 0;
+}
+
+.hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-stone-mid);
+  margin: 0;
+}
+
+.buttonRow {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 340px;
+}
+
+.pseudoBtnPrimary,
+.pseudoBtnOutline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: var(--font-size-base);
+  font-family: var(--font-arabic);
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.pseudoBtnPrimary {
+  background: var(--color-gold);
+  color: var(--color-navy);
+}
+
+.dropZone:hover .pseudoBtnPrimary {
+  background: var(--color-gold-light);
+}
+
+.pseudoBtnOutline {
+  background: transparent;
+  color: var(--color-gold-dark);
+  border: 2px solid var(--color-gold);
+  cursor: pointer;
+}
+
+.pseudoBtnOutline:hover {
+  background: var(--color-gold-alpha-08);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: var(--color-gold-alpha-25);
+}
+
+.dividerLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-stone-mid);
+  font-weight: 600;
+}
+
+.hiddenInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 1023px) {
+  .dropZone {
+    min-height: 360px;
+    padding: var(--space-6);
+  }
+}
+
+@media (max-width: 767px) {
+  .dropZone {
+    min-height: 300px;
+    padding: var(--space-5);
+  }
+  .icon {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dropZone {
+    transition: none;
+  }
+}

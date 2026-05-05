@@ -1,5 +1,6 @@
 import { Gem, Search, Heart, ShoppingCart, Menu, X, User } from 'lucide-react';
 import { Button } from './Button.jsx';
+import { VisualSearchButton } from './VisualSearchButton.jsx';
 import { navLinks } from '../data/index.js';
 import styles from './Navbar.module.css';
 
@@ -55,6 +56,8 @@ export function Navbar({
             >
               <Search size={18} />
             </button>
+
+            <VisualSearchButton onNavigate={onNavigate} />
 
             <button
               type="button"
