@@ -1,0 +1,38 @@
+export const API_CONFIG = {
+  BASE_URL: '',
+  DEFAULT_HEADERS: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
+  ENDPOINTS: {
+    dashboard: '/api/admin/dashboard',
+    analytics: '/api/admin/analytics',
+    financials: '/api/admin/financials',
+    users: '/api/admin/users',
+    userDetails: (userId) => `/api/admin/users/${userId}`,
+    userStatus: (userId) => `/api/admin/users/${userId}/status`,
+    userResetPassword: (userId) => `/api/admin/users/${userId}/reset-password`,
+    stores: '/api/admin/stores',
+    storeDetails: (storeId) => `/api/admin/stores/${storeId}`,
+    storeStatus: (storeId) => `/api/admin/stores/${storeId}/status`,
+    products: '/api/admin/products',
+    productDetails: (productId) => `/api/admin/products/${productId}`,
+    productStatus: (productId) => `/api/admin/products/${productId}/status`,
+    orders: '/api/admin/orders',
+    orderDetails: (orderId) => `/api/admin/orders/${orderId}`,
+    orderStatus: (orderId) => `/api/admin/orders/${orderId}/status`,
+    coupons: '/api/admin/coupons',
+    couponDetails: (audience, couponId) => `/api/admin/coupons/${audience}/${couponId}`,
+    messages: '/api/admin/messages',
+    messageStatus: (kind, messageId) => `/api/admin/messages/${kind}/${messageId}/status`,
+    reviews: '/api/admin/reviews',
+    reviewStatus: (source, reviewId) => `/api/admin/reviews/${source}/${reviewId}/status`,
+    notifications: '/api/admin/notifications',
+    notificationRead: (notificationId) => `/api/admin/notifications/${notificationId}/read`,
+    notificationsReadAll: '/api/admin/notifications/read-all',
+    profile: '/api/admin/profile',
+    profilePassword: '/api/admin/profile/password',
+  },
+};
+
+export default API_CONFIG;

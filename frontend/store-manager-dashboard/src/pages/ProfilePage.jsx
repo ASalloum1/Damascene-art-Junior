@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Save, Lock, Eye, EyeOff } from 'lucide-react';
 import Button from '../components/ui/Button';
 import InputField from '../components/ui/InputField';
 import { useToast } from '../components/ui/Toast';
+import { useStoreManager } from '../context/StoreManagerContext';
+import { API_CONFIG } from '../config/api.config.js';
+import { apiRequest } from '../utils/storeApi.js';
 import styles from './ProfilePage.module.css';
 
 function PasswordStrengthBar({ password }) {
@@ -44,13 +47,14 @@ function PasswordStrengthBar({ password }) {
 
 export default function ProfilePage() {
   const { showToast } = useToast();
+  const { profile, refreshProfile } = useStoreManager();
 
   const [personal, setPersonal] = useState(() => ({
-    firstName: 'محمد',
-    lastName: 'العلي',
-    email: 'manager@example.com',
-    phone: '+963 11 234 5678',
-    address: 'دمشق، شارع نور الدين',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    address: '',
   }));
 
   const [passwords, setPasswords] = useState(() => ({
@@ -62,11 +66,59 @@ export default function ProfilePage() {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  function savePersonal() {
-    showToast({ message: 'تم حفظ المعلومات الشخصية بنجاح', type: 'success' });
+  useEffect(() => {
+    if (!profile) {
+      return;
+    }
+
+    setPersonal({
+      firstName: profile.first_name || '',
+      lastName: profile.last_name || '',
+      email: profile.email || '',
+      phone: profile.phone || '',
+      address: profile.address || '',
+    });
+  }, [profile]);
+
+  async function savePersonal() {
+    try {
+      const data = await apiRequest(API_CONFIG.ENDPOINTS.profile, {
+        method: 'PUT',
+        body: {
+          first_name: personal.firstName,
+          last_name: personal.lastName,
+          email: personal.email,
+          phone: personal.phone,
+          address: personal.address,
+        },
+      });
+
+      const updatedProfile = data?.data?.profile || {};
+      const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
+
+      if (storedUser) {
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            ...storedUser,
+            first_name: updatedProfile.first_name || personal.firstName,
+            last_name: updatedProfile.last_name || personal.lastName,
+            email: updatedProfile.email || personal.email,
+            phone: updatedProfile.phone || personal.phone,
+            address: updatedProfile.address || personal.address,
+          })
+        );
+        window.dispatchEvent(new Event('auth-changed'));
+      }
+
+      await refreshProfile();
+      showToast({ message: 'تم حفظ المعلومات الشخصية بنجاح', type: 'success' });
+    } catch (error) {
+      showToast({ message: error.message || 'تعذر حفظ المعلومات الشخصية', type: 'error' });
+    }
   }
 
-  function updatePassword() {
+  async function updatePassword() {
     if (!passwords.current || !passwords.newPass || !passwords.confirm) {
       showToast({ message: 'يرجى ملء جميع حقول كلمة المرور', type: 'warning' });
       return;
@@ -75,8 +127,21 @@ export default function ProfilePage() {
       showToast({ message: 'كلمة المرور الجديدة وتأكيدها غير متطابقتين', type: 'error' });
       return;
     }
-    showToast({ message: 'تم تحديث كلمة المرور بنجاح', type: 'success' });
-    setPasswords({ current: '', newPass: '', confirm: '' });
+
+    try {
+      await apiRequest(API_CONFIG.ENDPOINTS.profilePassword, {
+        method: 'PUT',
+        body: {
+          current_password: passwords.current,
+          password: passwords.newPass,
+          password_confirmation: passwords.confirm,
+        },
+      });
+      showToast({ message: 'تم تحديث كلمة المرور بنجاح', type: 'success' });
+      setPasswords({ current: '', newPass: '', confirm: '' });
+    } catch (error) {
+      showToast({ message: error.message || 'تعذر تحديث كلمة المرور', type: 'error' });
+    }
   }
 
   return (
@@ -87,11 +152,11 @@ export default function ProfilePage() {
           <span className={styles.avatarInitials}>مع</span>
         </div>
         <div className={styles.profileInfo}>
-          <h2 className={styles.profileName}>محمد العلي</h2>
-          <p className={styles.profileEmail}>manager@example.com</p>
+          <h2 className={styles.profileName}>{profile?.full_name || `${personal.firstName} ${personal.lastName}`.trim() || 'مدير المتجر'}</h2>
+          <p className={styles.profileEmail}>{personal.email || '—'}</p>
           <div className={styles.profileMeta}>
-            <span className={styles.profileRole}>مدير المتجر</span>
-            <span className={styles.profileSince}>منذ يناير ٢٠٢٥</span>
+            <span className={styles.profileRole}>{profile?.store?.name || 'مدير المتجر'}</span>
+            <span className={styles.profileSince}>{profile?.status_label || 'نشط'}</span>
           </div>
         </div>
       </div>

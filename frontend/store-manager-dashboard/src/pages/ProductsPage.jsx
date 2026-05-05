@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Eye,
   Pencil,
@@ -17,60 +17,70 @@ import Button from '../components/ui/Button.jsx';
 import InputField from '../components/ui/InputField.jsx';
 import Modal from '../components/ui/Modal.jsx';
 import { useToast } from '../components/ui/Toast.jsx';
-import ProductImagesManager from '../components/products/ProductImagesManager.jsx';
-import * as productImagesApi from '../api';
-import { mockProducts, mockStores } from '../data/mockData.js';
 import { formatCurrency, toArabicNum } from '../utils/formatters.js';
+import { API_CONFIG } from '../config/api.config.js';
+import { apiRequest, getStatusLabel } from '../utils/storeApi.js';
+import { useStoreManager } from '../context/StoreManagerContext.jsx';
 import styles from './ProductsPage.module.css';
 
 const STATUS_VARIANT = {
-  'نشط':           'success',
-  'مخفي':          'default',
-  'نفد المخزون':   'danger',
-};
-
-const CATEGORY_VARIANT = {
-  'فسيفساء':    'info',
-  'خشب مطعّم':  'gold',
-  'زجاج منفوخ': 'purple',
-  'بروكار':     'warning',
-  'نحاسيات':    'default',
-  'فخار':       'danger',
+  نشط: 'success',
+  مخفي: 'default',
+  'نفد المخزون': 'danger',
 };
 
 const PAGE_SIZE = 10;
 
-// TODO: replace with logged-in user's store when auth lands.
-// The store-manager only has access to his own store, so this is hardcoded
-// to the first store in mockStores ("المتجر الرئيسي" — managed by "فاطمة الحسن"
-// per mockUsers). When auth context exists, read it from there instead.
-const CURRENT_STORE_NAME = 'المتجر الرئيسي';
-
 const INITIAL_PRODUCT_FORM = {
   name: '',
-  store: CURRENT_STORE_NAME, // locked to the manager's store; not user-editable
+  store: '',
+  category: '',
   price: '',
   quantity: '',
-  images: [],        // populated by ProductImagesManager
+  status: 'active',
+  images: [],
 };
+
+function normalizeProduct(product, fallbackStoreName = '') {
+  const price = Number(product.price || product.new_price || product.old_price || 0);
+  const stock = Number(product.stock || product.quantity || product.amount || 0);
+  const statusLabel = product.status_label || getStatusLabel(product.status);
+
+  return {
+    id: product.id,
+    name: product.name || '—',
+    store: product.store?.name || fallbackStoreName || '—',
+    category: product.category?.name || product.category_name || 'غير مصنف',
+    price,
+    stock,
+    rating: Number(product.rating || product.average_rate || 0),
+    status: statusLabel,
+    statusKey: product.status || 'active',
+    image: product.image || '',
+    oldPrice: Number(product.old_price || price),
+    newPrice: Number(product.new_price || price),
+  };
+}
 
 export default function ProductsPage() {
   const { showToast } = useToast();
-
-  const [search, setSearch]           = useState('');
-  const [storeFilter, setStore]       = useState('');
+  const { profile } = useStoreManager();
+  const [products, setProducts] = useState([]);
+  const [search, setSearch] = useState('');
+  const [storeFilter, setStore] = useState('');
   const [categoryFilter, setCategory] = useState('');
-  const [statusFilter, setStatus]     = useState('');
-  const [priceFilter, setPrice]       = useState('');
-  const [page, setPage]               = useState(1);
-  const [pageSize, setPageSize]       = useState(PAGE_SIZE);
+  const [statusFilter, setStatus] = useState('');
+  const [priceFilter, setPrice] = useState('');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [targetProduct, setTarget]    = useState(null);
+  const [targetProduct, setTarget] = useState(null);
   const [selectedIds, setSelectedIds] = useState([]);
-  const [viewMode, setViewMode]       = useState('table'); // 'table' | 'grid'
-  const [isLoading, setIsLoading]     = useState(false);
+  const [viewMode, setViewMode] = useState('table');
+  const [isLoading, setIsLoading] = useState(false);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [productForm, setProductForm] = useState({ ...INITIAL_PRODUCT_FORM });
+<<<<<<< HEAD
   const [editingProductId, setEditingProductId] = useState(null);
   const [initialImages, setInitialImages] = useState(undefined);
   const [isSubmittingProduct, setIsSubmittingProduct] = useState(false);
@@ -82,32 +92,81 @@ export default function ProductsPage() {
   const storeOptions = useMemo(() =>
     mockStores.map((s) => ({ value: s.name, label: s.name })),
     []
+=======
+  const [viewOpen, setViewOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [viewProduct, setViewProduct] = useState(null);
+  const [editProduct, setEditProduct] = useState(null);
+  const [editForm, setEditForm] = useState(null);
+
+  const defaultStoreName = profile?.store?.name || '';
+
+  async function loadProducts() {
+    setIsLoading(true);
+
+    try {
+      const data = await apiRequest(API_CONFIG.ENDPOINTS.products);
+      const items = data?.data?.products || [];
+      setProducts(items.map((item) => normalizeProduct(item, defaultStoreName)));
+    } catch (error) {
+      showToast({ message: error.message || 'تعذر تحميل المنتجات', type: 'error' });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadProducts();
+  }, [defaultStoreName]);
+
+  useEffect(() => {
+    setProductForm((form) => ({
+      ...form,
+      store: form.store || defaultStoreName,
+    }));
+  }, [defaultStoreName]);
+
+  const categoryOptions = useMemo(() => {
+    return Array.from(new Set(products.map((product) => product.category)))
+      .filter(Boolean)
+      .map((category) => ({ value: category, label: category }));
+  }, [products]);
+
+  const storeOptions = useMemo(
+    () => (defaultStoreName ? [{ value: defaultStoreName, label: defaultStoreName }] : []),
+    [defaultStoreName]
+>>>>>>> bd465d6 (Integrate frontend panels with backend APIs)
   );
 
   const filtered = useMemo(() => {
-    return mockProducts.filter((p) => {
-      const matchSearch   = !search || p.name.includes(search);
-      const matchStore    = !storeFilter || p.store === storeFilter;
-      const matchCategory = !categoryFilter || p.category === categoryFilter;
-      const matchStatus   = !statusFilter || p.status === statusFilter;
-      const matchPrice    = !priceFilter || (() => {
-        if (priceFilter === 'lt100')       return p.price < 100;
-        if (priceFilter === '100-500')     return p.price >= 100 && p.price <= 500;
-        if (priceFilter === '500-1000')    return p.price >= 500 && p.price <= 1000;
-        if (priceFilter === 'gt1000')      return p.price > 1000;
-        return true;
-      })();
+    return products.filter((product) => {
+      const matchSearch = !search || product.name.includes(search);
+      const matchStore = !storeFilter || product.store === storeFilter;
+      const matchCategory = !categoryFilter || product.category === categoryFilter;
+      const matchStatus = !statusFilter || product.status === statusFilter;
+      const matchPrice =
+        !priceFilter ||
+        (() => {
+          if (priceFilter === 'lt100') return product.price < 100;
+          if (priceFilter === '100-500') return product.price >= 100 && product.price <= 500;
+          if (priceFilter === '500-1000') return product.price >= 500 && product.price <= 1000;
+          if (priceFilter === 'gt1000') return product.price > 1000;
+          return true;
+        })();
+
       return matchSearch && matchStore && matchCategory && matchStatus && matchPrice;
     });
-  }, [search, storeFilter, categoryFilter, statusFilter, priceFilter]);
+  }, [products, search, storeFilter, categoryFilter, statusFilter, priceFilter]);
 
   const pagedRows = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   function resetFilters() {
-    setSearch(''); setStore(''); setCategory(''); setStatus(''); setPrice('');
+    setSearch('');
+    setStore('');
+    setCategory('');
+    setStatus('');
+    setPrice('');
     setPage(1);
-    setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 800);
   }
 
   function openDelete(product) {
@@ -115,16 +174,28 @@ export default function ProductsPage() {
     setConfirmOpen(true);
   }
 
-  function handleDelete() {
-    setConfirmOpen(false);
-    showToast({ message: `تم حذف المنتج: ${targetProduct?.name}`, type: 'success' });
-    setTarget(null);
+  async function handleDelete() {
+    if (!targetProduct) {
+      return;
+    }
+
+    try {
+      await apiRequest(API_CONFIG.ENDPOINTS.productDetails(targetProduct.id), {
+        method: 'DELETE',
+      });
+      showToast({ message: `تم حذف المنتج: ${targetProduct.name}`, type: 'success' });
+      setConfirmOpen(false);
+      setTarget(null);
+      await loadProducts();
+    } catch (error) {
+      showToast({ message: error.message || 'تعذر حذف المنتج', type: 'error' });
+    }
   }
 
   function handleAddProductClick() {
     setEditingProductId(null);
     setInitialImages([]);
-    setProductForm({ ...INITIAL_PRODUCT_FORM });
+    setProductForm({ ...INITIAL_PRODUCT_FORM, store: defaultStoreName });
     setIsAddingProduct(true);
   }
 
@@ -132,68 +203,62 @@ export default function ProductsPage() {
     setIsAddingProduct(false);
     setEditingProductId(null);
     setInitialImages([]);
-    setProductForm({ ...INITIAL_PRODUCT_FORM });
+    setProductForm({ ...INITIAL_PRODUCT_FORM, store: defaultStoreName });
   }
 
-  const handleImagesChange = useCallback((images) => {
-    setProductForm((f) => ({ ...f, images }));
-  }, []);
-
   async function handleSaveProduct() {
-    // Note: store is always populated (locked to the manager's store), so it
-    // is intentionally NOT part of the empty-fields check.
-    if (!productForm.name || !productForm.price || !productForm.quantity) {
+    if (!productForm.name || !productForm.category || !productForm.price || !productForm.quantity) {
       showToast({ message: 'يرجى ملء جميع الحقول', type: 'error' });
       return;
     }
-    setIsSubmittingProduct(true);
+
     try {
       if (editingProductId === null) {
-        // CREATE MODE — text fields would be POSTed first, then images uploaded
-        // against the returned productId. No real product CRUD backend exists
-        // yet, so we synthesize an id with Date.now().
-        // TODO: replace with real productsApi.create() when backend lands
-        const productId = Date.now();
-        if (productForm.images.length > 0) {
-          try {
-            await productImagesApi.upload(productId, productForm.images);
-          } catch (uploadErr) {
-            // Recovery: the product "exists" but images failed. Pivot to
-            // edit mode in place so the user can retry without re-typing
-            // any fields. Their work is preserved.
-            console.error('Image upload failed after product creation', uploadErr);
-            setEditingProductId(productId);
-            setInitialImages([]);
-            showToast({
-              message: 'تم إنشاء المنتج، لكن فشل رفع الصور — يمكنك إعادة المحاولة',
-              type: 'warning',
-            });
-            return;
-          }
-        }
-        showToast({
-          message: `تم إضافة المنتج "${productForm.name}" بنجاح`,
-          type: 'success',
+        // CREATE MODE
+        const createResponse = await apiRequest(API_CONFIG.ENDPOINTS.products, {
+          method: 'POST',
+          body: {
+            name: productForm.name,
+            category_name: productForm.category,
+            price: Number(productForm.price),
+            old_price: Number(productForm.price),
+            new_price: Number(productForm.price),
+            quantity: Number(productForm.quantity),
+            status: productForm.status,
+            average_rate: 0,
+          },
         });
+        const productId = createResponse?.data?.product?.id || Date.now();
+        if (productForm.images.length > 0) {
+          showToast({
+            message: `تم إضافة المنتج "${productForm.name}" بنجاح`,
+            type: 'success',
+          });
+        }
         handleCancelAddProduct();
       } else {
-        // EDIT MODE — image mutations are committed live by ProductImagesManager
-        // through the dedicated API endpoints. Only text fields would be
-        // PATCHed here.
-        // TODO: replace with real productsApi.update(editingProductId, fields) when backend lands
+        // EDIT MODE
+        await apiRequest(API_CONFIG.ENDPOINTS.productDetails(editingProductId), {
+          method: 'PUT',
+          body: {
+            name: productForm.name,
+            category_name: productForm.category,
+            price: Number(productForm.price),
+            old_price: Number(productForm.price),
+            new_price: Number(productForm.price),
+            quantity: Number(productForm.quantity),
+            status: productForm.status,
+          },
+        });
         showToast({
           message: `تم تحديث المنتج "${productForm.name}" بنجاح`,
           type: 'success',
         });
         handleCancelAddProduct();
       }
-    } catch (err) {
-      showToast({
-        message: err?.message || 'حدث خطأ غير متوقع',
-        type: 'error',
-      });
-    } finally {
-      setIsSubmittingProduct(false);
+      await loadProducts();
+    } catch (error) {
+      showToast({ message: error.message || 'تعذر حفظ المنتج', type: 'error' });
     }
   }
 
@@ -206,6 +271,7 @@ export default function ProductsPage() {
     setEditingProductId(product.id);
     setProductForm({
       name: product.name,
+<<<<<<< HEAD
       // Store is locked to the manager's store; fall back to the hardcoded
       // value if the product (somehow) lacks one.
       store: product.store || CURRENT_STORE_NAME,
@@ -219,21 +285,78 @@ export default function ProductsPage() {
     // TODO: replace with productsApi.get(product.id) when backend lands.
     setInitialImages([]);
     setIsAddingProduct(true);
+=======
+      category: product.category,
+      price: product.price,
+      stock: product.stock,
+      status: product.statusKey,
+    });
+    setEditOpen(true);
+  }
+
+  async function handleSaveEdit() {
+    if (!editProduct || !editForm?.name || !editForm?.price || editForm?.stock === undefined) {
+      showToast({ message: 'يرجى ملء جميع الحقول', type: 'error' });
+      return;
+    }
+
+    try {
+      await apiRequest(API_CONFIG.ENDPOINTS.productDetails(editProduct.id), {
+        method: 'PUT',
+        body: {
+          name: editForm.name,
+          category_name: editForm.category,
+          price: Number(editForm.price),
+          old_price: Number(editForm.price),
+          new_price: Number(editForm.price),
+          quantity: Number(editForm.stock),
+          status: editForm.status,
+        },
+      });
+      setEditOpen(false);
+      showToast({ message: `تم تحديث المنتج "${editForm.name}" بنجاح`, type: 'success' });
+      setEditProduct(null);
+      setEditForm(null);
+      await loadProducts();
+    } catch (error) {
+      showToast({ message: error.message || 'تعذر تحديث المنتج', type: 'error' });
+    }
+  }
+
+  async function handleToggleStatus(product) {
+    const nextStatus = product.statusKey === 'hidden' ? 'active' : 'hidden';
+
+    try {
+      await apiRequest(API_CONFIG.ENDPOINTS.productStatus(product.id), {
+        method: 'POST',
+        body: {
+          status: nextStatus,
+        },
+      });
+      showToast({
+        message: `تم ${nextStatus === 'hidden' ? 'إخفاء' : 'إظهار'} المنتج`,
+        type: 'warning',
+      });
+      await loadProducts();
+    } catch (error) {
+      showToast({ message: error.message || 'تعذر تحديث حالة المنتج', type: 'error' });
+    }
+>>>>>>> bd465d6 (Integrate frontend panels with backend APIs)
   }
 
   function renderStars(rating) {
-    const full = Math.floor(rating);
+    const full = Math.floor(Number(rating || 0));
     return (
       <div className={styles.stars}>
-        {Array.from({ length: 5 }, (_, i) => (
+        {Array.from({ length: 5 }, (_, index) => (
           <Star
-            key={i}
+            key={index}
             size={12}
             strokeWidth={1.5}
-            className={i < full ? styles.starFilled : styles.starEmpty}
+            className={index < full ? styles.starFilled : styles.starEmpty}
           />
         ))}
-        <span className={styles.ratingVal}>{toArabicNum(rating.toFixed(1))}</span>
+        <span className={styles.ratingVal}>{toArabicNum(Number(rating || 0).toFixed(1))}</span>
       </div>
     );
   }
@@ -257,7 +380,7 @@ export default function ProductsPage() {
     {
       key: 'category',
       label: 'التصنيف',
-      render: (val) => <Badge text={val} variant={CATEGORY_VARIANT[val] || 'default'} />,
+      render: (val) => <Badge text={val} variant="info" />,
     },
     {
       key: 'price',
@@ -269,9 +392,7 @@ export default function ProductsPage() {
       key: 'stock',
       label: 'المخزون',
       sortable: true,
-      render: (val) => (
-        <span className={val < 5 ? styles.lowStock : ''}>{toArabicNum(val)}</span>
-      ),
+      render: (val) => <span className={val < 5 ? styles.lowStock : ''}>{toArabicNum(val)}</span>,
     },
     {
       key: 'rating',
@@ -293,9 +414,9 @@ export default function ProductsPage() {
             { label: 'عرض', icon: Eye, onClick: () => handleViewProduct(row) },
             { label: 'تعديل', icon: Pencil, onClick: () => handleEditProduct(row) },
             {
-              label: row.status === 'مخفي' ? 'إظهار' : 'إخفاء',
+              label: row.statusKey === 'hidden' ? 'إظهار' : 'إخفاء',
               icon: EyeOff,
-              onClick: () => showToast({ message: `تم ${row.status === 'مخفي' ? 'إظهار' : 'إخفاء'} المنتج`, type: 'warning' }),
+              onClick: () => handleToggleStatus(row),
             },
             { label: 'حذف', icon: Trash2, danger: true, onClick: () => openDelete(row) },
           ]}
@@ -316,7 +437,6 @@ export default function ProductsPage() {
 
     return (
       <div className={`${styles.page} page-enter`}>
-        {/* Add / Edit Product Page Header */}
         <div className={styles.pageHeader}>
           <div className={styles.headerTitleGroup}>
             <button
@@ -333,18 +453,9 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        {/* Add / Edit Product Form */}
         <div className={styles.formContainer}>
           <div className={styles.formContent}>
-            {/* Image Manager (drop zone + grid) */}
-            <ProductImagesManager
-              productId={editingProductId}
-              initialImages={initialImages}
-              onImagesChange={handleImagesChange}
-              maxImages={10}
-            />
 
-            {/* Form Fields */}
             <div className={styles.formFields}>
               <InputField
                 label="اسم المنتج"
@@ -353,12 +464,18 @@ export default function ProductsPage() {
                 onChange={(e) => setProductForm((f) => ({ ...f, name: e.target.value }))}
                 required
               />
-              {/* Store — read-only display. The store-manager only has access
-                  to his own store, so this is locked rather than selectable. */}
               <div className={styles.formField}>
                 <label className={styles.formLabel}>اسم المتجر</label>
                 <div className={styles.readonlyValue}>{productForm.store}</div>
               </div>
+              <SelectField
+                label="التصنيف"
+                placeholder="اختر التصنيف"
+                value={productForm.category}
+                onChange={(e) => setProductForm((f) => ({ ...f, category: e.target.value }))}
+                options={categoryOptions}
+                required
+              />
               <InputField
                 label="السعر"
                 type="number"
@@ -375,23 +492,25 @@ export default function ProductsPage() {
                 onChange={(e) => setProductForm((f) => ({ ...f, quantity: e.target.value }))}
                 required
               />
+              <SelectField
+                label="الحالة"
+                placeholder="اختر الحالة"
+                value={productForm.status}
+                onChange={(e) => setProductForm((f) => ({ ...f, status: e.target.value }))}
+                options={[
+                  { value: 'active', label: 'نشط' },
+                  { value: 'hidden', label: 'مخفي' },
+                  { value: 'out_of_stock', label: 'نفد المخزون' },
+                ]}
+              />
             </div>
 
-            {/* Action Buttons */}
             <div className={styles.formActions}>
-              <Button
-                variant="ghost"
-                onClick={handleCancelAddProduct}
-                disabled={isSubmittingProduct}
-              >
+              <Button variant="ghost" onClick={handleCancelAddProduct}>
                 إلغاء
               </Button>
-              <Button
-                onClick={handleSaveProduct}
-                loading={isSubmittingProduct}
-                disabled={isSubmittingProduct}
-              >
-                {submitLabel}
+              <Button onClick={handleSaveProduct}>
+                إضافة المنتج
               </Button>
             </div>
           </div>
@@ -402,11 +521,10 @@ export default function ProductsPage() {
 
   return (
     <div className={`${styles.page} page-enter`}>
-      {/* Header */}
       <div className={styles.pageHeader}>
         <div>
           <h1 className={styles.pageTitle}>إدارة المنتجات</h1>
-          <p className={styles.pageSubtitle}>عرض وتتبع كل المنتجات عبر جميع المتاجر</p>
+          <p className={styles.pageSubtitle}>عرض وتتبع كل المنتجات في المتجر</p>
         </div>
         <div className={styles.headerActions}>
           <div className={styles.viewToggle}>
@@ -425,16 +543,12 @@ export default function ProductsPage() {
               <Star size={18} />
             </button>
           </div>
-          <button
-            className={styles.addBtn}
-            onClick={handleAddProductClick}
-          >
+          <button className={styles.addBtn} onClick={handleAddProductClick}>
             إضافة منتج
           </button>
         </div>
       </div>
 
-      {/* Filter Bar */}
       <FilterBar
         filters={[
           {
@@ -457,14 +571,7 @@ export default function ProductsPage() {
             placeholder: 'الكل',
             value: categoryFilter,
             onChange: setCategory,
-            options: [
-              { value: 'فسيفساء',    label: 'فسيفساء' },
-              { value: 'خشب مطعّم',  label: 'خشب مطعّم' },
-              { value: 'زجاج منفوخ', label: 'زجاج منفوخ' },
-              { value: 'بروكار',     label: 'بروكار' },
-              { value: 'نحاسيات',    label: 'نحاسيات' },
-              { value: 'فخار',       label: 'فخار' },
-            ],
+            options: categoryOptions,
           },
           {
             type: 'select',
@@ -473,8 +580,8 @@ export default function ProductsPage() {
             value: statusFilter,
             onChange: setStatus,
             options: [
-              { value: 'نشط',         label: 'نشط' },
-              { value: 'مخفي',        label: 'مخفي' },
+              { value: 'نشط', label: 'نشط' },
+              { value: 'مخفي', label: 'مخفي' },
               { value: 'نفد المخزون', label: 'نفد المخزون' },
             ],
           },
@@ -485,10 +592,10 @@ export default function ProductsPage() {
             value: priceFilter,
             onChange: setPrice,
             options: [
-              { value: 'lt100',    label: 'أقل من ١٠٠ $' },
-              { value: '100-500',  label: '١٠٠ - ٥٠٠ $' },
+              { value: 'lt100', label: 'أقل من ١٠٠ $' },
+              { value: '100-500', label: '١٠٠ - ٥٠٠ $' },
               { value: '500-1000', label: '٥٠٠ - ١٠٠٠ $' },
-              { value: 'gt1000',   label: 'أكثر من ١٠٠٠ $' },
+              { value: 'gt1000', label: 'أكثر من ١٠٠٠ $' },
             ],
           },
         ]}
@@ -496,7 +603,6 @@ export default function ProductsPage() {
         activeCount={[search, storeFilter, categoryFilter, statusFilter, priceFilter].filter(Boolean).length}
       />
 
-      {/* Table / Grid */}
       <div className={styles.tableCard}>
         {viewMode === 'table' ? (
           <DataTable
@@ -510,33 +616,36 @@ export default function ProductsPage() {
               page,
               pageSize,
               total: filtered.length,
-              onPageChange: (p) => setPage(p),
-              onPageSizeChange: (s) => { setPageSize(s); setPage(1); },
+              onPageChange: (nextPage) => setPage(nextPage),
+              onPageSizeChange: (size) => {
+                setPageSize(size);
+                setPage(1);
+              },
             }}
           />
         ) : (
           <div className={styles.productGrid}>
-            {pagedRows.map((p) => (
-              <div key={p.id} className={styles.productCard}>
+            {pagedRows.map((product) => (
+              <div key={product.id} className={styles.productCard}>
                 <div className={`${styles.cardImage} skeleton-shimmer`}>
                   <Package size={32} strokeWidth={1} />
                   <Badge
-                    text={p.status}
-                    variant={STATUS_VARIANT[p.status] || 'default'}
+                    text={product.status}
+                    variant={STATUS_VARIANT[product.status] || 'default'}
                     className={styles.cardBadge}
                   />
                 </div>
                 <div className={styles.cardContent}>
-                  <h3 className={styles.cardName}>{p.name}</h3>
+                  <h3 className={styles.cardName}>{product.name}</h3>
                   <div className={styles.cardMeta}>
-                    <Badge text={p.category} variant={CATEGORY_VARIANT[p.category] || 'default'} />
-                    <span className={styles.cardPrice}>{formatCurrency(p.price)}</span>
+                    <Badge text={product.category} variant="info" />
+                    <span className={styles.cardPrice}>{formatCurrency(product.price)}</span>
                   </div>
                   <div className={styles.cardFooter}>
                     <span className={styles.cardStock}>
-                      المخزون: <span className={p.stock < 5 ? styles.lowStock : ''}>{toArabicNum(p.stock)}</span>
+                      المخزون: <span className={product.stock < 5 ? styles.lowStock : ''}>{toArabicNum(product.stock)}</span>
                     </span>
-                    {renderStars(p.rating)}
+                    {renderStars(product.rating)}
                   </div>
                 </div>
               </div>
@@ -545,7 +654,6 @@ export default function ProductsPage() {
         )}
       </div>
 
-      {/* View Product Modal */}
       <Modal
         isOpen={viewOpen}
         onClose={() => setViewOpen(false)}
@@ -563,9 +671,7 @@ export default function ProductsPage() {
           </div>
           <div className={styles.viewField}>
             <label>التصنيف</label>
-            <p>
-              <Badge text={viewProduct?.category} variant={CATEGORY_VARIANT[viewProduct?.category] || 'default'} />
-            </p>
+            <p><Badge text={viewProduct?.category} variant="info" /></p>
           </div>
           <div className={styles.viewField}>
             <label>السعر</label>
@@ -577,18 +683,73 @@ export default function ProductsPage() {
           </div>
           <div className={styles.viewField}>
             <label>التقييم</label>
-            <p>{toArabicNum(viewProduct?.rating?.toFixed(1))}</p>
+            <p>{toArabicNum(Number(viewProduct?.rating || 0).toFixed(1))}</p>
           </div>
           <div className={styles.viewField}>
             <label>الحالة</label>
-            <p>
-              <Badge text={viewProduct?.status} variant={STATUS_VARIANT[viewProduct?.status] || 'default'} />
-            </p>
+            <p><Badge text={viewProduct?.status} variant={STATUS_VARIANT[viewProduct?.status] || 'default'} /></p>
           </div>
         </div>
       </Modal>
 
+<<<<<<< HEAD
       {/* Confirm Delete */}
+=======
+      <Modal
+        isOpen={editOpen}
+        onClose={() => setEditOpen(false)}
+        title={`تعديل المنتج: ${editProduct?.name}`}
+        size="sm"
+        footer={(
+          <div className={styles.modalFooter}>
+            <Button variant="ghost" onClick={() => setEditOpen(false)}>إلغاء</Button>
+            <Button onClick={handleSaveEdit}>حفظ التغييرات</Button>
+          </div>
+        )}
+      >
+        <div className={styles.editProductForm}>
+          <InputField
+            label="اسم المنتج"
+            value={editForm?.name || ''}
+            onChange={(e) => setEditForm((form) => ({ ...form, name: e.target.value }))}
+            required
+          />
+          <SelectField
+            label="التصنيف"
+            placeholder="اختر التصنيف"
+            value={editForm?.category || ''}
+            onChange={(e) => setEditForm((form) => ({ ...form, category: e.target.value }))}
+            options={categoryOptions}
+          />
+          <InputField
+            label="السعر"
+            type="number"
+            value={editForm?.price || ''}
+            onChange={(e) => setEditForm((form) => ({ ...form, price: parseFloat(e.target.value) }))}
+            required
+          />
+          <InputField
+            label="المخزون"
+            type="number"
+            value={editForm?.stock || ''}
+            onChange={(e) => setEditForm((form) => ({ ...form, stock: parseInt(e.target.value, 10) }))}
+            required
+          />
+          <SelectField
+            label="الحالة"
+            placeholder="اختر الحالة"
+            value={editForm?.status || 'active'}
+            onChange={(e) => setEditForm((form) => ({ ...form, status: e.target.value }))}
+            options={[
+              { value: 'active', label: 'نشط' },
+              { value: 'hidden', label: 'مخفي' },
+              { value: 'out_of_stock', label: 'نفد المخزون' },
+            ]}
+          />
+        </div>
+      </Modal>
+
+>>>>>>> bd465d6 (Integrate frontend panels with backend APIs)
       <ConfirmModal
         isOpen={confirmOpen}
         onClose={() => setConfirmOpen(false)}

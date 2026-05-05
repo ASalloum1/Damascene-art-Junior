@@ -3,10 +3,16 @@ import { Gem } from 'lucide-react';
 import { useApi } from '../context/ApiContext.jsx';
 import { InputField } from '../components/InputField.jsx';
 import { Button } from '../components/Button.jsx';
+import {
+  extractAuthData,
+  loginWithCredentials,
+  persistAuthSession,
+  redirectToUserLanding,
+} from '../utils/auth.js';
 import styles from './LoginPage.module.css';
 
 export function LoginPage({ onNavigate }) {
-  const { baseUrl } = useApi();
+  const { baseUrl, endpoints } = useApi();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -25,43 +31,22 @@ export function LoginPage({ onNavigate }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${baseUrl}/api/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+      const data = await loginWithCredentials({
+        baseUrl,
+        email,
+        password,
+        loginEndpoint: endpoints.login,
       });
+      const authData = extractAuthData(data);
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.message || 'فشل تسجيل الدخول');
-        return;
+      if (!authData.token || !authData.user) {
+        throw new Error('استجابة تسجيل الدخول غير مكتملة');
       }
 
-      // Store token and user data
-      localStorage.setItem('token', data.data.token);
-      localStorage.setItem('user', JSON.stringify(data.data.user));
-
-      // Navigate based on user type
-      const userType = data.data.user.type;
-      if (userType === 'admin') {
-        // Redirect to admin panel
-        window.location.href = 'http://localhost:5174/';
-      } else if (userType === 'store_manager') {
-        // Redirect to store manager dashboard
-        window.location.href = 'http://localhost:5175/';
-      } else {
-        // Default to customer account page
-        window.location.href = 'http://localhost:5173/';
-      }
+      persistAuthSession(authData);
+      redirectToUserLanding(authData.user);
     } catch (err) {
-      setError('حدث خطأ في الاتصال بالخادم');
+      setError(err.message || 'حدث خطأ في الاتصال بالخادم');
       console.error('Login error:', err);
     } finally {
       setIsLoading(false);

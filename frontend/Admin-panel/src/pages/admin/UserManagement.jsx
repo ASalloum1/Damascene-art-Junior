@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   UserPlus,
   Users,
@@ -8,9 +8,6 @@ import {
   Eye,
   Pencil,
   KeyRound,
-  Trash2,
-  CheckCircle,
-  XCircle,
 } from 'lucide-react';
 import StatCard from '../../components/ui/StatCard.jsx';
 import DataTable from '../../components/ui/DataTable.jsx';
@@ -22,84 +19,118 @@ import Modal from '../../components/ui/Modal.jsx';
 import InputField from '../../components/ui/InputField.jsx';
 import SelectField from '../../components/ui/SelectField.jsx';
 import { useToast } from '../../components/ui/Toast.jsx';
-import { mockUsers, mockStores } from '../../data/mockData.js';
 import { formatDate, relativeTime, toArabicNum } from '../../utils/formatters.js';
+import { API_CONFIG } from '../../config/api.config.js';
+import { apiRequest, getRoleLabel, getStatusLabel } from '../../utils/adminApi.js';
 import styles from './UserManagement.module.css';
 
 const ROLE_VARIANT = {
-  'أدمن':       'danger',
-  'مدير متجر':  'gold',
-  'عميل':       'success',
+  أدمن: 'danger',
+  'مدير متجر': 'gold',
+  عميل: 'success',
 };
 
 const STATUS_VARIANT = {
-  'نشط':   'success',
+  نشط: 'success',
   'معطّل': 'danger',
 };
 
 const PAGE_SIZE = 10;
 
+const INITIAL_FORM = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  password: '',
+  role: 'customers',
+  storeId: '',
+  phone: '',
+  address: '',
+  status: 'active',
+};
+
+function normalizeUser(user) {
+  return {
+    id: user.id,
+    firstName: user.first_name || user.full_name?.split(' ')?.[0] || '',
+    lastName: user.last_name || user.full_name?.split(' ')?.slice(1).join(' ') || '',
+    email: user.email || '',
+    role: user.role_label || getRoleLabel(user.role),
+    roleKey: user.role || 'customers',
+    store: user.store?.name || user.store || '',
+    storeId: user.store?.id || user.store_id || '',
+    status: user.status_label || getStatusLabel(user.status),
+    statusKey: user.status || 'active',
+    registeredAt: user.registered_at || user.created_at || null,
+    lastActive: user.last_active || user.updated_at || null,
+  };
+}
+
 export default function UserManagementPage() {
   const { showToast } = useToast();
-
-  // Filter state
-  const [search, setSearch]       = useState('');
-  const [roleFilter, setRole]     = useState('');
+  const [users, setUsers] = useState([]);
+  const [stores, setStores] = useState([]);
+  const [search, setSearch] = useState('');
+  const [roleFilter, setRole] = useState('');
   const [statusFilter, setStatus] = useState('');
-
-  // Pagination
-  const [page, setPage]           = useState(1);
-  const [pageSize, setPageSize]   = useState(PAGE_SIZE);
-
-  // Selection state
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
   const [selectedIds, setSelectedIds] = useState([]);
+  const [addOpen, setAddOpen] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
+  const [viewUser, setViewUser] = useState(null);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editForm, setEditForm] = useState(null);
+  const [resetOpen, setResetOpen] = useState(false);
+  const [resetUser, setResetUser] = useState(null);
+  const [resetForm, setResetForm] = useState({ newPassword: '', confirmPassword: '' });
+  const [form, setForm] = useState(() => ({ ...INITIAL_FORM }));
 
-  // Modal state
-  const [addOpen, setAddOpen]         = useState(false);
-  const [viewOpen, setViewOpen]       = useState(false);
-  const [viewUser, setViewUser]       = useState(null);
-  const [editOpen, setEditOpen]       = useState(false);
-  const [editForm, setEditForm]       = useState(null);
-  const [resetOpen, setResetOpen]     = useState(false);
-  const [resetUser, setResetUser]     = useState(null);
-  const [resetForm, setResetForm]     = useState({ newPassword: '', confirmPassword: '', sendEmail: true });
-  // Add User form state
-  const [form, setForm] = useState(() => ({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    role: '',
-    store: '',
-    status: 'نشط',
-  }));
+  const loadUsers = useCallback(async () => {
+    try {
+      const query = new URLSearchParams();
 
-  // Computed stats
+      if (search) query.set('search', search);
+      if (roleFilter) query.set('role', roleFilter);
+      if (statusFilter) query.set('status', statusFilter);
+
+      const path = query.toString()
+        ? `${API_CONFIG.ENDPOINTS.users}?${query.toString()}`
+        : API_CONFIG.ENDPOINTS.users;
+      const data = await apiRequest(path);
+      setUsers((data?.data?.users || []).map(normalizeUser));
+    } catch (error) {
+      showToast({ message: error.message || 'تعذر تحميل المستخدمين', type: 'error' });
+    }
+  }, [roleFilter, search, showToast, statusFilter]);
+
+  const loadStores = useCallback(async () => {
+    try {
+      const data = await apiRequest(API_CONFIG.ENDPOINTS.stores);
+      setStores(data?.data?.stores || []);
+    } catch (error) {
+      showToast({ message: error.message || 'تعذر تحميل المتاجر', type: 'error' });
+    }
+  }, [showToast]);
+
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
+
+  useEffect(() => {
+    loadStores();
+  }, [loadStores]);
+
   const stats = useMemo(() => ({
-    total: mockUsers.length,
-    admins: mockUsers.filter((u) => u.role === 'أدمن').length,
-    managers: mockUsers.filter((u) => u.role === 'مدير متجر').length,
-    customers: mockUsers.filter((u) => u.role === 'عميل').length,
-  }), []);
+    total: users.length,
+    admins: users.filter((user) => user.roleKey === 'admin').length,
+    managers: users.filter((user) => user.roleKey === 'store-manager').length,
+    customers: users.filter((user) => user.roleKey === 'customers').length,
+  }), [users]);
 
-  // Filtered rows
-  const filteredRows = useMemo(() => {
-    return mockUsers.filter((u) => {
-      const fullName = `${u.firstName} ${u.lastName}`.toLowerCase();
-      const s = search.toLowerCase();
-      const matchSearch =
-        !search ||
-        fullName.includes(s) ||
-        u.email.toLowerCase().includes(s);
-      const matchRole   = !roleFilter   || u.role   === roleFilter;
-      const matchStatus = !statusFilter || u.status === statusFilter;
-      return matchSearch && matchRole && matchStatus;
-    });
-  }, [search, roleFilter, statusFilter]);
-
-  const pagedRows = useMemo(() => 
-    filteredRows.slice((page - 1) * pageSize, page * pageSize),
-    [filteredRows, page, pageSize]
+  const pagedRows = useMemo(
+    () => users.slice((page - 1) * pageSize, page * pageSize),
+    [page, pageSize, users]
   );
 
   const resetFilters = useCallback(() => {
@@ -110,11 +141,31 @@ export default function UserManagementPage() {
     setSelectedIds([]);
   }, []);
 
-  const handleAddUser = () => {
-    setAddOpen(false);
-    showToast({ message: 'تم إضافة المستخدم بنجاح', type: 'success' });
-    setForm({ firstName: '', lastName: '', email: '', password: '', role: '', store: '', status: 'نشط' });
-  };
+  const handleAddUser = useCallback(async () => {
+    try {
+      await apiRequest(API_CONFIG.ENDPOINTS.users, {
+        method: 'POST',
+        body: {
+          first_name: form.firstName,
+          last_name: form.lastName,
+          email: form.email,
+          password: form.password,
+          password_confirmation: form.password,
+          phone: form.phone,
+          address: form.address,
+          role: form.role,
+          status: form.status,
+          store_id: form.role === 'store-manager' ? form.storeId || null : null,
+        },
+      });
+      setAddOpen(false);
+      showToast({ message: 'تم إضافة المستخدم بنجاح', type: 'success' });
+      setForm({ ...INITIAL_FORM });
+      await loadUsers();
+    } catch (error) {
+      showToast({ message: error.message || 'تعذر إضافة المستخدم', type: 'error' });
+    }
+  }, [form, loadUsers, showToast]);
 
   const openViewUserModal = useCallback((user) => {
     setViewUser(user);
@@ -127,25 +178,45 @@ export default function UserManagementPage() {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      role: user.role,
-      store: user.store || '',
-      status: user.status,
+      role: user.roleKey,
+      storeId: user.storeId || '',
+      status: user.statusKey,
+      phone: user.phone || '',
+      address: user.address || '',
     });
     setEditOpen(true);
   }, []);
 
-  const handleEditUser = () => {
-    setEditOpen(false);
-    showToast({ message: 'تم حفظ تعديلات المستخدم بنجاح', type: 'success' });
-  };
+  const handleEditUser = useCallback(async () => {
+    try {
+      await apiRequest(API_CONFIG.ENDPOINTS.userDetails(editForm.id), {
+        method: 'PUT',
+        body: {
+          first_name: editForm.firstName,
+          last_name: editForm.lastName,
+          email: editForm.email,
+          role: editForm.role,
+          status: editForm.status,
+          store_id: editForm.role === 'store-manager' ? editForm.storeId || null : null,
+          phone: editForm.phone,
+          address: editForm.address,
+        },
+      });
+      setEditOpen(false);
+      showToast({ message: 'تم حفظ تعديلات المستخدم بنجاح', type: 'success' });
+      await loadUsers();
+    } catch (error) {
+      showToast({ message: error.message || 'تعذر تعديل المستخدم', type: 'error' });
+    }
+  }, [editForm, loadUsers, showToast]);
 
   const openResetPasswordModal = useCallback((user) => {
     setResetUser(user);
-    setResetForm({ newPassword: '', confirmPassword: '', sendEmail: true });
+    setResetForm({ newPassword: '', confirmPassword: '' });
     setResetOpen(true);
   }, []);
 
-  const handleResetPassword = () => {
+  const handleResetPassword = useCallback(async () => {
     if (!resetForm.newPassword || !resetForm.confirmPassword) {
       showToast({ message: 'يرجى ملء جميع الحقول', type: 'warning' });
       return;
@@ -158,22 +229,21 @@ export default function UserManagementPage() {
       showToast({ message: 'كلمتا المرور غير متطابقتين', type: 'error' });
       return;
     }
-    setResetOpen(false);
-    showToast({
-      message: resetForm.sendEmail
-        ? 'تم إعادة تعيين كلمة المرور وإرسال الإشعار للمستخدم'
-        : 'تم إعادة تعيين كلمة المرور بنجاح',
-      type: 'success',
-    });
-  };
 
-  const handleBulkAction = (action) => {
-    showToast({ 
-      message: `تم تنفيذ إجراء (${action}) على ${toArabicNum(selectedIds.length)} مستخدمين`, 
-      type: 'info' 
-    });
-    setSelectedIds([]);
-  };
+    try {
+      await apiRequest(API_CONFIG.ENDPOINTS.userResetPassword(resetUser.id), {
+        method: 'POST',
+        body: {
+          password: resetForm.newPassword,
+          password_confirmation: resetForm.confirmPassword,
+        },
+      });
+      setResetOpen(false);
+      showToast({ message: 'تمت إعادة تعيين كلمة المرور بنجاح', type: 'success' });
+    } catch (error) {
+      showToast({ message: error.message || 'تعذر إعادة تعيين كلمة المرور', type: 'error' });
+    }
+  }, [resetForm, resetUser, showToast]);
 
   const headers = useMemo(() => [
     {
@@ -197,7 +267,7 @@ export default function UserManagementPage() {
     {
       key: 'store',
       label: 'المتجر',
-      render: (val) => val ? val : '—',
+      render: (val) => val || '—',
     },
     {
       key: 'status',
@@ -227,13 +297,15 @@ export default function UserManagementPage() {
         />
       ),
     },
-  ], [openViewUserModal, openEditUserModal, openResetPasswordModal]);
+  ], [openEditUserModal, openResetPasswordModal, openViewUserModal]);
 
-  const storeOptions = useMemo(() => mockStores.map((s) => ({ value: s.name, label: s.name })), []);
+  const storeOptions = useMemo(
+    () => stores.map((store) => ({ value: store.id, label: store.name })),
+    [stores]
+  );
 
   return (
     <div className={`${styles.page} page-enter`}>
-      {/* Header */}
       <div className={styles.pageHeader}>
         <div className={styles.headerTitle}>
           <h1 className={styles.pageTitle}>إدارة المستخدمين</h1>
@@ -244,33 +316,37 @@ export default function UserManagementPage() {
         </Button>
       </div>
 
-      {/* Stats */}
       <div className={styles.statsRow}>
-        <StatCard icon={Users}      label="إجمالي المستخدمين" value={toArabicNum(stats.total)}     color="blue" />
-        <StatCard icon={Shield}     label="مشرفين (Admin)"    value={toArabicNum(stats.admins)}    color="red" />
-        <StatCard icon={Store}      label="مدراء متاجر"       value={toArabicNum(stats.managers)}  color="gold" />
-        <StatCard icon={ShoppingBag} label="عملاء"            value={toArabicNum(stats.customers)} color="green" />
+        <StatCard icon={Users} label="إجمالي المستخدمين" value={toArabicNum(stats.total)} color="blue" />
+        <StatCard icon={Shield} label="مشرفين (Admin)" value={toArabicNum(stats.admins)} color="red" />
+        <StatCard icon={Store} label="مدراء متاجر" value={toArabicNum(stats.managers)} color="gold" />
+        <StatCard icon={ShoppingBag} label="عملاء" value={toArabicNum(stats.customers)} color="green" />
       </div>
 
-      {/* Filter Bar */}
       <FilterBar
         filters={[
           {
             type: 'search',
             placeholder: 'بحث بالاسم أو البريد الإلكتروني...',
             value: search,
-            onChange: setSearch,
+            onChange: (value) => {
+              setSearch(value);
+              setPage(1);
+            },
           },
           {
             type: 'select',
             label: 'الدور',
             placeholder: 'الكل',
             value: roleFilter,
-            onChange: (v) => { setRole(v); setPage(1); },
+            onChange: (value) => {
+              setRole(value);
+              setPage(1);
+            },
             options: [
-              { value: 'أدمن', label: 'أدمن' },
-              { value: 'مدير متجر', label: 'مدير متجر' },
-              { value: 'عميل', label: 'عميل' },
+              { value: 'admin', label: 'أدمن' },
+              { value: 'store-manager', label: 'مدير متجر' },
+              { value: 'customers', label: 'عميل' },
             ],
           },
           {
@@ -278,10 +354,13 @@ export default function UserManagementPage() {
             label: 'الحالة',
             placeholder: 'الكل',
             value: statusFilter,
-            onChange: (v) => { setStatus(v); setPage(1); },
+            onChange: (value) => {
+              setStatus(value);
+              setPage(1);
+            },
             options: [
-              { value: 'نشط', label: 'نشط' },
-              { value: 'معطّل', label: 'معطّل' },
+              { value: 'active', label: 'نشط' },
+              { value: 'disabled', label: 'معطّل' },
             ],
           },
         ]}
@@ -289,24 +368,6 @@ export default function UserManagementPage() {
         activeCount={[search, roleFilter, statusFilter].filter(Boolean).length}
       />
 
-      {/* Bulk Actions Bar */}
-      {selectedIds.length > 0 ? (
-        <div className={`${styles.bulkActions} slideInDown`}>
-          <div className={styles.bulkInfo}>
-            <span className={styles.bulkCount}>{toArabicNum(selectedIds.length)}</span>
-            <span>مستخدمين مختارين</span>
-          </div>
-          <div className={styles.bulkButtons}>
-            <Button variant="ghost" size="sm" icon={CheckCircle} onClick={() => handleBulkAction('تفعيل')}>تفعيل</Button>
-            <Button variant="ghost" size="sm" icon={XCircle} onClick={() => handleBulkAction('تعطيل')}>تعطيل</Button>
-            <Button variant="ghost" size="sm" icon={Trash2} danger onClick={() => handleBulkAction('حذف')}>حذف</Button>
-            <div className={styles.bulkDivider} />
-            <Button variant="ghost" size="sm" onClick={() => setSelectedIds([])}>إلغاء التحديد</Button>
-          </div>
-        </div>
-      ) : null}
-
-      {/* Table */}
       <div className={styles.tableCard}>
         <DataTable
           headers={headers}
@@ -317,267 +378,153 @@ export default function UserManagementPage() {
           pagination={{
             page,
             pageSize,
-            total: filteredRows.length,
-            onPageChange: setPage,
-            onPageSizeChange: (s) => { setPageSize(s); setPage(1); },
+            total: users.length,
+            onPageChange: (value) => setPage(value),
+            onPageSizeChange: (value) => {
+              setPageSize(value);
+              setPage(1);
+            },
           }}
         />
       </div>
 
-      {/* Add User Modal */}
       <Modal
         isOpen={addOpen}
         onClose={() => setAddOpen(false)}
         title="إضافة مستخدم جديد"
-        size="md"
-        footer={
+        footer={(
           <>
             <Button variant="ghost" onClick={() => setAddOpen(false)}>إلغاء</Button>
             <Button onClick={handleAddUser}>إنشاء المستخدم</Button>
           </>
-        }
+        )}
       >
         <div className={styles.formGrid}>
-          <InputField
-            label="الاسم الأول"
-            placeholder="أدخل الاسم الأول"
-            value={form.firstName}
-            onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))}
-            required
-          />
-          <InputField
-            label="اسم العائلة"
-            placeholder="أدخل اسم العائلة"
-            value={form.lastName}
-            onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))}
-            required
-          />
-          <div className={styles.formFull}>
-            <InputField
-              label="البريد الإلكتروني"
-              type="email"
-              placeholder="example@email.com"
-              value={form.email}
-              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-              required
-            />
-          </div>
-          <div className={styles.formFull}>
-            <InputField
-              label="كلمة المرور"
-              type="password"
-              placeholder="٨ أحرف على الأقل"
-              value={form.password}
-              onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-              required
-            />
-          </div>
+          <InputField label="الاسم الأول" value={form.firstName} onChange={(e) => setForm((value) => ({ ...value, firstName: e.target.value }))} required />
+          <InputField label="الاسم الأخير" value={form.lastName} onChange={(e) => setForm((value) => ({ ...value, lastName: e.target.value }))} required />
+          <InputField label="البريد الإلكتروني" type="email" value={form.email} onChange={(e) => setForm((value) => ({ ...value, email: e.target.value }))} required />
+          <InputField label="كلمة المرور" type="password" value={form.password} onChange={(e) => setForm((value) => ({ ...value, password: e.target.value }))} required />
+          <InputField label="الهاتف" value={form.phone} onChange={(e) => setForm((value) => ({ ...value, phone: e.target.value }))} />
+          <InputField label="العنوان" value={form.address} onChange={(e) => setForm((value) => ({ ...value, address: e.target.value }))} />
           <SelectField
             label="الدور"
-            placeholder="اختر الدور"
             value={form.role}
-            onChange={(e) => setForm((f) => ({ ...f, role: e.target.value, store: '' }))}
+            onChange={(e) => setForm((value) => ({ ...value, role: e.target.value }))}
             options={[
-              { value: 'أدمن', label: 'أدمن' },
-              { value: 'مدير متجر', label: 'مدير متجر' },
-              { value: 'عميل', label: 'عميل' },
+              { value: 'admin', label: 'أدمن' },
+              { value: 'store-manager', label: 'مدير متجر' },
+              { value: 'customers', label: 'عميل' },
             ]}
           />
-          {form.role === 'مدير متجر' ? (
-            <SelectField
-              label="المتجر"
-              placeholder="اختر المتجر"
-              value={form.store}
-              onChange={(e) => setForm((f) => ({ ...f, store: e.target.value }))}
-              options={storeOptions}
-            />
-          ) : null}
           <SelectField
             label="الحالة"
             value={form.status}
-            onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
+            onChange={(e) => setForm((value) => ({ ...value, status: e.target.value }))}
             options={[
-              { value: 'نشط', label: 'نشط' },
-              { value: 'معطّل', label: 'معطّل' },
+              { value: 'active', label: 'نشط' },
+              { value: 'disabled', label: 'معطّل' },
             ]}
           />
+          {form.role === 'store-manager' ? (
+            <SelectField
+              label="المتجر"
+              placeholder="اختر المتجر"
+              value={form.storeId}
+              onChange={(e) => setForm((value) => ({ ...value, storeId: e.target.value }))}
+              options={storeOptions}
+            />
+          ) : null}
         </div>
       </Modal>
 
       <Modal
         isOpen={viewOpen}
         onClose={() => setViewOpen(false)}
-        title="عرض بيانات المستخدم"
-        size="md"
-        footer={<Button variant="ghost" onClick={() => setViewOpen(false)}>إغلاق</Button>}
+        title="تفاصيل المستخدم"
       >
         {viewUser ? (
-          <div className={styles.viewUserContent}>
-            <div className={styles.viewUserHeader}>
-              <div className={styles.avatar}>
-                {viewUser.firstName?.[0]}{viewUser.lastName?.[0]}
-              </div>
-              <div>
-                <div className={styles.userName}>{viewUser.firstName} {viewUser.lastName}</div>
-                <div className={styles.userEmail}>{viewUser.email}</div>
-              </div>
-            </div>
-
-            <div className={styles.viewUserGrid}>
-              <div className={styles.viewUserItem}>
-                <span className={styles.viewUserLabel}>الدور</span>
-                <Badge text={viewUser.role} variant={ROLE_VARIANT[viewUser.role] || 'default'} />
-              </div>
-              <div className={styles.viewUserItem}>
-                <span className={styles.viewUserLabel}>الحالة</span>
-                <Badge text={viewUser.status} variant={STATUS_VARIANT[viewUser.status] || 'default'} />
-              </div>
-              <div className={styles.viewUserItem}>
-                <span className={styles.viewUserLabel}>المتجر</span>
-                <span className={styles.viewUserValue}>{viewUser.store ? viewUser.store : '—'}</span>
-              </div>
-              <div className={styles.viewUserItem}>
-                <span className={styles.viewUserLabel}>تاريخ التسجيل</span>
-                <span className={styles.viewUserValue}>{formatDate(viewUser.registeredAt)}</span>
-              </div>
-              <div className={styles.viewUserItem}>
-                <span className={styles.viewUserLabel}>آخر نشاط</span>
-                <span className={styles.viewUserValue}>{relativeTime(viewUser.lastActive)}</span>
-              </div>
-              <div className={styles.viewUserItem}>
-                <span className={styles.viewUserLabel}>معرف المستخدم</span>
-                <span className={styles.viewUserValue}>{viewUser.id}</span>
-              </div>
-            </div>
+          <div className={styles.viewCard}>
+            <p><strong>الاسم:</strong> {viewUser.firstName} {viewUser.lastName}</p>
+            <p><strong>البريد:</strong> {viewUser.email}</p>
+            <p><strong>الدور:</strong> {viewUser.role}</p>
+            <p><strong>المتجر:</strong> {viewUser.store || '—'}</p>
+            <p><strong>الحالة:</strong> {viewUser.status}</p>
           </div>
         ) : null}
       </Modal>
 
-      {/* Edit User Modal */}
       <Modal
         isOpen={editOpen}
         onClose={() => setEditOpen(false)}
-        title="تعديل بيانات المستخدم"
-        size="md"
-        footer={
+        title="تعديل المستخدم"
+        footer={(
           <>
             <Button variant="ghost" onClick={() => setEditOpen(false)}>إلغاء</Button>
             <Button onClick={handleEditUser}>حفظ التعديلات</Button>
           </>
-        }
+        )}
       >
-        {editForm ? (
-          <div className={styles.formGrid}>
-            <InputField
-              label="الاسم الأول"
-              value={editForm.firstName}
-              onChange={(e) => setEditForm((f) => ({ ...f, firstName: e.target.value }))}
-              required
-            />
-            <InputField
-              label="اسم العائلة"
-              value={editForm.lastName}
-              onChange={(e) => setEditForm((f) => ({ ...f, lastName: e.target.value }))}
-              required
-            />
-            <div className={styles.formFull}>
-              <InputField
-                label="البريد الإلكتروني"
-                type="email"
-                value={editForm.email}
-                onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
-                required
-              />
-            </div>
+        <div className={styles.formGrid}>
+          <InputField label="الاسم الأول" value={editForm?.firstName || ''} onChange={(e) => setEditForm((value) => ({ ...value, firstName: e.target.value }))} />
+          <InputField label="الاسم الأخير" value={editForm?.lastName || ''} onChange={(e) => setEditForm((value) => ({ ...value, lastName: e.target.value }))} />
+          <InputField label="البريد الإلكتروني" type="email" value={editForm?.email || ''} onChange={(e) => setEditForm((value) => ({ ...value, email: e.target.value }))} />
+          <SelectField
+            label="الدور"
+            value={editForm?.role || 'customers'}
+            onChange={(e) => setEditForm((value) => ({ ...value, role: e.target.value }))}
+            options={[
+              { value: 'admin', label: 'أدمن' },
+              { value: 'store-manager', label: 'مدير متجر' },
+              { value: 'customers', label: 'عميل' },
+            ]}
+          />
+          <SelectField
+            label="الحالة"
+            value={editForm?.status || 'active'}
+            onChange={(e) => setEditForm((value) => ({ ...value, status: e.target.value }))}
+            options={[
+              { value: 'active', label: 'نشط' },
+              { value: 'disabled', label: 'معطّل' },
+            ]}
+          />
+          {editForm?.role === 'store-manager' ? (
             <SelectField
-              label="الدور"
-              value={editForm.role}
-              onChange={(e) => setEditForm((f) => ({ ...f, role: e.target.value, store: '' }))}
-              options={[
-                { value: 'أدمن', label: 'أدمن' },
-                { value: 'مدير متجر', label: 'مدير متجر' },
-                { value: 'عميل', label: 'عميل' },
-              ]}
+              label="المتجر"
+              placeholder="اختر المتجر"
+              value={editForm?.storeId || ''}
+              onChange={(e) => setEditForm((value) => ({ ...value, storeId: e.target.value }))}
+              options={storeOptions}
             />
-            {editForm.role === 'مدير متجر' ? (
-              <SelectField
-                label="المتجر"
-                placeholder="اختر المتجر"
-                value={editForm.store}
-                onChange={(e) => setEditForm((f) => ({ ...f, store: e.target.value }))}
-                options={storeOptions}
-              />
-            ) : null}
-            <SelectField
-              label="الحالة"
-              value={editForm.status}
-              onChange={(e) => setEditForm((f) => ({ ...f, status: e.target.value }))}
-              options={[
-                { value: 'نشط', label: 'نشط' },
-                { value: 'معطّل', label: 'معطّل' },
-              ]}
-            />
-          </div>
-        ) : null}
+          ) : null}
+        </div>
       </Modal>
 
-      {/* Reset Password Modal */}
       <Modal
         isOpen={resetOpen}
         onClose={() => setResetOpen(false)}
-        title="إعادة تعيين كلمة المرور"
-        size="sm"
-        footer={
+        title={`إعادة تعيين كلمة المرور: ${resetUser?.firstName || ''}`}
+        footer={(
           <>
             <Button variant="ghost" onClick={() => setResetOpen(false)}>إلغاء</Button>
-            <Button icon={KeyRound} onClick={handleResetPassword}>إعادة التعيين</Button>
+            <Button onClick={handleResetPassword}>تأكيد</Button>
           </>
-        }
+        )}
       >
-        {resetUser ? (
-          <div className={styles.formGrid}>
-            <div className={styles.formFull}>
-              <p className={styles.resetNotice}>
-                سيتم إعادة تعيين كلمة المرور للمستخدم{' '}
-                <strong>{resetUser.firstName} {resetUser.lastName}</strong>
-                {' '}({resetUser.email}).
-              </p>
-            </div>
-            <div className={styles.formFull}>
-              <InputField
-                label="كلمة المرور الجديدة"
-                type="password"
-                placeholder="٨ أحرف على الأقل"
-                value={resetForm.newPassword}
-                onChange={(e) => setResetForm((f) => ({ ...f, newPassword: e.target.value }))}
-                required
-              />
-            </div>
-            <div className={styles.formFull}>
-              <InputField
-                label="تأكيد كلمة المرور"
-                type="password"
-                placeholder="أعد إدخال كلمة المرور"
-                value={resetForm.confirmPassword}
-                onChange={(e) => setResetForm((f) => ({ ...f, confirmPassword: e.target.value }))}
-                required
-              />
-            </div>
-            <div className={styles.formFull}>
-              <label className={styles.resetCheckbox}>
-                <input
-                  type="checkbox"
-                  checked={resetForm.sendEmail}
-                  onChange={(e) => setResetForm((f) => ({ ...f, sendEmail: e.target.checked }))}
-                />
-                <span>إرسال إشعار للمستخدم عبر البريد الإلكتروني</span>
-              </label>
-            </div>
-          </div>
-        ) : null}
+        <div className={styles.formGrid}>
+          <InputField
+            label="كلمة المرور الجديدة"
+            type="password"
+            value={resetForm.newPassword}
+            onChange={(e) => setResetForm((value) => ({ ...value, newPassword: e.target.value }))}
+          />
+          <InputField
+            label="تأكيد كلمة المرور"
+            type="password"
+            value={resetForm.confirmPassword}
+            onChange={(e) => setResetForm((value) => ({ ...value, confirmPassword: e.target.value }))}
+          />
+        </div>
       </Modal>
-
     </div>
   );
 }
-

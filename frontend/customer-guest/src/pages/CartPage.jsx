@@ -8,7 +8,7 @@ import { Button } from '../components/Button.jsx';
 import styles from './CartPage.module.css';
 
 export function CartPage({ onNavigate }) {
-  const { baseUrl, bearerToken } = useApi();
+  const { baseUrl, bearerToken, endpoints, refreshCartSummary } = useApi();
   const [cartData, setCartData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -28,11 +28,10 @@ export function CartPage({ onNavigate }) {
     setError('');
 
     try {
-      const response = await fetch(`${baseUrl}/api/customers/carts/in-progres`, {
+      const response = await fetch(`${baseUrl}${endpoints.cart}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
           'Authorization': `Bearer ${bearerToken}`,
         },
       });
@@ -46,6 +45,7 @@ export function CartPage({ onNavigate }) {
       console.log('Cart data received:', data);
 
       setCartData(data.data);
+      refreshCartSummary();
 
       // Initialize quantity map
       const qtyMap = {};
@@ -78,7 +78,6 @@ export function CartPage({ onNavigate }) {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': 'true',
             'Authorization': `Bearer ${bearerToken}`,
           },
           body: JSON.stringify({
@@ -110,6 +109,7 @@ export function CartPage({ onNavigate }) {
           ...prev,
           [cartItemId]: data.data.product_cart.count,
         }));
+        refreshCartSummary();
       } catch (err) {
         console.error('Error increasing quantity:', err);
         setQuantityError(`خطأ: ${err.message}`);
@@ -125,7 +125,6 @@ export function CartPage({ onNavigate }) {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': 'true',
             'Authorization': `Bearer ${bearerToken}`,
           },
           body: JSON.stringify({
@@ -157,6 +156,7 @@ export function CartPage({ onNavigate }) {
           ...prev,
           [cartItemId]: data.data.product_cart.count,
         }));
+        refreshCartSummary();
       } catch (err) {
         console.error('Error decreasing quantity:', err);
         setQuantityError(`خطأ: ${err.message}`);
@@ -181,7 +181,6 @@ export function CartPage({ onNavigate }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
           'Authorization': `Bearer ${bearerToken}`,
         },
         body: JSON.stringify({
@@ -201,6 +200,7 @@ export function CartPage({ onNavigate }) {
       setCartData(data.data);
       setCouponCode('');
       setCouponMessage('✓ تم تطبيق الكود بنجاح');
+      refreshCartSummary();
       setTimeout(() => setCouponMessage(''), 2000);
     } catch (err) {
       console.error('Error applying coupon:', err);
@@ -219,7 +219,6 @@ export function CartPage({ onNavigate }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
           'Authorization': `Bearer ${bearerToken}`,
         },
         body: JSON.stringify({
@@ -248,6 +247,7 @@ export function CartPage({ onNavigate }) {
         delete updated[cartItemId];
         return updated;
       });
+      refreshCartSummary();
 
       setQuantityError('تم حذف المنتج من السلة بنجاح');
       setTimeout(() => setQuantityError(''), 2000);
@@ -262,9 +262,27 @@ export function CartPage({ onNavigate }) {
     return parseFloat(price).toFixed(2);
   };
 
+  const getUnitPrice = (item) => {
+    const explicitPrice = parseFloat(item?.product?.new_price);
+    if (!Number.isNaN(explicitPrice)) {
+      return explicitPrice;
+    }
+
+    const sumPrice = parseFloat(item?.sum_price);
+    const count = Number(item?.count) || 0;
+
+    if (!Number.isNaN(sumPrice) && count > 0) {
+      return sumPrice / count;
+    }
+
+    return 0;
+  };
+
   // Calculate totals
   const calculateTotals = () => {
-    if (!cartData?.product_carts) return { subtotal: 0, discount: 0, total: 0 };
+    if (!cartData?.cart || !cartData?.product_carts) {
+      return { subtotal: 0, discount: 0, total: 0 };
+    }
 
     const subtotal = parseFloat(cartData.cart.total_price_before_coupon) || 0;
     const total = parseFloat(cartData.cart.total_price_after_coupon) || 0;
@@ -300,7 +318,7 @@ export function CartPage({ onNavigate }) {
   // Prepare summary items from cart data
   const summaryItems = cartData?.product_carts?.map((item) => {
     const qty = quantityMap[item.id] || item.count;
-    const unitPrice = parseFloat(item.product.new_price);
+    const unitPrice = getUnitPrice(item);
     const subtotal = unitPrice * qty;
     return {
       name: item.product.name,
@@ -356,7 +374,7 @@ export function CartPage({ onNavigate }) {
                 <div className={styles.itemInfo}>
                   <p className={styles.itemName}>{item.product.name}</p>
                   <p className={styles.itemCat}>
-                    السعر: {item.product.new_price} $
+                    السعر: {formatPrice(getUnitPrice(item))} $
                   </p>
                   <QuantitySelector
                     value={quantityMap[item.id] || item.count}

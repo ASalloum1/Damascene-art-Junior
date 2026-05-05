@@ -3,10 +3,11 @@ import { useApi } from '../context/ApiContext.jsx';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { ProductCard } from '../components/ProductCard.jsx';
 import { Button } from '../components/Button.jsx';
+import { getAuthHeaders, mapApiProduct } from '../utils/customerApi.js';
 import styles from './WishlistPage.module.css';
 
 export function WishlistPage({ onNavigate }) {
-  const { baseUrl, bearerToken } = useApi();
+  const { baseUrl, bearerToken, setSelectedProductId } = useApi();
   const [wishlistItems, setWishlistItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -22,11 +23,7 @@ export function WishlistPage({ onNavigate }) {
     try {
       const response = await fetch(`${baseUrl}/api/customers/wish-lists`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
-          'Authorization': `Bearer ${bearerToken}`,
-        },
+        headers: getAuthHeaders(bearerToken),
       });
 
       if (!response.ok) {
@@ -38,39 +35,10 @@ export function WishlistPage({ onNavigate }) {
       console.log('Wishlist retrieved:', data);
 
       // Transform wish_lists into products format for ProductCard
-      const transformedItems = data.data.wish_lists.map((item) => {
-        let imageUrl = item.product.image;
-
-        if (imageUrl) {
-          // If it's a full ngrok URL, extract just the /storage/... part
-          if (imageUrl.includes('ngrok') && imageUrl.includes('/storage/')) {
-            const storageIndex = imageUrl.indexOf('/storage/');
-            imageUrl = imageUrl.substring(storageIndex);
-          }
-          // If it's just a filename, add the /storage/ prefix
-          else if (imageUrl && !imageUrl.startsWith('/') && !imageUrl.startsWith('http')) {
-            imageUrl = `/storage/${imageUrl}`;
-          }
-
-          // Decode URI-encoded characters
-          try {
-            imageUrl = decodeURIComponent(imageUrl);
-          } catch (e) {
-            // If decoding fails, use original URL
-          }
-        }
-
-        return {
-          id: item.product.id,
-          name: item.product.name,
-          category: item.product.category_id,
-          price: parseFloat(item.product.new_price),
-          oldPrice: parseFloat(item.product.old_price),
-          rating: parseFloat(item.product.average_rate),
-          image: imageUrl,
-          wishlistId: item.id, // Store wishlist entry id for delete operations
-        };
-      });
+      const transformedItems = data.data.wish_lists.map((item) => ({
+        ...mapApiProduct(item.product),
+        wishlistId: item.id,
+      }));
 
       setWishlistItems(transformedItems);
     } catch (err) {
@@ -115,7 +83,10 @@ export function WishlistPage({ onNavigate }) {
             <ProductCard
               key={product.id}
               product={product}
-              onNavigate={() => onNavigate?.('product')}
+              onNavigate={(productId) => {
+                setSelectedProductId(productId);
+                onNavigate?.('product');
+              }}
             />
           ))}
         </div>

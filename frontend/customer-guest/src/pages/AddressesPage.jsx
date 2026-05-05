@@ -30,7 +30,6 @@ export function AddressesPage() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
           Authorization: `Bearer ${bearerToken}`,
         },
       });
@@ -66,7 +65,6 @@ export function AddressesPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
           Authorization: `Bearer ${bearerToken}`,
         },
         body: JSON.stringify(form),
@@ -96,7 +94,6 @@ export function AddressesPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
           Authorization: `Bearer ${bearerToken}`,
         },
         body: JSON.stringify({ address_id: addressId }),
