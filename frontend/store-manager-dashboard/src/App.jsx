@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ToastProvider } from './components/ui/Toast.jsx';
+import { AuthProvider } from './context/AuthContext.jsx';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import DashboardPage from './pages/DashboardPage';
@@ -33,6 +34,7 @@ export default function App() {
   const ActivePage = pages[activePage];
 
   return (
+    <AuthProvider>
     <ToastProvider>
       <div className={styles.layout}>
         <Sidebar
@@ -57,5 +59,6 @@ export default function App() {
         </div>
       </div>
     </ToastProvider>
+    </AuthProvider>
   );
 }
