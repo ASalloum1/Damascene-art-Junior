@@ -1,0 +1,29 @@
+# Visual Search Service - Python Dependencies
+# Python 3.12+ required
+# Install command:
+#   pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu121
+# (For CPU-only fallback, use: --extra-index-url https://download.pytorch.org/whl/cpu)
+
+# --- Deep Learning Framework (CUDA 12.1) ---
+torch==2.5.1
+torchvision==0.20.1
+
+# --- Hugging Face Transformers (for DINOv2) ---
+transformers==4.46.3
+
+# --- Vector Search ---
+faiss-cpu==1.9.0
+
+# --- Web Framework ---
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+python-multipart==0.0.17
+
+# --- Image Processing ---
+pillow==11.0.0
+
+# --- Configuration Management ---
+pydantic-settings==2.6.1
+
+# --- Numerical Computing ---
+numpy==2.1.3

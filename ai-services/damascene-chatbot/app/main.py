@@ -1,10 +1,15 @@
-from fastapi import FastAPI, HTTPException
+import logging
+
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security.api_key import APIKeyHeader
 from pydantic import BaseModel, Field
 
 from app.config import settings
 from app.embeddings import embedding_service
 from app.llm import llm_service
+
+logger = logging.getLogger(__name__)
 
 
 # ── App Setup ──────────────────────────────────────────────
@@ -15,13 +20,29 @@ app = FastAPI(
     version="1.0.0",
 )
 
+# CORS: when origins contains "*", credentials must be False per the CORS spec
+# (browsers reject the wildcard+credentials combination).
+_allow_credentials = "*" not in settings.CORS_ORIGINS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Restrict to your domain in production
-    allow_credentials=True,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=_allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# ── Auth ──────────────────────────────────────────────────
+
+_api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
+
+
+def require_api_key(api_key: str | None = Depends(_api_key_header)) -> None:
+    """Enforce X-API-Key header when settings.API_KEY is set; no-op otherwise."""
+    if not settings.API_KEY:
+        return
+    if api_key != settings.API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid or missing API key")
 
 
 # ── Models ─────────────────────────────────────────────────
@@ -45,14 +66,12 @@ class HealthResponse(BaseModel):
 
 # ── Endpoints ──────────────────────────────────────────────
 
-@app.post("/chat", response_model=ChatResponse)
+@app.post("/chat", response_model=ChatResponse, dependencies=[Depends(require_api_key)])
 async def chat(request: ChatRequest):
     """Main chat endpoint — receives a message, retrieves context, generates response."""
     try:
-        # Step 1: Search vector DB for relevant context
         contexts = embedding_service.search(request.message)
 
-        # Step 2: Generate response with Gemini
         response_text = await llm_service.generate_response(
             user_message=request.message,
             contexts=contexts,
@@ -64,8 +83,8 @@ async def chat(request: ChatRequest):
             session_id=request.session_id,
         )
 
-    except Exception as e:
-        print(f"Chat error: {e}")
+    except Exception:
+        logger.exception("Chat error in /chat endpoint")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -75,11 +94,11 @@ async def health():
     return HealthResponse(
         status="ok",
         kb_size=embedding_service.collection.count(),
-        model=settings.GEMINI_MODEL,
+        model=settings.LLM_MODEL,
     )
 
 
-@app.post("/ingest")
+@app.post("/ingest", dependencies=[Depends(require_api_key)])
 async def ingest():
     """Trigger KB ingestion (admin endpoint)."""
     try:
@@ -92,7 +111,7 @@ async def ingest():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/search")
+@app.post("/search", dependencies=[Depends(require_api_key)])
 async def search(query: str, top_k: int = 5):
     """Debug endpoint — search the KB without generating a response."""
     results = embedding_service.search(query, top_k=top_k)

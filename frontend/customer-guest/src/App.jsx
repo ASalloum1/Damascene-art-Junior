@@ -1,4 +1,4 @@
-import { useState, useEffect, useTransition } from 'react';
+import { useState, useEffect, useTransition, useCallback } from 'react';
 import { ApiProvider } from './context/ApiContext.jsx';
 import { Navbar } from './components/Navbar.jsx';
 import { Footer } from './components/Footer.jsx';
@@ -14,6 +14,8 @@ import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import AccountPage from './pages/AccountPage.jsx';
 import AddressesPage from './pages/AddressesPage.jsx';
+import MyOrdersPage from './pages/MyOrdersPage.jsx';
+import MyReviewsPage from './pages/MyReviewsPage.jsx';
 import CategoryPage from './pages/CategoryPage.jsx';
 import SearchPage from './pages/SearchPage.jsx';
 import WishlistPage from './pages/WishlistPage.jsx';
@@ -23,6 +25,9 @@ import FAQPage from './pages/FAQPage.jsx';
 import PrivacyPage from './pages/PrivacyPage.jsx';
 import ReturnPolicyPage from './pages/ReturnPolicyPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
+import VisualSearchPage from './pages/VisualSearchPage.jsx';
+import { ChatbotFab } from './components/ChatbotFab.jsx';
+import { ChatbotDrawer } from './components/chatbot/ChatbotDrawer.jsx';
 import styles from './App.module.css';
 
 const pages = {
@@ -40,7 +45,10 @@ const pages = {
   addresses: AddressesPage,
   category: CategoryPage,
   search: SearchPage,
+  visual: VisualSearchPage,
   wishlist: WishlistPage,
+  'my-orders': MyOrdersPage,
+  'my-reviews': MyReviewsPage,
   tracking: TrackingPage,
   custom: CustomOrderPage,
   faq: FAQPage,
@@ -48,14 +56,30 @@ const pages = {
   return: ReturnPolicyPage,
 };
 
+const AUTH_REQUIRED_PAGES = new Set([
+  'cart',
+  'wishlist',
+  'checkout',
+  'account',
+  'addresses',
+  'my-orders',
+  'my-reviews',
+  'custom',
+]);
+
+const readToken = () =>
+  typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
 export default function App() {
   const [activePage, setActivePage] = useState('home');
   const [isPending, startTransition] = useTransition();
   const [cartCount] = useState(2);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    () => typeof window !== 'undefined' && !!localStorage.getItem('token')
-  );
+  const [chatbotOpen, setChatbotOpen] = useState(false);
+  const handleToggleChatbot = useCallback(() => setChatbotOpen((v) => !v), []);
+  const handleCloseChatbot = useCallback(() => setChatbotOpen(false), []);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => !!readToken());
+  const [loginRedirectInfo, setLoginRedirectInfo] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -66,10 +90,24 @@ export default function App() {
   }, [activePage]);
 
   const handleNavigate = (pageId) => {
-    startTransition(() => {
-      setActivePage(pageId);
-    });
+    if (AUTH_REQUIRED_PAGES.has(pageId) && !readToken()) {
+      setLoginRedirectInfo({ intendedPage: pageId });
+      startTransition(() => setActivePage('login'));
+      setMobileNavOpen(false);
+      return;
+    }
+    if (pageId !== 'login' && loginRedirectInfo) {
+      setLoginRedirectInfo(null);
+    }
+    startTransition(() => setActivePage(pageId));
     setMobileNavOpen(false);
+  };
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+    const dest = loginRedirectInfo?.intendedPage ?? 'account';
+    setLoginRedirectInfo(null);
+    startTransition(() => setActivePage(dest));
   };
 
   const handleLogout = () => {
@@ -102,10 +140,32 @@ export default function App() {
           tabIndex={-1}
           aria-label="محتوى الصفحة"
         >
-          <ActivePage onNavigate={handleNavigate} onLogout={handleLogout} />
+          {activePage === 'login' ? (
+            <LoginPage
+              onNavigate={handleNavigate}
+              onLoginSuccess={handleLoginSuccess}
+              requiredFor={loginRedirectInfo?.intendedPage ?? null}
+            />
+          ) : (
+            <ActivePage onNavigate={handleNavigate} onLogout={handleLogout} />
+          )}
         </main>
         <Footer onNavigate={handleNavigate} />
       </div>
+      <ChatbotFab
+        open={chatbotOpen}
+        onToggle={handleToggleChatbot}
+        hidden={
+          mobileNavOpen ||
+          activePage === 'checkout' ||
+          activePage === 'confirmation'
+        }
+      />
+      <ChatbotDrawer
+        open={chatbotOpen}
+        onClose={handleCloseChatbot}
+        onNavigate={handleNavigate}
+      />
     </ApiProvider>
   );
 }

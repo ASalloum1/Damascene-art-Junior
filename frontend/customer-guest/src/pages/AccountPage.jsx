@@ -1,16 +1,28 @@
+import { useState, useEffect } from 'react';
 import { Package, Heart, Star, MapPin, LogOut } from 'lucide-react';
+import { useApi } from '../context/ApiContext.jsx';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { Badge } from '../components/Badge.jsx';
 import { InputField } from '../components/InputField.jsx';
 import { Button } from '../components/Button.jsx';
 import styles from './AccountPage.module.css';
 
-const stats = [
-  { icon: Package, label: 'طلباتي', value: '١٢ طلب' },
-  { icon: Heart, label: 'المفضلة', value: '٨ منتجات' },
-  { icon: Star, label: 'تقييماتي', value: '٥ تقييمات' },
-  { icon: MapPin, label: 'عناويني', value: '٢ عناوين', page: 'addresses' },
+const STATS = [
+  { icon: Package, label: 'طلباتي',   page: 'my-orders',  countKey: 'orders' },
+  { icon: Heart,   label: 'المفضلة',  page: 'wishlist',   countKey: 'wishlist' },
+  { icon: Star,    label: 'تقييماتي', page: 'my-reviews', countKey: 'reviews' },
+  { icon: MapPin,  label: 'عناويني',  page: 'addresses',  countKey: 'addresses' },
 ];
+
+const COUNT_REQUESTS = [
+  { key: 'orders',    path: '/api/customers/orders',     pick: (d) => d?.data?.length ?? 0 },
+  { key: 'wishlist',  path: '/api/customers/wish-lists', pick: (d) => d?.data?.wish_lists?.length ?? 0 },
+  { key: 'reviews',   path: '/api/customers/my-reviews', pick: (d) => d?.data?.length ?? 0 },
+  { key: 'addresses', path: '/api/customers/addresses',  pick: (d) => d?.data?.addresses?.length ?? 0 },
+];
+
+const formatCount = (n) =>
+  n === null || n === undefined ? '—' : Number(n).toLocaleString('ar-EG');
 
 const orders = [
   { id: '#1084', date: '٠٣/٠٤/٢٠٢٦', total: '١,٤٧٥ $', status: 'قيد التجهيز', variant: 'warning' },
@@ -19,38 +31,90 @@ const orders = [
 ];
 
 export function AccountPage({ onNavigate, onLogout }) {
+  const { baseUrl, bearerToken } = useApi();
+  const [counts, setCounts] = useState({
+    orders: null,
+    wishlist: null,
+    reviews: null,
+    addresses: null,
+  });
+  const [loadingCounts, setLoadingCounts] = useState(true);
+
+  useEffect(() => {
+    if (!baseUrl || !bearerToken) {
+      setLoadingCounts(false);
+      return;
+    }
+    const controller = new AbortController();
+
+    const fetchCount = async ({ path, pick }) => {
+      const response = await fetch(`${baseUrl}${path}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+          Authorization: `Bearer ${bearerToken}`,
+        },
+        signal: controller.signal,
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      return pick(data);
+    };
+
+    Promise.allSettled(COUNT_REQUESTS.map((req) => fetchCount(req))).then((results) => {
+      if (controller.signal.aborted) return;
+      const next = { orders: null, wishlist: null, reviews: null, addresses: null };
+      results.forEach((result, i) => {
+        const key = COUNT_REQUESTS[i].key;
+        if (result.status === 'fulfilled' && typeof result.value === 'number') {
+          next[key] = result.value;
+        } else {
+          next[key] = null;
+        }
+      });
+      setCounts(next);
+      setLoadingCounts(false);
+    });
+
+    return () => controller.abort();
+  }, [baseUrl, bearerToken]);
+
   return (
     <div className={styles.page}>
       <SectionHeader title="حسابي" subtitle="مرحباً، أحمد الشامي" />
 
       {/* ── Stat grid ── */}
       <div className={styles.statGrid}>
-        {stats.map((stat) => {
+        {STATS.map((stat) => {
           const StatIcon = stat.icon;
-          const clickable = Boolean(stat.page);
+          const rawCount = counts[stat.countKey];
+          const showSkeleton = loadingCounts && rawCount === null;
           return (
             <div
-              key={stat.label}
+              key={stat.countKey}
               className={styles.statCard}
-              onClick={clickable ? () => onNavigate?.(stat.page) : undefined}
-              role={clickable ? 'button' : undefined}
-              tabIndex={clickable ? 0 : undefined}
-              onKeyDown={
-                clickable
-                  ? (e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        onNavigate?.(stat.page);
-                      }
-                    }
-                  : undefined
-              }
+              onClick={() => onNavigate?.(stat.page)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onNavigate?.(stat.page);
+                }
+              }}
             >
               <div className={styles.statIcon}>
                 <StatIcon size={28} />
               </div>
               <p className={styles.statLabel}>{stat.label}</p>
-              <p className={stat.statValue}>{stat.value}</p>
+              <p className={styles.statValue}>
+                {showSkeleton ? (
+                  <span className={styles.skeleton} aria-label="جاري التحميل">…</span>
+                ) : (
+                  formatCount(rawCount)
+                )}
+              </p>
             </div>
           );
         })}

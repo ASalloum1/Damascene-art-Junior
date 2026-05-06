@@ -1,0 +1,130 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  background: var(--color-cream);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-4);
+}
+
+.imageWrap {
+  position: relative;
+  border-radius: var(--radius-md);
+  background: var(--color-cream-dark);
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  max-height: 360px;
+  width: 100%;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: var(--radius-md);
+}
+
+.imageFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--color-stone);
+}
+
+.closeBtn {
+  position: absolute;
+  top: var(--space-3);
+  inset-inline-end: var(--space-3);
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--color-cream);
+  color: var(--color-stone-mid);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-xs);
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.closeBtn:hover {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.closeBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--glow-gold);
+}
+
+.busyOverlay {
+  position: absolute;
+  top: var(--space-3);
+  inset-inline-start: var(--space-3);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-cream);
+  color: var(--color-gold-dark);
+  border-radius: var(--radius-full);
+  padding: var(--space-2);
+  box-shadow: var(--shadow-sm);
+}
+
+.spinner {
+  animation: spin 900ms linear infinite;
+}
+
+.buttonRow {
+  display: flex;
+  width: 100%;
+}
+
+.hiddenInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 1023px) {
+  .imageWrap {
+    max-height: 320px;
+  }
+}
+
+@media (max-width: 767px) {
+  .imageWrap {
+    max-height: 40vh;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: spin 2000ms linear infinite;
+  }
+  .closeBtn {
+    transition: none;
+  }
+}

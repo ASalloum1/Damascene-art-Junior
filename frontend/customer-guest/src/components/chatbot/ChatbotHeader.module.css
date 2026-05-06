@@ -1,0 +1,121 @@
+/* ─────────────────────────────────────────────────────────────────
+   ChatbotHeader — deep navy panel with a single gold inlay seam.
+   Reads as a polished marquetry frame, not a SaaS app bar.
+   ───────────────────────────────────────────────────────────────── */
+
+.header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+
+  padding: var(--space-4) var(--space-5);
+  background:
+    linear-gradient(
+      180deg,
+      var(--color-navy) 0%,
+      var(--color-navy-deep) 100%
+    );
+  color: var(--color-cream);
+
+  /* Hairline gold inlay along the bottom edge — the "seam". */
+  border-bottom: 1px solid var(--color-gold);
+  position: relative;
+}
+
+/* A second, fainter inlay just above the gold seam — adds depth without weight. */
+.header::after {
+  content: '';
+  position: absolute;
+  inset-inline: var(--space-5);
+  bottom: -3px;
+  height: 1px;
+  background: var(--color-gold-alpha-15);
+  pointer-events: none;
+}
+
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-arabic);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-cream);
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+.subtitle {
+  margin: 0;
+  font-family: var(--font-arabic);
+  font-size: var(--font-size-xs);
+  font-weight: 400;
+  color: var(--color-gold-light);
+  opacity: 0.85;
+  line-height: 1.3;
+}
+
+.actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+.iconBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-gold-light);
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.iconBtn:hover:not(:disabled) {
+  background: var(--color-gold-alpha-10);
+  color: var(--color-gold);
+  border-color: var(--color-gold-alpha-15);
+}
+
+.iconBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--glow-gold);
+  color: var(--color-gold);
+}
+
+.iconBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (max-width: 767px) {
+  .header {
+    padding: var(--space-3) var(--space-4);
+  }
+  .title {
+    font-size: var(--font-size-md);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iconBtn {
+    transition: none;
+  }
+}

@@ -1,0 +1,144 @@
+/* ─────────────────────────────────────────────────────────────────
+   ChatbotDrawer — desktop floating card / mobile bottom sheet.
+
+   Z-index reservation:
+     400 — backdrop (mobile/tablet only)
+     401 — drawer surface
+
+   Animation:
+     desktop/tablet: translateY(16px) + opacity 0→1, 380ms cubic-bezier(.22,1,.36,1)
+     mobile sheet:   translateY(100%) → 0 (slides up), same easing
+     prefers-reduced-motion: reduce → 100ms opacity-only fade
+   ───────────────────────────────────────────────────────────────── */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--color-black-alpha-40);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 400;
+  animation: backdropFadeIn 240ms ease-out both;
+}
+
+@keyframes backdropFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Base drawer (shared) ─────────────────────────────────────── */
+.drawer {
+  position: fixed;
+  z-index: 401;
+  background: var(--color-cream);
+  color: var(--color-navy);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* The drawer is a polished tablet — gold inlay rim. */
+  border: 1px solid var(--color-gold-alpha-15);
+  /* Default font (Tajawal) inherits from body. */
+  font-family: var(--font-arabic);
+}
+
+/* ── Desktop: floating card pinned to the FAB corner ──────────── */
+.drawerFloat {
+  /* 56px FAB + 24px from edge + 16px gap = 96px above the bottom edge. */
+  bottom: calc(var(--space-6) + 56px + var(--space-4));
+  inset-inline-end: var(--space-6);
+  width: 420px;
+  height: min(680px, calc(100svh - 32px));
+  max-height: calc(100svh - 32px);
+  border-radius: var(--radius-xl);
+  animation: drawerFloatIn 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: bottom right;
+}
+
+[dir='rtl'] .drawerFloat {
+  transform-origin: bottom left;
+}
+
+@keyframes drawerFloatIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Tablet: smaller floating card with backdrop ──────────────── */
+@media (max-width: 1023px) {
+  .drawerFloat {
+    bottom: calc(var(--space-5) + 48px + var(--space-3));
+    inset-inline-end: var(--space-4);
+    width: min(420px, calc(100vw - 32px));
+    height: min(640px, calc(100svh - 80px));
+  }
+}
+
+/* ── Mobile: full-screen bottom sheet ─────────────────────────── */
+.drawerSheet {
+  inset-inline: 0;
+  bottom: 0;
+  top: 0;
+  width: 100%;
+  height: 100svh;
+  border-radius: 0;
+  border: none;
+  border-top: 1px solid var(--color-gold-alpha-15);
+  animation: drawerSheetIn 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: bottom center;
+  /* Respect bottom safe-area on devices with home indicators. */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@keyframes drawerSheetIn {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* On tablet (768–1023px) the spec asks for a smaller floating card with a
+   backdrop, NOT a full sheet. So .drawerSheet only applies below 768px. */
+@media (min-width: 768px) {
+  .drawerSheet {
+    /* Promote the sheet to a tablet-sized floating card when the JS sees
+       isBelow(1024) but the viewport ≥ 768. The component class still says
+       "Sheet" but visually it should be a card with rounded corners. */
+    inset-inline-end: var(--space-4);
+    inset-inline-start: auto;
+    bottom: calc(var(--space-5) + 48px + var(--space-3));
+    top: auto;
+    width: min(420px, calc(100vw - 32px));
+    height: min(640px, calc(100svh - 80px));
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-gold-alpha-15);
+    transform-origin: bottom right;
+  }
+  [dir='rtl'] .drawerSheet {
+    transform-origin: bottom left;
+  }
+}
+
+/* ── Reduced motion ───────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .drawerFloat,
+  .drawerSheet {
+    animation: drawerReducedFade 100ms ease-out both;
+  }
+}
+
+@keyframes drawerReducedFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

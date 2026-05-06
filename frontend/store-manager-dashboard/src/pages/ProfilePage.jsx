@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Save, Lock, Eye, EyeOff } from 'lucide-react';
 import Button from '../components/ui/Button';
 import InputField from '../components/ui/InputField';
 import { useToast } from '../components/ui/Toast';
+import { apiBaseUrl } from '../config/index.js';
 import styles from './ProfilePage.module.css';
 
 function PasswordStrengthBar({ password }) {
@@ -62,6 +63,74 @@ export default function ProfilePage() {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  // Avatar
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileInputRef = useRef(null);
+
+  function openFilePicker() {
+    if (uploadingAvatar) return;
+    fileInputRef.current?.click();
+  }
+
+  async function handleAvatarChange(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowed = ['image/png', 'image/jpeg'];
+    if (!allowed.includes(file.type)) {
+      showToast({ message: 'يرجى اختيار صورة بصيغة PNG أو JPG', type: 'error' });
+      e.target.value = '';
+      return;
+    }
+
+    const max = 2 * 1024 * 1024;
+    if (file.size > max) {
+      showToast({ message: 'حجم الصورة يجب ألا يتجاوز 2MB', type: 'error' });
+      e.target.value = '';
+      return;
+    }
+
+    const previewUrl = URL.createObjectURL(file);
+    setAvatarUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return previewUrl;
+    });
+    e.target.value = '';
+
+    setUploadingAvatar(true);
+    try {
+      const fd = new FormData();
+      fd.append('avatar', file);
+      const res = await fetch(`${apiBaseUrl}/api/store-manager/profile/avatar`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { Accept: 'application/json' },
+        body: fd,
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      showToast({ message: 'تم تحديث الصورة الشخصية', type: 'success' });
+    } catch {
+      showToast({ message: 'فشل رفع الصورة، يرجى المحاولة لاحقاً', type: 'error' });
+      setAvatarUrl((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return null;
+      });
+    } finally {
+      setUploadingAvatar(false);
+    }
+  }
+
+  // Cleanup any active blob preview on unmount
+  useEffect(() => {
+    return () => {
+      setAvatarUrl((prev) => {
+        if (prev && prev.startsWith('blob:')) URL.revokeObjectURL(prev);
+        return prev;
+      });
+    };
+  }, []);
+
   function savePersonal() {
     showToast({ message: 'تم حفظ المعلومات الشخصية بنجاح', type: 'success' });
   }
@@ -84,7 +153,11 @@ export default function ProfilePage() {
       {/* Profile Header */}
       <div className={styles.profileHeader}>
         <div className={styles.avatarCircle}>
-          <span className={styles.avatarInitials}>مع</span>
+          {avatarUrl ? (
+            <img src={avatarUrl} alt="الصورة الشخصية" className={styles.avatarImage} />
+          ) : (
+            <span className={styles.avatarInitials}>مع</span>
+          )}
         </div>
         <div className={styles.profileInfo}>
           <h2 className={styles.profileName}>محمد العلي</h2>
@@ -131,11 +204,32 @@ export default function ProfilePage() {
             />
           </div>
           <div className={styles.uploadAvatar}>
-            <div className={styles.avatarSmall}>مع</div>
+            <div className={styles.avatarSmall}>
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="الصورة الشخصية" className={styles.avatarImage} />
+              ) : (
+                'مع'
+              )}
+            </div>
             <div className={styles.uploadInfo}>
               <span className={styles.uploadLabel}>صورة الملف الشخصي</span>
               <span className={styles.uploadHint}>PNG أو JPG — الحد الأقصى 2MB</span>
-              <Button variant="outline" size="sm">تغيير الصورة</Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg"
+                onChange={handleAvatarChange}
+                style={{ display: 'none' }}
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={openFilePicker}
+                loading={uploadingAvatar}
+                disabled={uploadingAvatar}
+              >
+                تغيير الصورة
+              </Button>
             </div>
           </div>
           <div className={styles.cardFooter}>

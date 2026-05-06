@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ImageIcon, Heart, ShoppingCart, Check } from 'lucide-react';
+import { ImageIcon, Heart, ShoppingCart, Check, Star } from 'lucide-react';
 import { useApi } from '../context/ApiContext.jsx';
 import { Breadcrumb } from '../components/Breadcrumb.jsx';
 import { Badge } from '../components/Badge.jsx';
@@ -8,8 +8,14 @@ import { QuantitySelector } from '../components/QuantitySelector.jsx';
 import { Button } from '../components/Button.jsx';
 import { SectionHeader } from '../components/SectionHeader.jsx';
 import { ProductCard } from '../components/ProductCard.jsx';
+import { InputField } from '../components/InputField.jsx';
 import { products } from '../data/index.js';
 import styles from './ProductPage.module.css';
+
+function toArabicNumerals(input) {
+  const map = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+  return String(input).replace(/\d/g, (d) => map[Number(d)]);
+}
 
 const reviews = [
   {
@@ -36,6 +42,14 @@ export function ProductPage({ onNavigate }) {
   const [addToCartMessage, setAddToCartMessage] = useState('');
   const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
   const [wishlistMessage, setWishlistMessage] = useState('');
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewHoverRating, setReviewHoverRating] = useState(0);
+  const [reviewText, setReviewText] = useState('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewSubmitMessage, setReviewSubmitMessage] = useState('');
+  const [reviewSubmitStatus, setReviewSubmitStatus] = useState('idle'); // 'idle' | 'success' | 'error'
+
+  const isLoggedIn = Boolean(localStorage.getItem('token'));
 
   useEffect(() => {
     if (!selectedProductId) {
@@ -204,6 +218,67 @@ export function ProductPage({ onNavigate }) {
     }
   };
 
+  const handleSubmitReview = async () => {
+    if (!selectedProductId) {
+      setReviewSubmitStatus('error');
+      setReviewSubmitMessage('خطأ: لم يتم تحديد المنتج');
+      return;
+    }
+
+    setIsSubmittingReview(true);
+    setReviewSubmitMessage('');
+    setReviewSubmitStatus('idle');
+
+    try {
+      const url = `${baseUrl}/api/customers/products/${selectedProductId}/reviews`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+          Authorization: `Bearer ${bearerToken}`,
+        },
+        body: JSON.stringify({ rate: reviewRating, feedback: reviewText.trim() }),
+      });
+
+      if (!response.ok) {
+        let backendMessage = '';
+        try {
+          const errorData = await response.json();
+          backendMessage = errorData?.message || '';
+        } catch (_parseErr) {
+          // ignore JSON parse failures
+        }
+
+        let friendlyMessage;
+        if (response.status === 404) {
+          friendlyMessage = 'هذه الميزة قيد التفعيل، حاول لاحقاً';
+        } else if (response.status === 401) {
+          friendlyMessage = 'انتهت صلاحية الجلسة، يرجى تسجيل الدخول مجدداً';
+        } else {
+          friendlyMessage = backendMessage || 'تعذّر إرسال التقييم، حاول لاحقاً';
+        }
+
+        setReviewSubmitStatus('error');
+        setReviewSubmitMessage(friendlyMessage);
+        return;
+      }
+
+      setReviewSubmitStatus('success');
+      setReviewSubmitMessage('شكراً لك! سيتم نشر تقييمك بعد المراجعة');
+      setReviewRating(0);
+      setReviewText('');
+      setTimeout(() => setReviewSubmitMessage(''), 4000);
+      // TODO: when GET reviews endpoint is available, trigger refetch here.
+    } catch (err) {
+      console.error('Error submitting review:', err);
+      setReviewSubmitStatus('error');
+      setReviewSubmitMessage('تعذّر إرسال التقييم، حاول لاحقاً');
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--color-stone)' }}>
@@ -346,7 +421,108 @@ export function ProductPage({ onNavigate }) {
         </div>
       </div>
 
+      {/* ── Add Review ── */}
+      <section className={styles.addReview} aria-labelledby="add-review-heading">
+        <SectionHeader title="أضف تقييمك" align="start" />
+
+        {!isLoggedIn ? (
+          <div className={styles.loginPrompt}>
+            <p>سجّل دخول لتترك تقييمك</p>
+            <Button variant="outline" onClick={() => onNavigate?.('login')}>
+              تسجيل الدخول
+            </Button>
+          </div>
+        ) : (
+          <form
+            className={styles.reviewForm}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmitReview();
+            }}
+          >
+            <div className={styles.ratingRow}>
+              <span className={styles.ratingLabel}>تقييمك:</span>
+              <div
+                className={styles.starInput}
+                role="radiogroup"
+                aria-label="اختر التقييم بالنجوم"
+                onMouseLeave={() => setReviewHoverRating(0)}
+              >
+                {[1, 2, 3, 4, 5].map((n) => {
+                  const filled = (reviewHoverRating || reviewRating) >= n;
+                  return (
+                    <button
+                      key={n}
+                      type="button"
+                      role="radio"
+                      aria-checked={reviewRating === n}
+                      aria-label={`${toArabicNumerals(n)} من ٥ نجوم`}
+                      className={styles.starBtn}
+                      onClick={() => setReviewRating(n)}
+                      onMouseEnter={() => setReviewHoverRating(n)}
+                      onFocus={() => setReviewHoverRating(n)}
+                      onBlur={() => setReviewHoverRating(0)}
+                      disabled={isSubmittingReview}
+                    >
+                      <Star
+                        size={28}
+                        fill={filled ? 'var(--color-gold)' : 'none'}
+                        stroke={filled ? 'var(--color-gold)' : 'var(--color-stone-light)'}
+                        strokeWidth={1.5}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <InputField
+              textarea
+              rows={4}
+              label="ملاحظاتك"
+              placeholder="شاركنا انطباعك عن المنتج..."
+              value={reviewText}
+              onChange={(e) => setReviewText(e.target.value.slice(0, 500))}
+              disabled={isSubmittingReview}
+            />
+            <div className={styles.charCounter}>
+              {toArabicNumerals(reviewText.length)} / {toArabicNumerals(500)}
+            </div>
+
+            <div className={styles.submitRow}>
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={
+                  reviewRating === 0 ||
+                  reviewText.trim().length < 10 ||
+                  reviewText.length > 500 ||
+                  isSubmittingReview
+                }
+              >
+                {isSubmittingReview ? 'جاري الإرسال...' : 'إرسال التقييم'}
+              </Button>
+            </div>
+
+            {reviewSubmitMessage && (
+              <p
+                className={
+                  reviewSubmitStatus === 'success'
+                    ? styles.statusSuccess
+                    : styles.statusError
+                }
+                role="status"
+                aria-live="polite"
+              >
+                {reviewSubmitMessage}
+              </p>
+            )}
+          </form>
+        )}
+      </section>
+
       {/* ── Reviews ── */}
+      {/* TODO: refetch when GET reviews endpoint wired */}
       <div className={styles.reviews}>
         <SectionHeader title="تقييمات العملاء" align="start" />
         {reviews.map((r) => (

@@ -133,3 +133,46 @@
   gap: var(--space-2);
   align-items: center;
 }
+
+/* ─── Reply Modal — Info Block + Form Layout ──────────────────── */
+.replyForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.replyInfoBlock {
+  background: var(--color-cream);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  border-inline-start: 3px solid var(--color-gold);
+}
+
+.replyInfoRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.replyInfoRow:not(:last-child) {
+  margin-block-end: var(--space-2);
+}
+
+.replyInfoLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.replyInfoValue {
+  font-size: var(--font-size-sm);
+  color: var(--color-navy);
+  font-weight: 600;
+}
+
+.replyInfoText {
+  font-size: var(--font-size-sm);
+  line-height: 1.7;
+  color: var(--color-text-primary);
+  margin: 0;
+}

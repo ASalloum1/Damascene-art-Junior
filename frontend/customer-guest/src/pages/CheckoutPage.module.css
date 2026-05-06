@@ -50,19 +50,6 @@
   }
 }
 
-/* ── Select field ────────────────────────────────────── */
-.selectField {
-  width: 100%;
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--color-cream-mid);
-  border-radius: var(--radius-sm);
-  font-size: var(--font-size-sm);
-  font-family: var(--font-arabic);
-  color: var(--color-navy);
-  background: var(--color-cream);
-  margin-block-end: var(--space-4);
-}
-
 /* ── Radio cards ─────────────────────────────────────── */
 .radioCard {
   display: flex;
@@ -83,10 +70,23 @@
   cursor: pointer;
 }
 
-.radioGroupLabel {
+.inlineForm {
+  margin-block-start: var(--space-4);
+  padding: var(--space-4);
+  border: 1px dashed var(--color-cream-mid);
+  border-radius: var(--radius-md);
+  background: var(--color-cream);
+}
+
+.stateMsg {
+  color: var(--color-stone);
   font-size: var(--font-size-sm);
-  font-weight: 700;
-  color: var(--color-navy);
-  margin-block: var(--space-4) var(--space-2);
-  display: block;
+  text-align: center;
+  padding-block: var(--space-4);
+}
+
+.errorMsg {
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+  margin-block: var(--space-2) var(--space-3);
 }

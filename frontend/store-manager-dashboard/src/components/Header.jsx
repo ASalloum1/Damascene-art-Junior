@@ -1,9 +1,13 @@
 import styles from './Header.module.css';
 import { Icon } from './SvgIcons';
 import { menuItems } from '../data/menuData';
+import { useAuth } from '../context/AuthContext.jsx';
 
 export function Header({ activePage, onNavigate, onMobileMenuOpen }) {
   const currentItem = menuItems.find((m) => m.id === activePage);
+  const { user } = useAuth();
+  const displayName = user && user.fullName ? user.fullName : 'مدير المتجر';
+  const avatarLetter = displayName ? displayName.trim().charAt(0) : 'م';
 
   return (
     <header className={styles.header} role="banner">
@@ -42,8 +46,8 @@ export function Header({ activePage, onNavigate, onMobileMenuOpen }) {
           onClick={() => onNavigate('profile')}
           aria-label="الملف الشخصي"
         >
-          <div className={styles.avatar} aria-hidden="true">م</div>
-          <span className={styles.userName}>مدير المتجر</span>
+          <div className={styles.avatar} aria-hidden="true">{avatarLetter}</div>
+          <span className={styles.userName}>{displayName}</span>
         </button>
       </div>
     </header>

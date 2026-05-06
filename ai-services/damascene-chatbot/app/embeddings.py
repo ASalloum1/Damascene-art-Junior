@@ -1,24 +1,39 @@
 import json
+import logging
 import chromadb
+from chromadb.config import Settings as ChromaSettings
 from sentence_transformers import SentenceTransformer
 
 from app.config import settings
+
+# chromadb 0.6.x still invokes posthog with a broken signature even when
+# telemetry is disabled, producing harmless "Failed to send telemetry event"
+# log noise on every client/collection/query call. Silence that one logger.
+logging.getLogger("chromadb.telemetry.product.posthog").setLevel(logging.CRITICAL)
+
+logger = logging.getLogger(__name__)
 
 
 class EmbeddingService:
     """Handles embedding generation and ChromaDB operations."""
 
     def __init__(self):
-        print(f"Loading embedding model: {settings.EMBEDDING_MODEL}...")
+        logger.info(f"Loading embedding model: {settings.EMBEDDING_MODEL}...")
         self.model = SentenceTransformer(settings.EMBEDDING_MODEL)
-        print("Embedding model loaded.")
+        logger.info("Embedding model loaded.")
 
-        self.client = chromadb.PersistentClient(path=settings.CHROMA_DB_PATH)
+        self.client = chromadb.PersistentClient(
+            path=settings.CHROMA_DB_PATH,
+            settings=ChromaSettings(anonymized_telemetry=False),
+        )
         self.collection = self.client.get_or_create_collection(
             name=settings.COLLECTION_NAME,
             metadata={"hnsw:space": "cosine"},
         )
-        print(f"ChromaDB collection '{settings.COLLECTION_NAME}' ready. Documents: {self.collection.count()}")
+        logger.info(
+            f"ChromaDB collection '{settings.COLLECTION_NAME}' ready. "
+            f"Documents: {self.collection.count()}"
+        )
 
     def embed_query(self, text: str) -> list[float]:
         """Embed a user query using the e5 'query:' prefix."""
@@ -78,19 +93,19 @@ class EmbeddingService:
 
         # Check if already ingested
         if self.collection.count() >= len(kb_data):
-            print(f"KB already ingested ({self.collection.count()} documents). Skipping.")
+            logger.info(f"KB already ingested ({self.collection.count()} documents). Skipping.")
             return
 
         # Clear existing data for fresh ingestion
         if self.collection.count() > 0:
-            print("Clearing existing collection for re-ingestion...")
+            logger.info("Clearing existing collection for re-ingestion...")
             self.client.delete_collection(settings.COLLECTION_NAME)
             self.collection = self.client.get_or_create_collection(
                 name=settings.COLLECTION_NAME,
                 metadata={"hnsw:space": "cosine"},
             )
 
-        print(f"Ingesting {len(kb_data)} QA pairs...")
+        logger.info(f"Ingesting {len(kb_data)} QA pairs...")
 
         batch_size = 64
         for i in range(0, len(kb_data), batch_size):
@@ -128,9 +143,9 @@ class EmbeddingService:
             )
 
             progress = min(i + batch_size, len(kb_data))
-            print(f"  Ingested {progress}/{len(kb_data)}")
+            logger.info(f"Ingested {progress}/{len(kb_data)}")
 
-        print(f"Ingestion complete. Total documents: {self.collection.count()}")
+        logger.info(f"Ingestion complete. Total documents: {self.collection.count()}")
 
 
 # Singleton instance
