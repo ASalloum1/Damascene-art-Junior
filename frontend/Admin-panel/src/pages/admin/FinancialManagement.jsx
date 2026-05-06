@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, lazy, Suspense } from 'react';
 import {
   DollarSign,
   CreditCard,
@@ -6,6 +6,7 @@ import {
   BarChart2,
   Eye,
   FileText,
+  Loader2,
 } from 'lucide-react';
 import StatCard from '../../components/ui/StatCard.jsx';
 import DataTable from '../../components/ui/DataTable.jsx';
@@ -13,14 +14,221 @@ import Badge from '../../components/ui/Badge.jsx';
 import FilterBar from '../../components/ui/FilterBar.jsx';
 import ActionMenu from '../../components/ui/ActionMenu.jsx';
 import Modal from '../../components/ui/Modal.jsx';
-import Button from '../../components/ui/Button.jsx';
 import AreaChartWrapper from '../../components/charts/AreaChartWrapper.jsx';
 import BarChartWrapper from '../../components/charts/BarChartWrapper.jsx';
 import { useToast } from '../../components/ui/Toast.jsx';
-import { mockTransactions, monthlyRevenue, mockStores, mockProducts, mockUsers } from '../../data/mockData.js';
+import {
+  mockTransactions,
+  monthlyRevenue,
+  mockStores,
+} from '../../data/mockData.js';
 import { formatCurrency, formatDate, toArabicNum } from '../../utils/formatters.js';
 import { COLORS } from '../../constants/colors.js';
 import styles from './FinancialManagement.module.css';
+
+// ── Single-transaction receipt printer ───────────────────────────────────────
+// Opens a clean isolated window, writes a self-contained HTML document with
+// embedded CSS + Tajawal from Google Fonts + <bdi> for mixed content, then
+// triggers the browser's native print dialog once fonts have loaded. This
+// avoids the @react-pdf/renderer glyph drop bugs (orphan "د", missing hamza
+// on "الإدارية", and BiDi reversal on "TXN-2026-0001"/"#o1") that plagued the
+// previous two attempts at this single-document export.
+function escapeHtml(value) {
+  if (value === null || value === undefined) return '';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function printTransactionReceipt(tx, onPopupBlocked) {
+  const w = window.open('', '_blank', 'width=900,height=1200');
+  if (!w) {
+    if (onPopupBlocked) onPopupBlocked();
+    return;
+  }
+
+  const txNumber       = escapeHtml(tx.transactionNumber);
+  const txType         = escapeHtml(tx.type);
+  const txPaymentMethod = escapeHtml(tx.paymentMethod);
+  const txOrderId      = escapeHtml(tx.orderId);
+  const txCustomer     = escapeHtml(tx.customer);
+  const txStore        = escapeHtml(tx.store);
+  const txStatus       = escapeHtml(tx.status);
+  const isRefund       = tx.type === 'استرداد';
+  const amountClass    = isRefund ? 'amount-negative' : 'amount-positive';
+  const amountSign     = isRefund ? '-' : '+';
+  const amountStr      = escapeHtml(formatCurrency(tx.amount));
+  const dateStr        = escapeHtml(formatDate(tx.date));
+  const issuedStr      = new Date().toLocaleDateString('ar-EG');
+
+  w.document.write(`
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>إيصال معاملة ${txNumber}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      font-family: 'Tajawal', sans-serif;
+      direction: rtl;
+      text-align: right;
+      color: #1A1F3A;
+      background: #fff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    body { padding: 20mm; max-width: 210mm; margin: 0 auto; }
+    .header {
+      text-align: center;
+      border-bottom: 2px solid #C8A45A;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+    .brand { font-size: 24px; font-weight: 800; color: #1A1F3A; }
+    .subtitle { font-size: 14px; color: #666; margin-top: 4px; }
+    .doc-title { font-size: 18px; font-weight: 700; margin-top: 12px; color: #C8A45A; }
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: #666;
+    }
+    .meta-row span bdi { font-weight: 600; color: #1A1F3A; }
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1A1F3A;
+      border-bottom: 1px solid #C8A45A;
+      padding-bottom: 6px;
+      margin-bottom: 16px;
+    }
+    .details-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .details-table tr { border-bottom: 1px solid #f0f0f0; }
+    .details-table td {
+      padding: 12px 8px;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+    .details-table td.label {
+      font-weight: 600;
+      color: #555;
+      width: 35%;
+    }
+    .details-table td.value {
+      font-weight: 500;
+      color: #1A1F3A;
+    }
+    .amount-positive { color: #2D7A3E; font-weight: 700; }
+    .amount-negative { color: #C53030; font-weight: 700; }
+    .footer {
+      margin-top: 40px;
+      padding-top: 16px;
+      border-top: 1px solid #e0e0e0;
+      text-align: center;
+      font-size: 11px;
+      color: #999;
+    }
+    @media print {
+      body { padding: 15mm; }
+      @page { size: A4; margin: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="brand">الفن الدمشقي</div>
+    <div class="subtitle">لوحة التحكم الإدارية</div>
+    <div class="doc-title">إيصال معاملة مالية</div>
+  </div>
+
+  <div class="meta-row">
+    <span>تاريخ الإصدار: <bdi>${issuedStr}</bdi></span>
+    <span>رقم المعاملة: <bdi>${txNumber}</bdi></span>
+  </div>
+
+  <div class="section-title">تفاصيل المعاملة</div>
+
+  <table class="details-table">
+    <tr>
+      <td class="label">رقم المعاملة</td>
+      <td class="value"><bdi>${txNumber}</bdi></td>
+    </tr>
+    <tr>
+      <td class="label">النوع</td>
+      <td class="value">${txType}</td>
+    </tr>
+    <tr>
+      <td class="label">المبلغ</td>
+      <td class="value ${amountClass}">
+        <bdi>${amountSign}${amountStr}</bdi>
+      </td>
+    </tr>
+    <tr>
+      <td class="label">طريقة الدفع</td>
+      <td class="value">${txPaymentMethod}</td>
+    </tr>
+    <tr>
+      <td class="label">الطلب المرتبط</td>
+      <td class="value"><bdi>#${txOrderId}</bdi></td>
+    </tr>
+    <tr>
+      <td class="label">العميل</td>
+      <td class="value">${txCustomer}</td>
+    </tr>
+    <tr>
+      <td class="label">المتجر</td>
+      <td class="value">${txStore}</td>
+    </tr>
+    <tr>
+      <td class="label">الحالة</td>
+      <td class="value">${txStatus}</td>
+    </tr>
+    <tr>
+      <td class="label">التاريخ</td>
+      <td class="value"><bdi>${dateStr}</bdi></td>
+    </tr>
+  </table>
+
+  <div class="footer">
+    <div>صفحة ١ من ١</div>
+    <div>© ٢٠٢٦ الفن الدمشقي - جميع الحقوق محفوظة</div>
+  </div>
+
+  <script>
+    // انتظر تحميل الخط ثم اطبع
+    document.fonts.ready.then(function () {
+      setTimeout(function () {
+        window.print();
+        // النافذة تُغلق بعد إنهاء الطباعة
+        setTimeout(function () { window.close(); }, 500);
+      }, 200);
+    });
+  </script>
+</body>
+</html>
+  `);
+  w.document.close();
+}
+
+// ── Lazy boundaries ──────────────────────────────────────────────────────────
+// The entire @react-pdf/renderer dependency (≈ several hundred KB) and the
+// xlsx writer ship in their own chunks. Both load only when the admin actually
+// triggers an export, keeping the financial page's initial JS small.
+const LazyFinancialReportLink = lazy(() =>
+  import('../../utils/pdf/LazyFinancialReportLink.jsx')
+);
 
 const STATUS_VARIANT = {
   'مكتملة': 'success',
@@ -48,19 +256,28 @@ const storeRevenueData = mockStores.map((s) => ({
   value: s.monthlyRevenue,
 }));
 
+// ── Export helpers ───────────────────────────────────────────────────────────
+function todayIso() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+const TOAST = {
+  excelSuccess: 'تم تنزيل ملف Excel بنجاح',
+  excelFail: 'فشل تصدير الملف. حاول مرة أخرى',
+  popupBlocked: 'يرجى السماح بالنوافذ المنبثقة',
+  emptyFilter: 'لا توجد معاملات للتصدير',
+};
+
 export default function FinancialManagementPage() {
   const { showToast } = useToast();
 
-  const [typeFilter, setType]        = useState('');
-  const [storeFilter, setStore]      = useState('');
-  const [search, setSearch]          = useState('');
-  const [page, setPage]              = useState(1);
-  const [pageSize, setPageSize]      = useState(() => PAGE_SIZE);
-  const [pdfOpen, setPdfOpen]        = useState(false);
-  const [excelOpen, setExcelOpen]    = useState(false);
+  const [typeFilter, setType]         = useState('');
+  const [storeFilter, setStore]       = useState('');
+  const [search, setSearch]           = useState('');
+  const [page, setPage]               = useState(1);
+  const [pageSize, setPageSize]       = useState(() => PAGE_SIZE);
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const [pdfTxOpen, setPdfTxOpen]    = useState(false);
-  const [selectedTx, setSelectedTx]  = useState(null);
+  const [selectedTx, setSelectedTx]   = useState(null);
 
   const { totalRevenue, totalRefunds, avgOrderValue, refundCount } = useMemo(() => {
     const revenue = mockTransactions
@@ -96,6 +313,32 @@ export default function FinancialManagementPage() {
     return filtered.slice((page - 1) * pageSize, page * pageSize);
   }, [filtered, page, pageSize]);
 
+  // Stable document props for the report PDF — only re-creates when the
+  // underlying filters or KPIs change, so PDFDownloadLink doesn't keep
+  // re-generating the blob on every render.
+  const reportDocumentProps = useMemo(
+    () => ({
+      kpis: {
+        totalRevenue,
+        totalRefunds,
+        avgOrderValue,
+        refundCount,
+        transactionsCount: mockTransactions.length,
+      },
+      stores: mockStores,
+      transactions: filtered,
+      filters: {
+        store: storeFilter,
+        type: typeFilter,
+        search,
+      },
+      generatedAt: new Date(),
+    }),
+    [filtered, storeFilter, typeFilter, search, totalRevenue, totalRefunds, avgOrderValue, refundCount]
+  );
+
+  const reportFileName = `damascene-financial-report-${todayIso()}.pdf`;
+
   function resetFilters() {
     setType('');
     setStore('');
@@ -103,7 +346,39 @@ export default function FinancialManagementPage() {
     setPage(1);
   }
 
-  const headers = useMemo(() => [
+  // ── Excel export ───────────────────────────────────────────────────────────
+  async function handleExcelExport() {
+    if (filtered.length === 0) {
+      showToast({ message: TOAST.emptyFilter, type: 'warning' });
+      return;
+    }
+    try {
+      const { exportTransactionsExcel } = await import(
+        '../../utils/pdf/exportTransactionsExcel.js'
+      );
+      exportTransactionsExcel(filtered, {
+        filename: `damascene-transactions-${todayIso()}.xlsx`,
+      });
+      showToast({ message: TOAST.excelSuccess, type: 'success' });
+    } catch (err) {
+      console.error('Excel export failed:', err);
+      showToast({ message: TOAST.excelFail, type: 'error' });
+    }
+  }
+
+  // ── Single-transaction PDF export ──────────────────────────────────────────
+  // Pivoted away from @react-pdf/renderer for this one document — the receipt
+  // is now printed from a clean isolated browser window via
+  // printTransactionReceipt() defined at module scope. This sidesteps the
+  // glyph-drop and BiDi-reversal bugs that two prior @react-pdf attempts hit.
+  function handleSingleTxPdfExport(transaction) {
+    if (!transaction) return;
+    printTransactionReceipt(transaction, () => {
+      showToast({ message: TOAST.popupBlocked, type: 'error' });
+    });
+  }
+
+  const headers = [
     { key: 'transactionNumber', label: 'رقم المعاملة' },
     {
       key: 'type',
@@ -142,29 +417,27 @@ export default function FinancialManagementPage() {
               onClick: () => {
                 setSelectedTx(row);
                 setDetailsOpen(true);
-              }
+              },
             },
             {
               label: 'تصدير PDF',
               icon: FileText,
-              onClick: () => {
-                setSelectedTx(row);
-                setPdfTxOpen(true);
-              }
+              onClick: () => handleSingleTxPdfExport(row),
             },
           ]}
         />
       ),
     },
-  ], [showToast]);
+  ];
 
   return (
     <div className={`${styles.page} page-enter`}>
       {/* Header */}
       <div>
-      <h1 className={styles.pageTitle}>الإدارة المالية</h1>
-          <p className={styles.pageSubtitle}>مراقبة الإيرادات والمدفوعات والتسويات المالية بين المتاجر والمنصة</p>
+        <h1 className={styles.pageTitle}>الإدارة المالية</h1>
+        <p className={styles.pageSubtitle}>مراقبة الإيرادات والمدفوعات والتسويات المالية بين المتاجر والمنصة</p>
       </div>
+
       {/* Stats Row */}
       <div className={styles.statsRow}>
         <StatCard
@@ -232,19 +505,36 @@ export default function FinancialManagementPage() {
         <div className={styles.tableHeader}>
           <h3 className={styles.tableTitle} id="transactions-table-title">المعاملات المالية</h3>
           <div className={styles.exportBtns}>
-            <button
-              type="button"
-              className={styles.exportBtn}
-              onClick={() => setPdfOpen(true)}
-              aria-label="تصدير المعاملات إلى ملف PDF"
+            <Suspense
+              fallback={
+                <button type="button" className={styles.exportBtn} disabled>
+                  <Loader2 size={14} strokeWidth={1.8} className={styles.spinner} />
+                  تحضير PDF...
+                </button>
+              }
             >
-              <FileText size={14} strokeWidth={1.8} />
-              تصدير PDF
-            </button>
+              <LazyFinancialReportLink
+                documentProps={reportDocumentProps}
+                fileName={reportFileName}
+                className={styles.exportBtn}
+                ariaLabel="تصدير المعاملات إلى ملف PDF"
+              >
+                {({ loading, error }) => (
+                  <>
+                    {loading ? (
+                      <Loader2 size={14} strokeWidth={1.8} className={styles.spinner} />
+                    ) : (
+                      <FileText size={14} strokeWidth={1.8} />
+                    )}
+                    {loading ? 'جارٍ التحضير...' : error ? 'تعذّر التحضير' : 'تصدير PDF'}
+                  </>
+                )}
+              </LazyFinancialReportLink>
+            </Suspense>
             <button
               type="button"
               className={styles.exportBtn}
-              onClick={() => setExcelOpen(true)}
+              onClick={handleExcelExport}
               aria-label="تصدير المعاملات إلى ملف Excel"
             >
               <FileText size={14} strokeWidth={1.8} />
@@ -294,239 +584,14 @@ export default function FinancialManagementPage() {
               pageSize,
               total: filtered.length,
               onPageChange: (p) => setPage(() => p),
-              onPageSizeChange: (s) => { 
-                setPageSize(() => s); 
-                setPage(() => 1); 
+              onPageSizeChange: (s) => {
+                setPageSize(() => s);
+                setPage(() => 1);
               },
             }}
           />
         </div>
       </div>
-
-      {/* PDF Export Modal */}
-      <Modal
-        isOpen={pdfOpen}
-        onClose={() => setPdfOpen(false)}
-        title="تقرير شامل - المعاملات والمنتجات والعملاء والمتاجر"
-        size="lg"
-        footer={
-          <div className={styles.modalFooter}>
-            <Button
-              variant="ghost"
-              onClick={() => setPdfOpen(false)}
-            >
-              إغلاق
-            </Button>
-            <Button
-              onClick={() => {
-                window.print();
-                showToast({ message: 'يرجى اختيار حفظ بصيغة PDF', type: 'info' });
-              }}
-            >
-              طباعة / حفظ PDF
-            </Button>
-          </div>
-        }
-      >
-        <div className={styles.pdfPreview}>
-          <div className={styles.a4Page}>
-            <div className={styles.a4Content}>
-              <h2 className={styles.documentTitle}>التقرير الشامل</h2>
-              <p className={styles.documentSubtitle}>الفن الدمشقي - لوحة التحكم الإدارية</p>
-
-              <div className={styles.documentMeta}>
-                <div className={styles.metaItem}>
-                  <span className={styles.metaLabel}>تاريخ التقرير:</span>
-                  <span className={styles.metaValue}>{formatDate(new Date().toISOString())}</span>
-                </div>
-                {storeFilter && (
-                  <div className={styles.metaItem}>
-                    <span className={styles.metaLabel}>المتجر المختار:</span>
-                    <span className={styles.metaValue}>{storeFilter}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Stores Section */}
-              <h3 style={{marginTop: '20px', marginBottom: '10px', borderBottom: '2px solid #C8A45A', paddingBottom: '5px'}}>المتاجر</h3>
-              <table className={styles.documentTable}>
-                <thead>
-                  <tr>
-                    <th>اسم المتجر</th>
-                    <th>المدير</th>
-                    <th>الهاتف</th>
-                    <th>الحالة</th>
-                    <th>عدد المنتجات</th>
-                    <th>الإيرادات الشهرية</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(storeFilter ? mockStores.filter(s => s.name === storeFilter) : mockStores).map((store) => (
-                    <tr key={store.id}>
-                      <td>{store.name}</td>
-                      <td>{store.manager}</td>
-                      <td>{store.phone}</td>
-                      <td>{store.status}</td>
-                      <td>{store.productsCount}</td>
-                      <td>{formatCurrency(store.monthlyRevenue)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              {/* Products Section */}
-              <h3 style={{marginTop: '20px', marginBottom: '10px', borderBottom: '2px solid #C8A45A', paddingBottom: '5px'}}>المنتجات</h3>
-              <table className={styles.documentTable}>
-                <thead>
-                  <tr>
-                    <th>اسم المنتج</th>
-                    <th>المتجر</th>
-                    <th>الفئة</th>
-                    <th>السعر</th>
-                    <th>المخزون</th>
-                    <th>التقييم</th>
-                    <th>الحالة</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(storeFilter ? mockProducts.filter(p => p.store === storeFilter) : mockProducts).map((product) => (
-                    <tr key={product.id}>
-                      <td>{product.name}</td>
-                      <td>{product.store}</td>
-                      <td>{product.category}</td>
-                      <td>{formatCurrency(product.price)}</td>
-                      <td>{product.stock}</td>
-                      <td>{product.rating}</td>
-                      <td>{product.status}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              {/* Clients Section */}
-              <h3 style={{marginTop: '20px', marginBottom: '10px', borderBottom: '2px solid #C8A45A', paddingBottom: '5px'}}>العملاء</h3>
-              <table className={styles.documentTable}>
-                <thead>
-                  <tr>
-                    <th>الاسم</th>
-                    <th>البريد الإلكتروني</th>
-                    <th>الدور</th>
-                    <th>المتجر</th>
-                    <th>الحالة</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {mockUsers.map((user) => (
-                    <tr key={user.id}>
-                      <td>{user.firstName} {user.lastName}</td>
-                      <td>{user.email}</td>
-                      <td>{user.role}</td>
-                      <td>{user.store || '-'}</td>
-                      <td>{user.status}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              {/* Transactions Section */}
-              <h3 style={{marginTop: '20px', marginBottom: '10px', borderBottom: '2px solid #C8A45A', paddingBottom: '5px'}}>المعاملات المالية</h3>
-              <table className={styles.documentTable}>
-                <thead>
-                  <tr>
-                    <th>رقم المعاملة</th>
-                    <th>النوع</th>
-                    <th>المبلغ</th>
-                    <th>طريقة الدفع</th>
-                    <th>العميل</th>
-                    <th>المتجر</th>
-                    <th>الحالة</th>
-                    <th>التاريخ</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtered.map((row) => (
-                    <tr key={row.id}>
-                      <td>{row.transactionNumber}</td>
-                      <td>{row.type}</td>
-                      <td>{formatCurrency(row.amount)}</td>
-                      <td>{row.paymentMethod}</td>
-                      <td>{row.customer}</td>
-                      <td>{row.store}</td>
-                      <td>{row.status}</td>
-                      <td>{formatDate(row.date)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              <div className={styles.documentFooter} style={{marginTop: '20px'}}>
-                <p>© 2026 الفن الدمشقي - جميع الحقوق محفوظة</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Modal>
-
-      {/* Excel Export Modal */}
-      <Modal
-        isOpen={excelOpen}
-        onClose={() => setExcelOpen(false)}
-        title="عرض المعاملات المالية - Excel"
-        size="lg"
-        footer={
-          <div className={styles.modalFooter}>
-            <Button
-              variant="ghost"
-              onClick={() => setExcelOpen(false)}
-            >
-              إغلاق
-            </Button>
-            <Button
-              onClick={() => {
-                const csvContent = generateCSV(pagedRows);
-                downloadFile(csvContent, 'transactions.csv', 'text/csv');
-                showToast({ message: 'تم تحميل الملف بنجاح', type: 'success' });
-                setExcelOpen(false);
-              }}
-            >
-              تحميل كـ Excel
-            </Button>
-          </div>
-        }
-      >
-        <div className={styles.excelPreview}>
-          <table className={styles.excelTable}>
-            <thead>
-              <tr>
-                <th>رقم المعاملة</th>
-                <th>النوع</th>
-                <th>المبلغ</th>
-                <th>طريقة الدفع</th>
-                <th>الطلب المرتبط</th>
-                <th>العميل</th>
-                <th>المتجر</th>
-                <th>الحالة</th>
-                <th>التاريخ</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pagedRows.map((row) => (
-                <tr key={row.id}>
-                  <td>{row.transactionNumber}</td>
-                  <td>{row.type}</td>
-                  <td>{formatCurrency(row.amount)}</td>
-                  <td>{row.paymentMethod}</td>
-                  <td>#{row.orderId}</td>
-                  <td>{row.customer}</td>
-                  <td>{row.store}</td>
-                  <td>{row.status}</td>
-                  <td>{formatDate(row.date)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Modal>
 
       {/* Transaction Details Modal */}
       <Modal
@@ -580,135 +645,6 @@ export default function FinancialManagementPage() {
           </div>
         </div>
       </Modal>
-
-      {/* Transaction PDF Export Modal */}
-      <Modal
-        isOpen={pdfTxOpen}
-        onClose={() => setPdfTxOpen(false)}
-        title={`تصدير المعاملة: ${selectedTx?.transactionNumber} - PDF`}
-        size="lg"
-        footer={
-          <div className={styles.modalFooter}>
-            <Button
-              variant="ghost"
-              onClick={() => setPdfTxOpen(false)}
-            >
-              إغلاق
-            </Button>
-            <Button
-              onClick={() => {
-                window.print();
-                showToast({ message: 'يرجى اختيار حفظ بصيغة PDF', type: 'info' });
-              }}
-            >
-              طباعة / حفظ PDF
-            </Button>
-          </div>
-        }
-      >
-        <div className={styles.pdfPreview}>
-          <div className={styles.a4Page}>
-            <div className={styles.a4Content}>
-              <h2 className={styles.documentTitle}>تفاصيل المعاملة المالية</h2>
-              <p className={styles.documentSubtitle}>الفن الدمشقي - لوحة التحكم الإدارية</p>
-
-              <div className={styles.documentMeta}>
-                <div className={styles.metaItem}>
-                  <span className={styles.metaLabel}>رقم المعاملة:</span>
-                  <span className={styles.metaValue}>{selectedTx?.transactionNumber}</span>
-                </div>
-                <div className={styles.metaItem}>
-                  <span className={styles.metaLabel}>تاريخ التقرير:</span>
-                  <span className={styles.metaValue}>{formatDate(new Date().toISOString())}</span>
-                </div>
-              </div>
-
-              <table className={styles.documentTable}>
-                <tbody>
-                  <tr>
-                    <td className={styles.labelCol}>النوع</td>
-                    <td>{selectedTx?.type}</td>
-                  </tr>
-                  <tr>
-                    <td className={styles.labelCol}>المبلغ</td>
-                    <td>
-                      <span className={selectedTx?.type === 'استرداد' ? styles.refundAmount : styles.paymentAmount}>
-                        {selectedTx?.type === 'استرداد' ? '-' : '+'}{formatCurrency(selectedTx?.amount)}
-                      </span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={styles.labelCol}>طريقة الدفع</td>
-                    <td>{selectedTx?.paymentMethod}</td>
-                  </tr>
-                  <tr>
-                    <td className={styles.labelCol}>الطلب المرتبط</td>
-                    <td>#{selectedTx?.orderId}</td>
-                  </tr>
-                  <tr>
-                    <td className={styles.labelCol}>العميل</td>
-                    <td>{selectedTx?.customer}</td>
-                  </tr>
-                  <tr>
-                    <td className={styles.labelCol}>المتجر</td>
-                    <td>{selectedTx?.store}</td>
-                  </tr>
-                  <tr>
-                    <td className={styles.labelCol}>الحالة</td>
-                    <td>{selectedTx?.status}</td>
-                  </tr>
-                  <tr>
-                    <td className={styles.labelCol}>التاريخ</td>
-                    <td>{formatDate(selectedTx?.date)}</td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <div className={styles.documentFooter}>
-                <p>© 2026 الفن الدمشقي - جميع الحقوق محفوظة</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Modal>
     </div>
   );
-}
-
-// Helper function to generate CSV
-function generateCSV(data) {
-  const headers = ['رقم المعاملة', 'النوع', 'المبلغ', 'طريقة الدفع', 'الطلب', 'العميل', 'المتجر', 'الحالة', 'التاريخ'];
-  const rows = data.map((row) => [
-    row.transactionNumber,
-    row.type,
-    row.amount,
-    row.paymentMethod,
-    row.orderId,
-    row.customer,
-    row.store,
-    row.status,
-    row.date,
-  ]);
-
-  const csvContent = [
-    headers.join(','),
-    ...rows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
-  ].join('\n');
-
-  return csvContent;
-}
-
-// Helper function to download file
-function downloadFile(content, filename, type) {
-  const isCsv = type.startsWith('text/csv');
-  const mime = isCsv ? 'text/csv;charset=utf-8' : type;
-  // Prepend UTF-8 BOM so Excel detects the encoding correctly (otherwise Arabic shows as mojibake)
-  const parts = isCsv ? ['﻿', content] : [content];
-  const blob = new Blob(parts, { type: mime });
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  a.click();
-  window.URL.revokeObjectURL(url);
 }

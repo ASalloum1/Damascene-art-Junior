@@ -1,5 +1,13 @@
-import { useState, useMemo } from 'react';
-import { Star, Check, X, Trash2, ExternalLink, StarHalf } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import {
+  Star,
+  Check,
+  X,
+  Trash2,
+  ExternalLink,
+  StarHalf,
+  MessageSquare,
+} from 'lucide-react';
 import StatCard from '../../components/ui/StatCard.jsx';
 import Badge from '../../components/ui/Badge.jsx';
 import Button from '../../components/ui/Button.jsx';
@@ -9,9 +17,12 @@ import SearchInput from '../../components/ui/SearchInput.jsx';
 import ConfirmModal from '../../components/ui/ConfirmModal.jsx';
 import Modal from '../../components/ui/Modal.jsx';
 import EmptyState from '../../components/ui/EmptyState.jsx';
+import InputField from '../../components/ui/InputField.jsx';
+import TextArea from '../../components/ui/TextArea.jsx';
 import { useToast } from '../../components/ui/Toast.jsx';
-import { mockReviews, mockProducts } from '../../data/mockData.js';
+import { mockReviews, mockProducts, mockUsers } from '../../data/mockData.js';
 import { formatDate, formatCurrency } from '../../utils/formatters.js';
+import { replyToReview } from '../../api/reviewsApi.js';
 import styles from './ReviewsManagement.module.css';
 
 const STORE_OPTIONS = [
@@ -38,6 +49,14 @@ const STATUS_OPTIONS = [
   { value: 'مرفوض', label: 'مرفوض' },
 ];
 
+// Build a "Display Name (ar) → email" map ONCE at module scope. Reviews don't
+// embed the customer email; we resolve it through `mockUsers`. Falls back to
+// "غير متوفر" in the modal when a name doesn't match.
+const EMAIL_BY_NAME = mockUsers.reduce((acc, u) => {
+  acc[`${u.firstName} ${u.lastName}`] = u.email;
+  return acc;
+}, {});
+
 function StarRating({ rating }) {
   return (
     <div className={styles.starRow} aria-label={`تقييم ${rating} من ٥`}>
@@ -60,6 +79,149 @@ function getStatusVariant(status) {
   return 'default';
 }
 
+/**
+ * ReplyReviewModal — admin-side Reply-by-Email composer.
+ *
+ * Subject is prefilled from the product name; the admin can edit before
+ * sending. The body is required and capped at 2000 chars (Arabic counter
+ * via `TextArea`'s `maxLength` slot). On success the parent fires `onSuccess`
+ * and the modal closes; on failure we keep the modal open so the admin can
+ * retry without losing their typing.
+ */
+function ReplyReviewModal({ isOpen, onClose, review, onSuccess }) {
+  const { showToast } = useToast();
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+
+  const customerEmail = review ? EMAIL_BY_NAME[review.customer] : null;
+
+  // Prefill on review change. We reset both fields whenever a different review
+  // opens the modal so a previous draft doesn't bleed into the next reply.
+  // We deliberately key on review.id only — re-running on every parent render
+  // would clobber a half-written reply.
+  useEffect(() => {
+    if (review) {
+      setSubject(`رد من الفن الدمشقي على تقييمك للمنتج: ${review.product}`);
+      setMessage('');
+      setErrors({});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [review?.id]);
+
+  async function handleSubmit() {
+    const nextErrors = {};
+    if (!subject.trim()) {
+      nextErrors.subject = 'الرجاء إدخال موضوع للرد';
+    }
+    if (message.trim().length < 10) {
+      nextErrors.message = 'نص الرد يجب أن يحتوي على ١٠ أحرف على الأقل';
+    }
+    if (Object.keys(nextErrors).length) {
+      setErrors(nextErrors);
+      return;
+    }
+
+    setSubmitting(true);
+    setErrors({});
+    try {
+      await replyToReview(review.id, {
+        subject: subject.trim(),
+        message: message.trim(),
+      });
+      showToast({ message: 'تم إرسال الرد بنجاح', type: 'success' });
+      onSuccess?.();
+      onClose?.();
+    } catch (err) {
+      // Map HTTP shape to user-friendly Arabic. Endpoint not yet wired in
+      // backend → 404; auth gating → 401/403; everything else → generic.
+      const status = err?.status;
+      const msg =
+        status === 404
+          ? 'خدمة إرسال الردود غير متاحة حالياً، يرجى المحاولة لاحقاً'
+          : status === 401 || status === 403
+          ? 'ليست لديك الصلاحية لإرسال الرد'
+          : 'فشل إرسال الرد، يرجى المحاولة مرة أخرى';
+      showToast({ message: msg, type: 'error' });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (!review) return null;
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={submitting ? undefined : onClose}
+      title="رد على التقييم"
+      size="md"
+      closeOnBackdrop={!submitting}
+      footer={
+        <>
+          <Button variant="ghost" onClick={onClose} disabled={submitting}>
+            إلغاء
+          </Button>
+          <Button
+            variant="primary"
+            loading={submitting}
+            onClick={handleSubmit}
+          >
+            إرسال الرد
+          </Button>
+        </>
+      }
+    >
+      <div className={styles.replyModalBody}>
+        {/* Read-only summary of the review being replied to. */}
+        <div className={styles.replyModalSummary}>
+          <div className={styles.replyMetaRow}>
+            <span className={styles.replyMetaLabel}>اسم العميل</span>
+            <span className={styles.replyMetaValue}>{review.customer}</span>
+          </div>
+          <div className={styles.replyMetaRow}>
+            <span className={styles.replyMetaLabel}>البريد الإلكتروني</span>
+            <span className={styles.replyMetaValue}>
+              {customerEmail || 'غير متوفر'}
+            </span>
+          </div>
+          <div className={styles.replyMetaRow}>
+            <span className={styles.replyMetaLabel}>المنتج</span>
+            <span className={styles.replyMetaValue}>{review.product}</span>
+          </div>
+          <div className={styles.replyMetaRow}>
+            <span className={styles.replyMetaLabel}>التقييم</span>
+            <StarRating rating={review.rating} />
+          </div>
+          <blockquote className={styles.replyQuote}>{review.text}</blockquote>
+        </div>
+
+        <InputField
+          label="الموضوع"
+          required
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          error={errors.subject}
+          disabled={submitting}
+        />
+
+        <TextArea
+          label="نص الرد"
+          required
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          error={errors.message}
+          rows={6}
+          maxLength={2000}
+          disabled={submitting}
+          placeholder="اكتب رسالتك للعميل..."
+        />
+      </div>
+    </Modal>
+  );
+}
+
 export default function ReviewsManagementPage() {
   const { showToast } = useToast();
   const [reviews, setReviews] = useState(() => mockReviews);
@@ -71,6 +233,7 @@ export default function ReviewsManagementPage() {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [productModalOpen, setProductModalOpen] = useState(false);
+  const [replyTarget, setReplyTarget] = useState(null);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -256,6 +419,15 @@ export default function ReviewsManagementPage() {
               <div className={styles.reviewFooter}>
                 <span className={styles.reviewStore}>{review.store}</span>
                 <div className={styles.reviewActions}>
+                  <button
+                    type="button"
+                    className={[styles.actionBtn, styles.actionReply].join(' ')}
+                    onClick={() => setReplyTarget(review)}
+                    title="الرد على التقييم"
+                    aria-label="الرد على التقييم"
+                  >
+                    <MessageSquare size={15} strokeWidth={1.8} />
+                  </button>
                   {review.status !== 'منشور' ? (
                     <button
                       type="button"
@@ -360,6 +532,12 @@ export default function ReviewsManagementPage() {
           </div>
         ) : null}
       </Modal>
+
+      <ReplyReviewModal
+        isOpen={!!replyTarget}
+        review={replyTarget}
+        onClose={() => setReplyTarget(null)}
+      />
 
       <ConfirmModal
         isOpen={!!deleteTarget}
