@@ -1,0 +1,374 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ─── Top Bar ─────────────────────────────────────────────── */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-card);
+  border-block-start: 3px solid transparent;
+  transition:
+    box-shadow var(--transition-base),
+    transform var(--transition-base),
+    border-color var(--transition-base);
+}
+
+.topBar:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
+  border-block-start-color: var(--color-gold);
+}
+
+.topBar:hover .pageTitle::after {
+  width: 155px;
+}
+
+.topBarHead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.pageTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: 900;
+  color: var(--color-navy);
+  margin: 0;
+  position: relative;
+}
+
+.pageTitle::after {
+  content: '';
+  display: block;
+  width: 55px;
+  height: 4px;
+  background: var(--gradient-gold);
+  border-radius: var(--radius-full);
+  margin-block-start: var(--space-1);
+  transition: width var(--transition-base);
+}
+
+.storePill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-arabic);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-gold-dark);
+  background: var(--color-gold-alpha-10);
+  border: 1px solid var(--color-gold-alpha-25);
+  padding-block: 4px;
+  padding-inline: 10px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.storePillDot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-gold);
+  box-shadow: 0 0 0 3px var(--color-gold-alpha-15);
+}
+
+.pageSubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  max-width: 540px;
+  margin: 0;
+}
+
+.topBarControls {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  flex-wrap: nowrap;
+}
+
+/* ─── KPI Stats Row ───────────────────────────────────────── */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+}
+
+.statsRow > * {
+  animation: fadeInUp 0.4s ease-out backwards;
+}
+
+.statsRow > *:nth-child(1) { animation-delay: 0s; }
+.statsRow > *:nth-child(2) { animation-delay: 0.06s; }
+.statsRow > *:nth-child(3) { animation-delay: 0.12s; }
+.statsRow > *:nth-child(4) { animation-delay: 0.18s; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ─── Charts Grid ─────────────────────────────────────────── */
+.chartsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.chartsGrid > * {
+  animation: fadeInScale 0.4s ease-out backwards;
+}
+
+.chartsGrid > *:nth-child(1) { animation-delay: 0.06s; }
+.chartsGrid > *:nth-child(2) { animation-delay: 0.12s; }
+.chartsGrid > *:nth-child(3) { animation-delay: 0.18s; }
+.chartsGrid > *:nth-child(4) { animation-delay: 0.24s; }
+
+.chartCard {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-card);
+  position: relative;
+  border-block-start: 3px solid transparent;
+  transition:
+    box-shadow var(--transition-base),
+    transform var(--transition-base),
+    border-color var(--transition-base);
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+}
+
+.chartCard:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
+  border-block-start-color: var(--color-gold);
+}
+
+.chartSkeleton {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-block: var(--space-3);
+}
+
+.skeletonTitle {
+  height: 16px;
+  width: 40%;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--color-cream-dark) 0%,
+    var(--color-cream-mid) 50%,
+    var(--color-cream-dark) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.skeletonChart {
+  flex: 1;
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    90deg,
+    var(--color-cream-dark) 0%,
+    var(--color-cream-mid) 50%,
+    var(--color-cream-dark) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  min-height: 240px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -100% 0; }
+  100% { background-position: 100% 0; }
+}
+
+.chartErrorWrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-4);
+  color: var(--color-text-secondary);
+}
+
+.chartErrorTitle {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-navy);
+  margin: 0;
+}
+
+.chartErrorMsg {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  max-width: 320px;
+  margin: 0;
+}
+
+/* ─── Tables Section ──────────────────────────────────────── */
+.tablesSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-card);
+  border-block-start: 3px solid transparent;
+  transition:
+    box-shadow var(--transition-base),
+    transform var(--transition-base),
+    border-color var(--transition-base);
+}
+
+.tablesSection:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
+  border-block-start-color: var(--color-gold);
+}
+
+.tablesHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.tablesTitleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.tablesTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 800;
+  color: var(--color-navy);
+  margin: 0;
+}
+
+.tablesSubtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.tablesCount {
+  font-family: var(--font-arabic);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  background: var(--color-cream);
+  padding-block: 3px;
+  padding-inline: 9px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-cream-dark);
+}
+
+.tableCard {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--color-cream-dark);
+  background: var(--color-white);
+}
+
+/* Mode badge for mock indicator (subtle) */
+.modeBadge {
+  font-size: var(--font-size-xs);
+  font-family: var(--font-arabic);
+  color: var(--color-text-secondary);
+  background: var(--color-cream-dark);
+  padding-block: 2px;
+  padding-inline: 8px;
+  border-radius: var(--radius-full);
+}
+
+/* ─── Responsive ──────────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1024px) {
+  .topBarControls {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .statsRow {
+    grid-template-columns: 1fr;
+  }
+
+  .topBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .topBarControls {
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    gap: var(--space-3);
+  }
+
+  .chartCard {
+    padding: var(--space-3);
+    min-height: 280px;
+  }
+
+  .statsRow,
+  .chartsGrid {
+    gap: var(--space-3);
+  }
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .statsRow > *,
+  .chartsGrid > *,
+  .skeletonTitle,
+  .skeletonChart {
+    animation: none !important;
+    transition: none !important;
+  }
+}
